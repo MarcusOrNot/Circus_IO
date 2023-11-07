@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -7,12 +6,20 @@ using UnityEngine;
 
 public class Hunter : MonoBehaviour
 {
-    public bool IsReadyToBoost = true;
+    public bool IsReadyToBoost { get { return _isReadyToBoost; } }
 
     public void Boost()
     {
         StartCoroutine(BoostMoving());
     }
+
+    public void Move(Vector2 direction)
+    {
+        if (!_isBoosting) _character.Move(direction);
+    }    
+
+
+
 
 
 
@@ -20,12 +27,8 @@ public class Hunter : MonoBehaviour
     [SerializeField] private HunterModel _model;    
     private Character _character;
 
-    private float _boostTime = 0.5f;    
-    private float _boosterCooldownTime = 7f;
-    private bool _isBoosting = false;
-
-    private float _unvulnerablityTimer = 5f;
-    private bool _isUnvulnerable = true;
+    private bool _isReadyToBoost = true;
+    private bool _isBoosting = false;    
 
     private int _health;
 
@@ -38,28 +41,30 @@ public class Hunter : MonoBehaviour
     }
 
     private void Start()
-    {
+    {        
         SetColorOnColoredComponents(_model.Color);
         _health = _model.StartEntity;
-        StartCoroutine(SetUnvulnerablity());
-        SetScale();
+        SetScale();        
+        StartCoroutine(StandOnFloor());
+
+        //StartCoroutine(SetUnvulnerablity());
     }
 
     private void Update()
     {
-        if (_isBoosting) _character.Move(new Vector2(transform.forward.y, transform.forward.x));
+        if (_isBoosting) _character.Move(new Vector2(transform.forward.x, transform.forward.z));
     }
 
 
     private void SetColorOnColoredComponents(Color color)
     {
         foreach (Renderer valuableColoredComponent in _valuableColoredComponents)
-            valuableColoredComponent.material.color = _model.Color;
+            valuableColoredComponent.material.color = color;
     }
-
+    
     private void SetScale()
     {
-        transform.localScale = Vector3.one * (1 + (float)_health / 10);
+        transform.localScale = Vector3.one * (1 + (float)_health / 10);        
     }
 
     /*
@@ -102,7 +107,7 @@ public class Hunter : MonoBehaviour
     }
     */
 
-
+    /*
     private IEnumerator SetUnvulnerablity()
     {
         _isUnvulnerable = true;
@@ -122,23 +127,28 @@ public class Hunter : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
     }
-
+    */
 
     private IEnumerator BoostMoving()
     {
         StartCoroutine(BoosterCooldown());
         _isBoosting = true;
         float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostValue;
-        yield return new WaitForSeconds(_boostTime);
-        _character.SpeedMultiplier = savedBoostSpeed;
+        _character.SpeedMultiplier = _model.BoostValue;       
+        yield return new WaitForSeconds(_model.BoostTime);
+        _character.SpeedMultiplier = savedBoostSpeed;        
         _isBoosting = false;
     }
     private IEnumerator BoosterCooldown()
     {
-        IsReadyToBoost = false;
-        yield return new WaitForSeconds(_boosterCooldownTime);
-        IsReadyToBoost = true;
+        _isReadyToBoost = false;
+        yield return new WaitForSeconds(_model.BoostRestartTime);
+        _isReadyToBoost = true;
     }
 
+    private IEnumerator StandOnFloor()
+    {
+        yield return new WaitForSeconds(0.3f);
+        _character.Move(Vector2.up);
+    }
 }
