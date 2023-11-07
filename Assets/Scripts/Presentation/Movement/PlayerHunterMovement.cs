@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class PlayerHunterMovement : MonoBehaviour
 {
-    private Joystick _joystick;
+    [Inject] private IControlCharacter _controller;
     private Hunter _hunter;
-    private Character _character;
 
     private void Awake()
     {
-        _character = GetComponent<Character>();
         _hunter = GetComponent<Hunter>();
-        _joystick = FindObjectOfType<Joystick>();
+        if (_controller!=null)
+        {
+            _controller.SetOnActionClicked(() =>
+            {
+                _hunter.Boost();
+            });
+        }
     }
 
     private void Start()
@@ -23,10 +28,14 @@ public class PlayerHunterMovement : MonoBehaviour
 
     private void Update()
     {
-        if (_joystick != null)
+        if (_controller != null)
         {
             //Debug.Log("Now move on "+_joystick.Direction.ToString());
-            _character.Move(_joystick.Direction);
+            _hunter.Move(_controller.Direction);
+        }
+        else
+        {
+            Debug.Log("Requires Control Character!!!");
         }
     }
 }
