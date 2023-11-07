@@ -5,9 +5,13 @@ using UnityEngine;
 public class PlayerHunterMovement : MonoBehaviour
 {
     private Joystick _joystick;
+    private Hunter _hunter;
+    private Character _character;
 
     private void Awake()
     {
+        _character = GetComponent<Character>();
+        _hunter = GetComponent<Hunter>();
         _joystick = FindObjectOfType<Joystick>();
     }
 
@@ -21,7 +25,8 @@ public class PlayerHunterMovement : MonoBehaviour
     {
         if (_joystick != null)
         {
-            Debug.Log("Now move on "+_joystick.Direction.ToString());
+            //Debug.Log("Now move on "+_joystick.Direction.ToString());
+            _character.Move(_joystick.Direction);
         }
     }
 }
