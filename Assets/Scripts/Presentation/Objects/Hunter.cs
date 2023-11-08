@@ -8,10 +8,10 @@ using UnityEngine;
 public class Hunter : MonoBehaviour
 {
     public HunterModel Model { get { return _model; } }
-    public bool IsReadyToBoost { get { return _isReadyToBoost; } }
+    public bool IsReadyToBoost { get { return _isBoosterReady; } }
     
-    public void Boost() { StartCoroutine(BoostMoving()); }
-    public void Move(Vector2 direction) { if (!_isBoosting) _character.Move(direction); }
+    public void Boost() { StartCoroutine(BoosterActivation()); }
+    public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.Move(direction); }
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
 
@@ -19,8 +19,8 @@ public class Hunter : MonoBehaviour
     [SerializeField] private HunterModel _model;    
     private Character _character;
 
-    private bool _isReadyToBoost = true;
-    private bool _isBoosting = false;    
+    private bool _isBoosterReady = true;
+    private bool _isMovingWithBoost = false;    
 
     private int _health = 0;
     private Action<int> _onHealthChanged;        
@@ -36,11 +36,7 @@ public class Hunter : MonoBehaviour
         StartCoroutine(StandOnFloor());
         SetBoostReady();        
     }
-    private void Update()
-    {
-        if (_isBoosting) _character.Move(new Vector2(transform.forward.x, transform.forward.z));
-    }
-
+    
     private void SetColorOnColoredComponents(Color color)
     {
         foreach (Renderer coloredComponent in _model.ColoredComponents) coloredComponent.material.color = color;
@@ -50,22 +46,31 @@ public class Hunter : MonoBehaviour
         transform.localScale = Vector3.one * (1 + (float)_health / 10);        
     }   
 
-    private IEnumerator BoostMoving()
+    private IEnumerator BoosterActivation()
     {
-        if (!_isReadyToBoost) yield break;
-        StartCoroutine(BoosterCooldown());
-        _isBoosting = true;
+        if (!_isBoosterReady) yield break;
+        StartCoroutine(BoosterReloading());
+        _isMovingWithBoost = true;
         float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostValue;       
+        _character.SpeedMultiplier = _model.BoostValue;
+        StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
-        _character.SpeedMultiplier = savedBoostSpeed;        
-        _isBoosting = false;
+        _character.SpeedMultiplier = savedBoostSpeed;
+        _isMovingWithBoost = false;
     }
-    private IEnumerator BoosterCooldown()
+    private IEnumerator BoosterReloading()
     {
-        _isReadyToBoost = false;
+        _isBoosterReady = false;
         yield return new WaitForSeconds(_model.BoostRestartTime);
         SetBoostReady();
+    }
+    private IEnumerator MovingWithBoost()
+    {
+        while (_isMovingWithBoost)
+        {
+            _character.Move(new Vector2(transform.forward.x, transform.forward.z));
+            yield return null;
+        }  
     }
 
     private IEnumerator StandOnFloor()
@@ -74,7 +79,7 @@ public class Hunter : MonoBehaviour
         _character.Move(Vector2.up);
     }
 
-    private void SetBoostReady() { _isReadyToBoost = _health > _model.BoostPrice; }
+    private void SetBoostReady() { _isBoosterReady = _health > _model.BoostPrice; }
 
     private void OnTriggerEnter(Collider other)
     {
