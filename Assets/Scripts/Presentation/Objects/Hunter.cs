@@ -1,12 +1,15 @@
 using System.Collections;
 using System;
 using UnityEngine;
+using Zenject;
 
 
 [RequireComponent(typeof(Character))]
 
 public class Hunter : MonoBehaviour
 {
+    [Inject] private EntityFactory _factory;    
+
     public HunterModel Model { get { return _model; } }
     public bool IsReadyToBoost { get { return _isBoosterReady; } }
     
@@ -51,6 +54,7 @@ public class Hunter : MonoBehaviour
         if (!_isBoosterReady) yield break;
         StartCoroutine(BoosterReloading());
         _isMovingWithBoost = true;
+        if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
         _character.SpeedMultiplier = _model.BoostValue;
         StartCoroutine(MovingWithBoost());
@@ -99,9 +103,30 @@ public class Hunter : MonoBehaviour
         _onHealthChanged?.Invoke(_health);
     }
 
+    private void GetDamage(int value)
+    {
+        ChangeHealth(-value);
+        SpawnOutEntities(Mathf.Min(value, _health + value));
+        if (_health <= 0) Destroy(gameObject);        
+    }
 
-
-
+    private void SpawnOutEntities(int count)
+    {
+        Array entityTypes = Enum.GetValues(typeof(EntityType)); 
+        float pullOutForceUp = 5f;
+        float pullOutForceHorizontal = 3f;
+        float positionVerticalOffset = transform.localScale.x * 1f;
+        float positionHorisontalOffset = transform.localScale.x * 1f;        
+        for (int i = 1; i <= count; i++)
+        {
+            EntityType randomEntityType = (EntityType)entityTypes.GetValue(UnityEngine.Random.Range(0, 2));
+            float angle = UnityEngine.Random.Range(45, 315f);
+            Vector3 horizontalDirection = Quaternion.AngleAxis(angle, Vector3.up) * transform.forward;
+            Entity spawnedEntity = _factory.Spawn(randomEntityType);
+            spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
+            spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
+        }
+    }
 
 
     /*     
