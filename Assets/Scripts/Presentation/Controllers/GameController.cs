@@ -9,9 +9,13 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
-        _factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(0,10,0);
+        //_eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
+        //_factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(0,10,0);
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
+        for (int i=0; i < 10; i++)
+        {
+            _factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(5+i*3, 10, 0);
+        }
     }
 
     // Update is called once per frame
