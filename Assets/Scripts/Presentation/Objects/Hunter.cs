@@ -12,9 +12,11 @@ public class Hunter : MonoBehaviour
 
     public HunterModel Model { get { return _model; } }
     public bool IsReadyToBoost { get { return _isBoosterReady; } }
+    public int Lifes { get { return _health; } }
     
     public void Boost() { StartCoroutine(BoosterActivation()); }
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.Move(direction); }
+    public void AddDamage(int value) { GetDamage(value); }
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
@@ -94,8 +96,8 @@ public class Hunter : MonoBehaviour
     private void ChangeHealth(int value)
     {
         _health += value;
-        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 10);
         _onHealthChanged?.Invoke(_health);
+        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 10);        
     }
 
     private void GetDamage(int value)
@@ -114,7 +116,7 @@ public class Hunter : MonoBehaviour
         float positionHorisontalOffset = transform.localScale.x * 1f;        
         for (int i = 1; i <= count; i++)
         {
-            EntityType randomEntityType = (EntityType)entityTypes.GetValue(UnityEngine.Random.Range(0, 2));
+            EntityType randomEntityType = (EntityType)entityTypes.GetValue(UnityEngine.Random.Range(0, entityTypes.Length));
             float angle = UnityEngine.Random.Range(45, 315f);
             Vector3 horizontalDirection = Quaternion.AngleAxis(angle, Vector3.up) * transform.forward;
             Entity spawnedEntity = _factory.Spawn(randomEntityType);
