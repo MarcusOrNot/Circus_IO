@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-public class PlayerHunterMovement : MonoBehaviour
+public class PlayerHunter : MonoBehaviour, IPlayer
 {
     [Inject] private IControlCharacter _controller;
+    [Inject] private IGameUI _gameUI;
     private Hunter _hunter;
+
+    public Vector3 GetPosition() => transform.position;
 
     private void Awake()
     {
         _hunter = GetComponent<Hunter>();
-        if (_controller!=null)
+        if (_controller != null)
         {
             _controller.SetOnActionClicked(() =>
             {
                 _hunter.Boost();
+            });
+            _hunter.SetOnHealthChanged((lifes) =>
+            {
+                _gameUI.SetLifesValue(lifes);
             });
         }
     }
