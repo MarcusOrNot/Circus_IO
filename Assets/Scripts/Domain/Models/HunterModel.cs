@@ -11,4 +11,7 @@ public class HunterModel
 
     public float BoostTime = 0.5f;
     public float BoostRestartTime = 7f;
+    public int BoostPrice = 0;
+
+    public Renderer[] ColoredComponents;
 }

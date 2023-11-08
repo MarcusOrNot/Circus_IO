@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [System.Serializable]
 
-public class EntityModel 
+public class MobModel : MonoBehaviour
 {
-    public EntityType EntityType;    
+    
 }

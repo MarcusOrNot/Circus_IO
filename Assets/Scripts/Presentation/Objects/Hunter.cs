@@ -1,4 +1,5 @@
 using System.Collections;
+using System;
 using UnityEngine;
 
 
@@ -6,21 +7,12 @@ using UnityEngine;
 
 public class Hunter : MonoBehaviour
 {
+    public HunterModel Model { get { return _model; } }
     public bool IsReadyToBoost { get { return _isReadyToBoost; } }
-
-    public void Boost()
-    {
-        StartCoroutine(BoostMoving());
-    }
-
-    public void Move(Vector2 direction)
-    {
-        if (!_isBoosting) _character.Move(direction);
-    }    
-
-
-
-
+    
+    public void Boost() { StartCoroutine(BoostMoving()); }
+    public void Move(Vector2 direction) { if (!_isBoosting) _character.Move(direction); }
+    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
 
 
@@ -30,83 +22,121 @@ public class Hunter : MonoBehaviour
     private bool _isReadyToBoost = true;
     private bool _isBoosting = false;    
 
-    private int _health;
-
-    [SerializeField] private Renderer[] _valuableColoredComponents;
-
+    private int _health = 0;
+    private Action<int> _onHealthChanged;        
 
     private void Awake()
     {
-        _character = GetComponent<Character>();        
+        _character = GetComponent<Character>();
     }
-
     private void Start()
     {        
         SetColorOnColoredComponents(_model.Color);
-        _health = _model.StartEntity;
-        SetScale();        
+        ChangeHealth(_model.StartEntity);         
         StartCoroutine(StandOnFloor());
-
-        //StartCoroutine(SetUnvulnerablity());
+        SetBoostReady();        
     }
-
     private void Update()
     {
         if (_isBoosting) _character.Move(new Vector2(transform.forward.x, transform.forward.z));
     }
 
-
     private void SetColorOnColoredComponents(Color color)
     {
-        foreach (Renderer valuableColoredComponent in _valuableColoredComponents)
-            valuableColoredComponent.material.color = color;
-    }
-    
+        foreach (Renderer coloredComponent in _model.ColoredComponents) coloredComponent.material.color = color;
+    }    
     private void SetScale()
     {
         transform.localScale = Vector3.one * (1 + (float)_health / 10);        
+    }   
+
+    private IEnumerator BoostMoving()
+    {
+        if (!_isReadyToBoost) yield break;
+        StartCoroutine(BoosterCooldown());
+        _isBoosting = true;
+        float savedBoostSpeed = _character.SpeedMultiplier;        
+        _character.SpeedMultiplier = _model.BoostValue;       
+        yield return new WaitForSeconds(_model.BoostTime);
+        _character.SpeedMultiplier = savedBoostSpeed;        
+        _isBoosting = false;
+    }
+    private IEnumerator BoosterCooldown()
+    {
+        _isReadyToBoost = false;
+        yield return new WaitForSeconds(_model.BoostRestartTime);
+        SetBoostReady();
     }
 
-    /*
-      
-    [SerializeField] private List<Entity> _entitiesPrefabs = new List<Entity>();
-
-    private void OnCollisionEnter(Collision collision)
+    private IEnumerator StandOnFloor()
     {
-        if (collision.gameObject.TryGetComponent(out Entity entity))
-            EatEntity(entity);
-
+        yield return new WaitForSeconds(0.3f);
+        _character.Move(Vector2.up);
     }
 
-    private void GetDamage()
-    {
-        if (_isUnvulnerable) return;
-        int health = _health;
-        _health /= 2;
-        StartCoroutine(SetUnvulnerablityTimer());
-        GenerateEntities(health - _health);
-        SetScale();
-        if (_health <= 0) Destroy(gameObject);
-    }
+    private void SetBoostReady() { _isReadyToBoost = _health > _model.BoostPrice; }
 
-    private void GenerateEntities(int count)
+    private void OnTriggerEnter(Collider other)
     {
-        float entityPullOutForce = 0.05f;
-        for (int i = 1; i <= count; i++)
-        {
-            Instantiate(_entitiesPrefabs[Random.Range(0, _entitiesPrefabs.Count)], transform.position, Quaternion.identity)
-                .GetComponent<Rigidbody>().AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * entityPullOutForce, ForceMode.Impulse);
-        }
+        if (other.TryGetComponent(out Entity entity)) EatEntity(entity);   
     }
 
     private void EatEntity(Entity entity)
     {
         Destroy(entity.gameObject);
-        _health++;
+        ChangeHealth(1);        
+    }
+
+    private void ChangeHealth(int value)
+    {
+        _health += value;
         SetScale();
+        _onHealthChanged?.Invoke(_health);
+    }
+
+
+
+
+
+
+    /*     
+    SetOnHealthChanged(NowHealthChanged);
+
+    private void NowHealthChanged(int health)
+    {
     }
     */
+    /*
+    StartCoroutine(SetUnvulnerablity());
 
+   [SerializeField] private List<Entity> _entitiesPrefabs = new List<Entity>();
+    */
+   
+    /*
+   private void GetDamage()
+   {
+       if (_isUnvulnerable) return;
+       int health = _health;
+       _health /= 2;
+       StartCoroutine(SetUnvulnerablityTimer());
+       GenerateEntities(health - _health);
+       SetScale();
+       if (_health <= 0) Destroy(gameObject);
+   }
+    */
+
+    /*
+   private void GenerateEntities(int count)
+   {
+       float entityPullOutForce = 0.05f;
+       for (int i = 1; i <= count; i++)
+       {
+           Instantiate(_entitiesPrefabs[Random.Range(0, _entitiesPrefabs.Count)], transform.position, Quaternion.identity)
+               .GetComponent<Rigidbody>().AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * entityPullOutForce, ForceMode.Impulse);
+       }
+   }
+    */
+   
     /*
     private IEnumerator SetUnvulnerablity()
     {
@@ -128,27 +158,4 @@ public class Hunter : MonoBehaviour
         }
     }
     */
-
-    private IEnumerator BoostMoving()
-    {
-        StartCoroutine(BoosterCooldown());
-        _isBoosting = true;
-        float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostValue;       
-        yield return new WaitForSeconds(_model.BoostTime);
-        _character.SpeedMultiplier = savedBoostSpeed;        
-        _isBoosting = false;
-    }
-    private IEnumerator BoosterCooldown()
-    {
-        _isReadyToBoost = false;
-        yield return new WaitForSeconds(_model.BoostRestartTime);
-        _isReadyToBoost = true;
-    }
-
-    private IEnumerator StandOnFloor()
-    {
-        yield return new WaitForSeconds(0.3f);
-        _character.Move(Vector2.up);
-    }
 }

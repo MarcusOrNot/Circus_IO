@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6751090729480570882}
   - component: {fileID: 5134259154192171134}
   - component: {fileID: 6236748558884760654}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Entity 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,8 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad364b138eebaeb4b86caf4c0bee24fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _valuableColoredComponents:
-  - {fileID: 1123489105978446619}
+  _model:
+    EntityType: 1
 --- !u!1 &6553809466805753653
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 8292047627409536732}
   - component: {fileID: 620675988485185180}
   - component: {fileID: 1123489105978446619}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

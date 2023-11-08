@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6167242284233119694}
   - component: {fileID: 6073773182444298804}
   - component: {fileID: 2270913879951509949}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 6751090729480570882}
   - component: {fileID: 5134259154192171134}
   - component: {fileID: 6236748558884760654}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Entity 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,5 +178,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad364b138eebaeb4b86caf4c0bee24fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _valuableColoredComponents:
-  - {fileID: 2270913879951509949}
+  _model:
+    EntityType: 0

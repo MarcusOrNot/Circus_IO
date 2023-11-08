@@ -1,21 +1,51 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
+
 
 public class Entity : MonoBehaviour
 {
+    public EntityModel Model { get { return _model; } }
+
+
+
     [SerializeField] private EntityModel _model;
     
-    [SerializeField] private Renderer[] _valuableColoredComponents;        
-    
-    private Color[] colors = new Color[] { Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow };
-    private Color color;
+    private Color[] _colors = new Color[] { Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow };
+    private Color _color;
+    private Renderer[] _coloredComponents;
+
+    private Rigidbody _rigidbody;
+    private Collider _collider;
+
+
+    private void Awake()
+    {
+        _coloredComponents = GetComponentsInChildren<Renderer>();
+        _rigidbody = GetComponentInChildren<Rigidbody>();
+        _collider = GetComponentInChildren<Collider>();
+    }
 
     private void Start()
     {
-        color = colors[Random.Range(0, colors.Length)];
-        foreach (Renderer valuableColoredComponent in _valuableColoredComponents)
-            valuableColoredComponent.material.color = color;        
-    }    
+        SetRandomColorOnColoredComponents();
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if ((collision.GetContact(0).point - transform.position).normalized == Vector3.down)
+        {            
+            _rigidbody.isKinematic = true;            
+            _collider.isTrigger = true;
+        }
+    }
+
+    private void SetRandomColorOnColoredComponents()
+    {
+        _color = _colors[Random.Range(0, _colors.Length)];
+        foreach (Renderer coloredComponent in _coloredComponents)
+            coloredComponent.material.color = _color;
+    }
 }
