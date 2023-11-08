@@ -15,6 +15,7 @@ public class Hunter : MonoBehaviour
     
     public void Boost() { StartCoroutine(BoosterActivation()); }
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.Move(direction); }
+
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
 
@@ -44,11 +45,7 @@ public class Hunter : MonoBehaviour
     {
         foreach (Renderer coloredComponent in _model.ColoredComponents) coloredComponent.material.color = color;
     }    
-    private void SetScale()
-    {
-        transform.localScale = Vector3.one * (1 + (float)_health / 10);        
-    }   
-
+    
     private IEnumerator BoosterActivation()
     {
         if (!_isBoosterReady) yield break;
@@ -87,19 +84,17 @@ public class Hunter : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Entity entity)) EatEntity(entity);   
-    }
-
-    private void EatEntity(Entity entity)
-    {
-        Destroy(entity.gameObject);
-        ChangeHealth(1);        
-    }
+        if (other.TryGetComponent(out Entity entity))
+        {
+            Destroy(entity.gameObject);
+            ChangeHealth(1);
+        }
+    }   
 
     private void ChangeHealth(int value)
     {
         _health += value;
-        SetScale();
+        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 10);
         _onHealthChanged?.Invoke(_health);
     }
 
@@ -155,17 +150,7 @@ public class Hunter : MonoBehaviour
    }
     */
 
-    /*
-   private void GenerateEntities(int count)
-   {
-       float entityPullOutForce = 0.05f;
-       for (int i = 1; i <= count; i++)
-       {
-           Instantiate(_entitiesPrefabs[Random.Range(0, _entitiesPrefabs.Count)], transform.position, Quaternion.identity)
-               .GetComponent<Rigidbody>().AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * entityPullOutForce, ForceMode.Impulse);
-       }
-   }
-    */
+   
    
     /*
     private IEnumerator SetUnvulnerablity()

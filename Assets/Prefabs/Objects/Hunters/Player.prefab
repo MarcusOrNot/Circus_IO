@@ -269,6 +269,7 @@ MonoBehaviour:
     BoostTime: 0.5
     BoostRestartTime: 3
     BoostPrice: 0
+    IsScaleDependFromHealth: 1
     ColoredComponents:
     - {fileID: 8800014978469739307}
 --- !u!143 &5511835259696588282
@@ -290,10 +291,10 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 0.41
-  m_Radius: 0.7
+  m_Height: 1.16
+  m_Radius: 0.57
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.18, z: 0.12}
+  m_Center: {x: 0, y: -0.01, z: 0.12}
