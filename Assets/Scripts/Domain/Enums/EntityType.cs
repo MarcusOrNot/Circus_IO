@@ -6,6 +6,11 @@ using UnityEngine;
 
 public enum EntityType
 {
-    ENTITY1,
-    ENTITY2    
+    CORRUPTED,
+    BANANA,
+    APPLE,  
+    MEAT,
+    CAKE,
+    BURGER,
+    PUMPKIN
 }

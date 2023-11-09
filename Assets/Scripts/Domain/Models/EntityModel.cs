@@ -6,5 +6,7 @@ using UnityEngine;
 
 public class EntityModel 
 {
-    public EntityType EntityType;    
+    public EntityType EntityType;
+
+    public int HealCount = 1;
 }

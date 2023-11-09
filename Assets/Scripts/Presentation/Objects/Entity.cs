@@ -6,30 +6,25 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    public EntityModel Model { get { return _model; } }
-
+    public EntityModel Model { get => _model; }
+    public Color Color { set => SetColor(value); }
+    public int HealthCount { get => _model.HealCount; }
 
 
     [SerializeField] private EntityModel _model;
     
-    private Color[] _colors = new Color[] { Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow };
-    private Color _color;
+        
     private Renderer[] _coloredComponents;
 
     private Rigidbody _rigidbody;
-    private Collider _collider;
-
+    private Collider _collider;    
+    
 
     private void Awake()
     {
         _coloredComponents = GetComponentsInChildren<Renderer>();
         _rigidbody = GetComponentInChildren<Rigidbody>();
         _collider = GetComponentInChildren<Collider>();
-    }
-
-    private void Start()
-    {
-        SetRandomColorOnColoredComponents();        
     }
 
 
@@ -57,11 +52,10 @@ public class Entity : MonoBehaviour
         }
     }
 
-
-    private void SetRandomColorOnColoredComponents()
+    private void SetColor(Color color)
     {
-        _color = _colors[Random.Range(0, _colors.Length)];
         foreach (Renderer coloredComponent in _coloredComponents)
-            coloredComponent.material.color = _color;
-    }
+            coloredComponent.material.color += color;
+    }    
+
 }
