@@ -27,6 +27,10 @@ public class Entity : MonoBehaviour
         _collider = GetComponentInChildren<Collider>();
     }
 
+    private void Start()
+    {
+        transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
