@@ -1,17 +1,23 @@
 using System.Collections;
 using System;
 using UnityEngine;
+using Zenject;
 
 
 [RequireComponent(typeof(Character))]
 
 public class Hunter : MonoBehaviour
 {
+    [Inject] private EntityFactory _factory;    
+
     public HunterModel Model { get { return _model; } }
-    public bool IsReadyToBoost { get { return _isReadyToBoost; } }
+    public bool IsReadyToBoost { get { return _isBoosterReady; } }
+    public int Lifes { get { return _health; } }
     
-    public void Boost() { StartCoroutine(BoostMoving()); }
-    public void Move(Vector2 direction) { if (!_isBoosting) _character.Move(direction); }
+    public void Boost() { StartCoroutine(BoosterActivation()); }
+    public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.Move(direction); }
+    public void AddDamage(int value) { GetDamage(value); }
+
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
 
@@ -19,8 +25,8 @@ public class Hunter : MonoBehaviour
     [SerializeField] private HunterModel _model;    
     private Character _character;
 
-    private bool _isReadyToBoost = true;
-    private bool _isBoosting = false;    
+    private bool _isBoosterReady = true;
+    private bool _isMovingWithBoost = false;    
 
     private int _health = 0;
     private Action<int> _onHealthChanged;        
@@ -36,36 +42,38 @@ public class Hunter : MonoBehaviour
         StartCoroutine(StandOnFloor());
         SetBoostReady();        
     }
-    private void Update()
-    {
-        if (_isBoosting) _character.Move(new Vector2(transform.forward.x, transform.forward.z));
-    }
-
+    
     private void SetColorOnColoredComponents(Color color)
     {
         foreach (Renderer coloredComponent in _model.ColoredComponents) coloredComponent.material.color = color;
     }    
-    private void SetScale()
+    
+    private IEnumerator BoosterActivation()
     {
-        transform.localScale = Vector3.one * (1 + (float)_health / 10);        
-    }   
-
-    private IEnumerator BoostMoving()
-    {
-        if (!_isReadyToBoost) yield break;
-        StartCoroutine(BoosterCooldown());
-        _isBoosting = true;
+        if (!_isBoosterReady) yield break;
+        StartCoroutine(BoosterReloading());
+        _isMovingWithBoost = true;
+        if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostValue;       
+        _character.SpeedMultiplier = _model.BoostValue;
+        StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
-        _character.SpeedMultiplier = savedBoostSpeed;        
-        _isBoosting = false;
+        _character.SpeedMultiplier = savedBoostSpeed;
+        _isMovingWithBoost = false;
     }
-    private IEnumerator BoosterCooldown()
+    private IEnumerator BoosterReloading()
     {
-        _isReadyToBoost = false;
+        _isBoosterReady = false;
         yield return new WaitForSeconds(_model.BoostRestartTime);
         SetBoostReady();
+    }
+    private IEnumerator MovingWithBoost()
+    {
+        while (_isMovingWithBoost)
+        {
+            _character.Move(new Vector2(transform.forward.x, transform.forward.z));
+            yield return null;
+        }  
     }
 
     private IEnumerator StandOnFloor()
@@ -74,29 +82,48 @@ public class Hunter : MonoBehaviour
         _character.Move(Vector2.up);
     }
 
-    private void SetBoostReady() { _isReadyToBoost = _health > _model.BoostPrice; }
+    private void SetBoostReady() { _isBoosterReady = _health > _model.BoostPrice; }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Entity entity)) EatEntity(entity);   
-    }
-
-    private void EatEntity(Entity entity)
-    {
-        Destroy(entity.gameObject);
-        ChangeHealth(1);        
-    }
+        if (other.TryGetComponent(out Entity entity))
+        {
+            Destroy(entity.gameObject);
+            ChangeHealth(1);
+        }
+    }   
 
     private void ChangeHealth(int value)
     {
         _health += value;
-        SetScale();
         _onHealthChanged?.Invoke(_health);
+        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 10);        
     }
 
+    private void GetDamage(int value)
+    {
+        ChangeHealth(-value);
+        SpawnOutEntities(Mathf.Min(value, _health + value));
+        if (_health <= 0) Destroy(gameObject);        
+    }
 
-
-
+    private void SpawnOutEntities(int count)
+    {
+        Array entityTypes = Enum.GetValues(typeof(EntityType)); 
+        float pullOutForceUp = 5f;
+        float pullOutForceHorizontal = 3f;
+        float positionVerticalOffset = transform.localScale.x * 1f;
+        float positionHorisontalOffset = transform.localScale.x * 1f;        
+        for (int i = 1; i <= count; i++)
+        {
+            EntityType randomEntityType = (EntityType)entityTypes.GetValue(UnityEngine.Random.Range(0, entityTypes.Length));
+            float angle = UnityEngine.Random.Range(45, 315f);
+            Vector3 horizontalDirection = Quaternion.AngleAxis(angle, Vector3.up) * transform.forward;
+            Entity spawnedEntity = _factory.Spawn(randomEntityType);
+            spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
+            spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
+        }
+    }
 
 
     /*     
@@ -125,17 +152,7 @@ public class Hunter : MonoBehaviour
    }
     */
 
-    /*
-   private void GenerateEntities(int count)
-   {
-       float entityPullOutForce = 0.05f;
-       for (int i = 1; i <= count; i++)
-       {
-           Instantiate(_entitiesPrefabs[Random.Range(0, _entitiesPrefabs.Count)], transform.position, Quaternion.identity)
-               .GetComponent<Rigidbody>().AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * entityPullOutForce, ForceMode.Impulse);
-       }
-   }
-    */
+   
    
     /*
     private IEnumerator SetUnvulnerablity()

@@ -29,18 +29,34 @@ public class Entity : MonoBehaviour
 
     private void Start()
     {
-        SetRandomColorOnColoredComponents();
+        SetRandomColorOnColoredComponents();        
     }
 
 
     private void OnCollisionEnter(Collision collision)
     {
-        if ((collision.GetContact(0).point - transform.position).normalized == Vector3.down)
+        float collisionPrecision = 0.01f;
+        if ((collision.GetContact(0).point - transform.position).normalized.y + 1 <= collisionPrecision)
         {            
-            _rigidbody.isKinematic = true;            
+            if (!collision.gameObject.TryGetComponent(out Hunter _)) _rigidbody.isKinematic = true;            
             _collider.isTrigger = true;
         }
     }
+    private void OnCollisionStay(Collision collision)
+    {
+        OnCollisionEnter(collision);
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out Entity _))
+        {
+            float reboundForce = 0.5f;
+            _rigidbody.isKinematic = false;
+            _collider.isTrigger = false;
+            _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);
+        }
+    }
+
 
     private void SetRandomColorOnColoredComponents()
     {
