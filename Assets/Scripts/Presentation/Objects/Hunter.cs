@@ -10,13 +10,13 @@ public class Hunter : MonoBehaviour
 {
     [Inject] private EntityFactory _factory;    
 
-    public HunterModel Model { get { return _model; } }
-    public bool IsReadyToBoost { get { return _isBoosterReady; } }
-    public int Lifes { get { return _health; } }
+    public HunterModel Model { get => _model; }
+    public bool IsReadyToBoost { get => _isBoosterReady; }
+    public int Lifes { get => _health; }
     
-    public void Boost() { StartCoroutine(BoosterActivation()); }
+    public void Boost() => StartCoroutine(BoosterActivation()); 
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.Move(direction); }
-    public void AddDamage(int value) { GetDamage(value); }
+    public void AddDamage(int value) => GetDamage(value); 
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
@@ -26,10 +26,15 @@ public class Hunter : MonoBehaviour
     private Character _character;
 
     private bool _isBoosterReady = true;
-    private bool _isMovingWithBoost = false;    
+    private bool _isMovingWithBoost = false;
+    private bool _boosterIsReloading = false;
 
     private int _health = 0;
-    private Action<int> _onHealthChanged;        
+    private Action<int> _onHealthChanged;
+
+    private EntityType _entityTypeForSpawn;
+
+    private Color _color;
 
     private void Awake()
     {
@@ -37,10 +42,32 @@ public class Hunter : MonoBehaviour
     }
     private void Start()
     {        
-        SetColorOnColoredComponents(_model.Color);
+        _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
+        SetColor();
+        SetColorOnColoredComponents(_color);
         ChangeHealth(_model.StartEntity);         
         StartCoroutine(StandOnFloor());
         SetBoostReady();        
+    }
+
+    private void SetColor()
+    {  
+        _color = _model.HunterColor switch
+        {
+            HunterColor.BLACK => Color.black,
+            HunterColor.BROWN => new Color(0.3f, 0.17f, 0.17f),
+            HunterColor.DARK_GRAY => new Color(0.39f, 0.39f, 0.39f),
+            HunterColor.BLUE => Color.blue,
+            HunterColor.DARK_YELLOW => new Color(0.52f, 0.51f, 0f),
+            HunterColor.DARK_RED => new Color(0.53f, 0f, 0f),
+            HunterColor.DARK_GREEN => new Color(0f, 0.53f, 0f),
+            HunterColor.DARK_ORANGE => new Color(0.7f, 0.4f, 0f),
+            HunterColor.VIOLET => new Color(0.5f, 0f, 1f),
+            HunterColor.DARK_PINK => new Color(0.57f, 0f, 0.54f),
+            HunterColor.DARK_SKY => new Color(0f, 0.49f, 0.52f),
+            _ => Color.white
+        };        
+        _color -= Color.white * _model.DarkColorMultiplier;
     }
     
     private void SetColorOnColoredComponents(Color color)
@@ -64,7 +91,9 @@ public class Hunter : MonoBehaviour
     private IEnumerator BoosterReloading()
     {
         _isBoosterReady = false;
+        _boosterIsReloading = true;
         yield return new WaitForSeconds(_model.BoostRestartTime);
+        _boosterIsReloading = false;
         SetBoostReady();
     }
     private IEnumerator MovingWithBoost()
@@ -82,14 +111,14 @@ public class Hunter : MonoBehaviour
         _character.Move(Vector2.up);
     }
 
-    private void SetBoostReady() { _isBoosterReady = _health > _model.BoostPrice; }
+    private void SetBoostReady() { _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice); }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Entity entity))
         {
-            Destroy(entity.gameObject);
-            ChangeHealth(1);
+            ChangeHealth(entity.HealthCount);
+            Destroy(entity.gameObject);            
         }
     }   
 
@@ -97,34 +126,39 @@ public class Hunter : MonoBehaviour
     {
         _health += value;
         _onHealthChanged?.Invoke(_health);
-        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 10);        
+        SetBoostReady();
+        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 30);        
     }
 
     private void GetDamage(int value)
     {
-        ChangeHealth(-value);
+        ChangeHealth(-value);        
         SpawnOutEntities(Mathf.Min(value, _health + value));
         if (_health <= 0) Destroy(gameObject);        
     }
 
-    private void SpawnOutEntities(int count)
+    private void SpawnOutEntities(int summaryHealth)
     {
-        Array entityTypes = Enum.GetValues(typeof(EntityType)); 
+        do { summaryHealth -= SpawnOutEntity().HealthCount; } while (summaryHealth > 0);
+    }
+
+    private Entity SpawnOutEntity()
+    {
         float pullOutForceUp = 5f;
         float pullOutForceHorizontal = 3f;
         float positionVerticalOffset = transform.localScale.x * 1f;
         float positionHorisontalOffset = transform.localScale.x * 1f;        
-        for (int i = 1; i <= count; i++)
-        {
-            EntityType randomEntityType = (EntityType)entityTypes.GetValue(UnityEngine.Random.Range(0, entityTypes.Length));
-            float angle = UnityEngine.Random.Range(45, 315f);
-            Vector3 horizontalDirection = Quaternion.AngleAxis(angle, Vector3.up) * transform.forward;
-            Entity spawnedEntity = _factory.Spawn(randomEntityType);
-            spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
-            spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
-        }
+        Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;        
+        Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
+        spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
+        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);        
+        spawnedEntity.Color = _color;
+        return spawnedEntity;
     }
 
+
+    // Array entityTypes = Enum.GetValues(typeof(EntityType));
+    // EntityType randomEntityType = (EntityType)entityTypes.GetValue(UnityEngine.Random.Range(0, entityTypes.Length));
 
     /*     
     SetOnHealthChanged(NowHealthChanged);
@@ -138,7 +172,7 @@ public class Hunter : MonoBehaviour
 
    [SerializeField] private List<Entity> _entitiesPrefabs = new List<Entity>();
     */
-   
+
     /*
    private void GetDamage()
    {
@@ -152,8 +186,8 @@ public class Hunter : MonoBehaviour
    }
     */
 
-   
-   
+
+
     /*
     private IEnumerator SetUnvulnerablity()
     {

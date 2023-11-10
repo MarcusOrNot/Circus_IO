@@ -265,7 +265,7 @@ MonoBehaviour:
   _model:
     StartEntity: 10
     BoostValue: 3
-    Color: {r: 0, g: 0, b: 1, a: 1}
+    HunterColor: 9
     BoostTime: 0.5
     BoostRestartTime: 3
     BoostPrice: 0

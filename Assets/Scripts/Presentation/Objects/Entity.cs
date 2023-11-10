@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
 
 public class Entity : MonoBehaviour
 {
-    public EntityModel Model { get { return _model; } }
-
+    public EntityModel Model { get => _model; }
+    public Color Color { set => SetColor(value); }
+    public int HealthCount { get => _model.HealCount; }
 
 
     [SerializeField] private EntityModel _model;
     
-    private Color[] _colors = new Color[] { Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow };
-    private Color _color;
+        
     private Renderer[] _coloredComponents;
 
     private Rigidbody _rigidbody;
-    private Collider _collider;
-
+    private Collider _collider;    
+    
 
     private void Awake()
     {
@@ -29,39 +30,63 @@ public class Entity : MonoBehaviour
 
     private void Start()
     {
-        SetRandomColorOnColoredComponents();        
+        transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
     }
-
 
     private void OnCollisionEnter(Collision collision)
     {
         float collisionPrecision = 0.01f;
         if ((collision.GetContact(0).point - transform.position).normalized.y + 1 <= collisionPrecision)
-        {            
-            if (!collision.gameObject.TryGetComponent(out Hunter _)) _rigidbody.isKinematic = true;            
-            _collider.isTrigger = true;
+        {
+            if (collision.gameObject.TryGetComponent(out Hunter _))
+            {
+                _rigidbody.isKinematic = false;
+                _collider.isTrigger = true;
+            }
+            else if (collision.gameObject.TryGetComponent(out Entity _))
+            {
+                _rigidbody.isKinematic = false;
+                _collider.isTrigger = false;
+                PhysicalRebound();
+            }
+            else
+            {
+                _rigidbody.isKinematic = true;
+                _collider.isTrigger = true;
+            }            
         }
     }
     private void OnCollisionStay(Collision collision)
     {
         OnCollisionEnter(collision);
     }
+    private void OnCollisionExit(Collision collision)
+    {
+        float maxSpeed = 10f;
+        float velocitySlowMultiplier = 0.3f;
+        if (_rigidbody.velocity.magnitude > maxSpeed) _rigidbody.velocity *= velocitySlowMultiplier;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Entity _))
-        {
-            float reboundForce = 0.5f;
+        {            
             _rigidbody.isKinematic = false;
             _collider.isTrigger = false;
-            _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);
+            PhysicalRebound();
         }
     }
-
-
-    private void SetRandomColorOnColoredComponents()
+    
+    private void PhysicalRebound()
     {
-        _color = _colors[Random.Range(0, _colors.Length)];
-        foreach (Renderer coloredComponent in _coloredComponents)
-            coloredComponent.material.color = _color;
+        float reboundForce = 0.5f;   
+        _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);
     }
+
+    private void SetColor(Color color)
+    {
+        foreach (Renderer coloredComponent in _coloredComponents)
+            coloredComponent.material.color += color;
+    }    
+
 }
