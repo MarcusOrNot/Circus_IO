@@ -25,8 +25,7 @@ public class Hunter : MonoBehaviour
 
     [SerializeField] private HunterModel _model;    
     private Character _character;
-
-    private Rigidbody _rigidbody;
+        
 
     private bool _isBoosterReady = true;
     private bool _isMovingWithBoost = false;
@@ -39,8 +38,7 @@ public class Hunter : MonoBehaviour
 
     private void Awake()
     {
-        _character = GetComponent<Character>();
-        _rigidbody = GetComponent<Rigidbody>();
+        _character = GetComponent<Character>();        
     }
     private void Start()
     {        

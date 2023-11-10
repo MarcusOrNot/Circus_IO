@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -51,7 +52,9 @@ public class AIHunter : MonoBehaviour
         //סכמי סבמנא זנאעגû
         float currentDist = 1000000.0f;
         Entity nearest = null;
-        var allFood = Resources.FindObjectsOfTypeAll(typeof(Entity)) as Entity[];
+
+        var allFood = Resources.FindObjectsOfTypeAll(typeof(Entity)) as Entity[];        
+
         foreach (var food in allFood)
         {
             var dist = Vector3.Distance(food.transform.position, transform.position);
@@ -63,8 +66,18 @@ public class AIHunter : MonoBehaviour
         }
         if (nearest != null)
         {
-            var between = Vector3.Cross(Vector3.up, (nearest.transform.position - transform.position).normalized);
-            //Debug.Log("cross " + between.ToString());
+            var between = (nearest.transform.position - transform.position).normalized;
+            
+
+            if (nearest.transform.parent == null)
+            {
+                UnityEngine.Debug.Log("Find Problem Food");
+                UnityEngine.Debug.Log(nearest.gameObject.transform.position);
+                UnityEngine.Debug.Log(nearest.gameObject.name);
+            }
+
+            
+            //Debug.Log("cross " + between.ToString());            
             return new Vector2(between.x, between.z);
         }
         return Vector2.zero;
