@@ -9,7 +9,7 @@ public class HunterModel
     public float BoostValue = 30f;
 
     public HunterColor HunterColor;
-    //public Color Color = Color.blue;
+    public float DarkColorMultiplier = 0.25f;
 
     public float BoostTime = 0.5f;
     public float BoostRestartTime = 7f;

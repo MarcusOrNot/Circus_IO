@@ -50,8 +50,7 @@ public class Hunter : MonoBehaviour
     }
 
     private void SetColor()
-    {
-        float darkMultiplier = 0.25f;
+    {  
         _color = _model.HunterColor switch
         {
             HunterColor.BLACK => Color.black,
@@ -66,8 +65,8 @@ public class Hunter : MonoBehaviour
             HunterColor.DARK_PINK => new Color(0.57f, 0f, 0.54f),
             HunterColor.DARK_SKY => new Color(0f, 0.49f, 0.52f),
             _ => Color.white
-        };
-        _color = new Color(_color.r - darkMultiplier, _color.g - darkMultiplier, _color.b - darkMultiplier);
+        };        
+        _color -= Color.white * _model.DarkColorMultiplier;
     }
     
     private void SetColorOnColoredComponents(Color color)
@@ -124,7 +123,7 @@ public class Hunter : MonoBehaviour
     {
         _health += value;
         _onHealthChanged?.Invoke(_health);
-        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 10);        
+        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 30);        
     }
 
     private void GetDamage(int value)
