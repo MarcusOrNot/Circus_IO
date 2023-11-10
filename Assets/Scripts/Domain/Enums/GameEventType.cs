@@ -6,5 +6,6 @@ public enum GameEventType
 {
     PLAYER_SPAWNED,
     PLAYER_DEAD,
-    HUNTER_SPAWNED
+    HUNTER_SPAWNED,
+    HUNTER_DEAD
 }

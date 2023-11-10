@@ -7,6 +7,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
 {
     [Inject] private IControlCharacter _controller;
     [Inject] private IGameUI _gameUI;
+    [Inject] private IEventBus _eventBus;
     private Hunter _hunter;
 
     public Vector3 GetPosition() => transform.position;
@@ -44,5 +45,10 @@ public class PlayerHunter : MonoBehaviour, IPlayer
         {
             Debug.Log("Requires Control Character!!!");
         }
+    }
+
+    private void OnDestroy()
+    {
+        _eventBus?.NotifyObservers(GameEventType.PLAYER_DEAD);
     }
 }
