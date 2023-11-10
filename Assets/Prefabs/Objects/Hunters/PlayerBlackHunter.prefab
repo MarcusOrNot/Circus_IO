@@ -212,9 +212,9 @@ GameObject:
   - component: {fileID: 4417518082458132220}
   - component: {fileID: 896055348293074514}
   - component: {fileID: 8771609089846911496}
-  - component: {fileID: 3756957110124700103}
+  - component: {fileID: 205452417456444188}
   m_Layer: 0
-  m_Name: GreenHunter
+  m_Name: PlayerBlackHunter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -267,8 +267,8 @@ MonoBehaviour:
   _model:
     StartEntity: 10
     BoostValue: 3
-    HunterType: 3
-    Color: {r: 0.045117892, g: 0.33962262, b: 0.027233893, a: 0}
+    HunterType: 0
+    Color: {r: 0, g: 0, b: 0, a: 0}
     BoostTime: 0.5
     BoostRestartTime: 3
     BoostPrice: 0
@@ -323,7 +323,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &3756957110124700103
+--- !u!114 &205452417456444188
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -332,6 +332,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5312247504195273182}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34cf8c25ede0cb6469d9d84339b7227a, type: 3}
+  m_Script: {fileID: 11500000, guid: 0768033f13b7f244b98b7900546fbca2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

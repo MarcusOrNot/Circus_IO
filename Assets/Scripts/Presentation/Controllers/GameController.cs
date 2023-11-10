@@ -1,11 +1,10 @@
 using UnityEngine;
 using Zenject;
 
-public class GameController : MonoBehaviour
+public class GameController : MonoBehaviour, IGameEventObserver
 {
-    [Inject] private IGameStats _stats;
     [Inject] private IEventBus _eventBus;
-    [Inject] private EntityFactory _factory;
+    [Inject] private IGameUI _gameUI;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,10 +13,6 @@ public class GameController : MonoBehaviour
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
         
         
-        for (int i=0; i < 10; i++)
-        {
-            //_factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(5+i*3, 10, 0);
-        }
         
     }
 
@@ -25,5 +20,41 @@ public class GameController : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnEnable()
+    {
+        _eventBus.RegisterObserver(this);
+    }
+
+    private void OnDisable()
+    {
+        _eventBus.RemoveObserver(this);
+    }
+
+    public void Notify(GameEventType gameEvent)
+    {
+        if (gameEvent==GameEventType.PLAYER_DEAD)
+        {
+            PauseGame();
+            _gameUI.ShowGameOver();
+        }
+        else if (gameEvent==GameEventType.HUNTER_DEAD)
+        {
+            var hunters = FindObjectsOfType<Hunter>();
+            if (hunters.Length == 1)
+            {
+                if (hunters[0].GetComponent<PlayerHunter>()!=null)
+                {
+                    PauseGame();
+                    _gameUI.ShowWin();
+                }
+            }
+        }
+    }
+
+    public void PauseGame()
+    {
+        Debug.Log("Now should pause the game!!!");
     }
 }

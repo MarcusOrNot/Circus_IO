@@ -9,6 +9,7 @@ using Zenject;
 public class Hunter : MonoBehaviour
 {
     [Inject] private EntityFactory _factory;
+    [Inject] private IEventBus _eventBus;
     
 
     public HunterModel Model { get => _model; }
@@ -50,8 +51,12 @@ public class Hunter : MonoBehaviour
         
         SetBoostReady();        
     }
-    
-    
+    private void OnDestroy()
+    {
+        _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
+    }
+
+
     private void SetColorOnColoredComponents(Color color)
     {
         foreach (Renderer coloredComponent in _model.ColoredComponents) coloredComponent.material.color = color;
