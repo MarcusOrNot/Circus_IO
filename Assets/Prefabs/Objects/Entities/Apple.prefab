@@ -182,4 +182,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _model:
     EntityType: 2
-    HealCount: 2
+    HealCount: 5

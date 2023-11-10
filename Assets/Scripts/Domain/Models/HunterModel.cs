@@ -8,8 +8,8 @@ public class HunterModel
     public int StartEntity = 10;
     public float BoostValue = 30f;
 
-    public HunterColor HunterColor;
-    public float DarkColorMultiplier = 0.25f;
+    public HunterType HunterType;
+    public Color Color;
 
     public float BoostTime = 0.5f;
     public float BoostRestartTime = 7f;

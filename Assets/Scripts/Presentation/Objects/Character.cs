@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 
@@ -8,13 +9,21 @@ public class Character : MonoBehaviour
 
     public void Move(Vector2 direction)
     {
-        if (direction.magnitude < _model.SensivityTreshold) return;
+        if ((direction.magnitude < _model.SensivityTreshold) || (Mathf.Abs(_rigidbody.velocity.y) > 1f)) 
+        { 
+            _rigidbody.velocity = new Vector3(0 , _rigidbody.velocity.y, 0);
+            _isMoving = false;
+            return; 
+        }        
         Quaternion targetRotation = transform.rotation * Quaternion.AngleAxis(Vector3.SignedAngle(transform.forward, new Vector3(direction.x, 0, direction.y), Vector3.up), Vector3.up);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _model.RotationSpeed * Time.deltaTime);
         if (transform.rotation == targetRotation)
-        {
-            _controller.Move(transform.forward * _model.Speed * _speedMultiplier * Time.deltaTime + Vector3.down * 10);
-        }
+        {            
+            _isMoving = true;
+            if (!_isStoppingProcessStart) StartCoroutine(StopMoving()); 
+            direction *= _model.Speed * _speedMultiplier;
+            _rigidbody.velocity = new Vector3(direction.x, _rigidbody.velocity.y, direction.y);    
+        }       
     }
 
 
@@ -22,13 +31,27 @@ public class Character : MonoBehaviour
 
 
     [SerializeField] private CharacterModel _model;
-    private CharacterController _controller;    
-    private float _speedMultiplier = 1.0f;    
-
+    private Rigidbody _rigidbody;
+    
+    private float _speedMultiplier = 1.0f;
+    private bool _isMoving = false;
+    private bool _isStoppingProcessStart = false;
 
     private void Awake()
+    {        
+        _rigidbody = GetComponent<Rigidbody>();
+    }  
+
+    private IEnumerator StopMoving()
     {
-        _controller = GetComponent<CharacterController>();
-    }
-        
+        _isStoppingProcessStart = true;
+        while (_isMoving)
+        {
+            _isMoving = false;
+            yield return new WaitForSeconds(Mathf.Max(Time.deltaTime, Time.fixedDeltaTime) * 2);                       
+        }
+        Move(Vector2.zero);
+        _isStoppingProcessStart = false;
+    }    
+
 }
