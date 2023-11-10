@@ -77,7 +77,7 @@ public class DamageZoneConroller : MonoBehaviour
             if (Vector3.Distance(_startPos, hunter.transform.position) > _currentSize * 3)
             {
                 //Debug.Log("char is outside");
-                hunter.AddDamage(5);
+                hunter.AddDamage(Mathf.Max(hunter.Lifes/2, 10));
             }
         }
     }
