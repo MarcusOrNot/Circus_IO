@@ -5,6 +5,7 @@ using DG.Tweening;
 
 public class DamageZoneConroller : MonoBehaviour
 {
+    public int MinDamage = 100;
     [SerializeField] private List<DamageZoneModel> _damageZones;
     private Transform _visual;
     public int StartSize;
@@ -77,7 +78,7 @@ public class DamageZoneConroller : MonoBehaviour
             if (Vector3.Distance(_startPos, hunter.transform.position) > _currentSize * 3)
             {
                 //Debug.Log("char is outside");
-                hunter.AddDamage(Mathf.Max(hunter.Lifes/2, 10));
+                hunter.AddDamage(Mathf.Max(hunter.Lifes/2, MinDamage));
             }
         }
     }

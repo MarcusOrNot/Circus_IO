@@ -132,11 +132,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dcfde8dc1e1c9e4d9cf8b2e1c948488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MinDamage: 100
   _damageZones:
-  - TimeSeconds: 10
+  - TimeSeconds: 60
     Size: 50
-  - TimeSeconds: 10
+  - TimeSeconds: 30
+    Size: 30
+  - TimeSeconds: 30
     Size: 20
-  - TimeSeconds: 5
+  - TimeSeconds: 30
     Size: 10
   StartSize: 10

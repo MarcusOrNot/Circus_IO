@@ -53,7 +53,8 @@ public class AIHunter : MonoBehaviour
         float currentDist = 1000000.0f;
         Entity nearest = null;
 
-        var allFood = Resources.FindObjectsOfTypeAll(typeof(Entity)) as Entity[];        
+        //var allFood = GameObject.FindObjectsOfTypeAll(typeof(Entity)) as Entity[];
+        var allFood = FindObjectsOfType<Entity>();
 
         foreach (var food in allFood)
         {
@@ -66,17 +67,7 @@ public class AIHunter : MonoBehaviour
         }
         if (nearest != null)
         {
-            var between = (nearest.transform.position - transform.position).normalized;
-            
-
-            if (nearest.transform.parent == null)
-            {
-                UnityEngine.Debug.Log("Find Problem Food");
-                UnityEngine.Debug.Log(nearest.gameObject.transform.position);
-                UnityEngine.Debug.Log(nearest.gameObject.name);
-            }
-
-            
+            var between = (nearest.transform.position - transform.position).normalized;            
             //Debug.Log("cross " + between.ToString());            
             return new Vector2(between.x, between.z);
         }

@@ -26,6 +26,7 @@ public class EntityGenerator : MonoBehaviour
             
             Vector3 placeVector = new Vector3(middle - rnd.Next(GenerationAreaSize), transform.position.y, middle - rnd.Next(GenerationAreaSize));
             var entity = _entityFactory.Spawn(enumsArr[rnd.Next(1,enumsArr.Count)]);
+            //entity.transform.parent = this.transform;
             //entity.transform.position = transform.position + Vector3.left * i;
             entity.transform.position = placeVector;
         }

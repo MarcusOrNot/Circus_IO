@@ -11,7 +11,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //_eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
         //_factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(0,10,0);
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
-        
+        ResumeGame();
         
         
     }
@@ -55,6 +55,11 @@ public class GameController : MonoBehaviour, IGameEventObserver
 
     public void PauseGame()
     {
-        Debug.Log("Now should pause the game!!!");
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
     }
 }
