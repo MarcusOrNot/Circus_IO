@@ -152,7 +152,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dcfde8dc1e1c9e4d9cf8b2e1c948488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _visual: {fileID: 1521256431}
+  _damageZones:
+  - TimeSeconds: 5
+    Size: 50
+  - TimeSeconds: 10
+    Size: 20
+  - TimeSeconds: 5
+    Size: 10
   StartSize: 10
 --- !u!4 &694003778
 Transform:
@@ -371,7 +377,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 10, y: 1, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1380153462
 MeshRenderer:
@@ -422,7 +428,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1380153460}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &1380153464
 Transform:
   m_ObjectHideFlags: 0
@@ -560,7 +566,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
