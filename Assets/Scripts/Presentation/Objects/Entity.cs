@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -18,7 +19,8 @@ public class Entity : MonoBehaviour
     private Renderer[] _coloredComponents;
 
     private Rigidbody _rigidbody;
-    private Collider _collider;    
+    private Collider _collider;
+
     
 
     private void Awake()
@@ -26,12 +28,15 @@ public class Entity : MonoBehaviour
         _coloredComponents = GetComponentsInChildren<Renderer>();
         _rigidbody = GetComponentInChildren<Rigidbody>();
         _collider = GetComponentInChildren<Collider>();
+        
     }
 
     private void Start()
-    {
+    {        
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
+        transform.localScale = Vector3.one * (0.5f + Mathf.Min(_model.HealCount / 10f, 1f));
     }
+
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -66,7 +71,6 @@ public class Entity : MonoBehaviour
         float velocitySlowMultiplier = 0.3f;
         if (_rigidbody.velocity.magnitude > maxSpeed) _rigidbody.velocity *= velocitySlowMultiplier;
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Entity _))
@@ -76,6 +80,7 @@ public class Entity : MonoBehaviour
             PhysicalRebound();
         }
     }
+
     
     private void PhysicalRebound()
     {
@@ -87,6 +92,7 @@ public class Entity : MonoBehaviour
     {
         foreach (Renderer coloredComponent in _coloredComponents)
             coloredComponent.material.color += color;
-    }    
-
+    }
+    
+    
 }
