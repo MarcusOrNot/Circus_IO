@@ -26,7 +26,8 @@ public class Hunter : MonoBehaviour
     private Character _character;
 
     private bool _isBoosterReady = true;
-    private bool _isMovingWithBoost = false;    
+    private bool _isMovingWithBoost = false;
+    private bool _boosterIsReloading = false;
 
     private int _health = 0;
     private Action<int> _onHealthChanged;
@@ -90,7 +91,9 @@ public class Hunter : MonoBehaviour
     private IEnumerator BoosterReloading()
     {
         _isBoosterReady = false;
+        _boosterIsReloading = true;
         yield return new WaitForSeconds(_model.BoostRestartTime);
+        _boosterIsReloading = false;
         SetBoostReady();
     }
     private IEnumerator MovingWithBoost()
@@ -108,7 +111,7 @@ public class Hunter : MonoBehaviour
         _character.Move(Vector2.up);
     }
 
-    private void SetBoostReady() { _isBoosterReady = _health > _model.BoostPrice; }
+    private void SetBoostReady() { _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice); }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -123,6 +126,7 @@ public class Hunter : MonoBehaviour
     {
         _health += value;
         _onHealthChanged?.Invoke(_health);
+        SetBoostReady();
         if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + (float)_health / 30);        
     }
 

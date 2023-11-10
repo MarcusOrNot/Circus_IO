@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
@@ -55,7 +56,17 @@ public class Entity : MonoBehaviour
             }            
         }
     }
-    
+    private void OnCollisionStay(Collision collision)
+    {
+        OnCollisionEnter(collision);
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        float maxSpeed = 10f;
+        float velocitySlowMultiplier = 0.3f;
+        if (_rigidbody.velocity.magnitude > maxSpeed) _rigidbody.velocity *= velocitySlowMultiplier;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Entity _))
@@ -68,7 +79,7 @@ public class Entity : MonoBehaviour
     
     private void PhysicalRebound()
     {
-        float reboundForce = 0.5f;
+        float reboundForce = 0.5f;   
         _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);
     }
 
