@@ -250,7 +250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _model:
     Speed: 10
-    RotationSpeed: 1000
+    RotationSpeed: 500
     SensivityTreshold: 0.01
 --- !u!114 &4417518082458132220
 MonoBehaviour:
@@ -320,7 +320,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 122
   m_CollisionDetection: 0
 --- !u!114 &3756957110124700103

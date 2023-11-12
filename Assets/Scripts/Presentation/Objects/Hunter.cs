@@ -2,7 +2,8 @@ using System.Collections;
 using System;
 using UnityEngine;
 using Zenject;
-
+using static UnityEngine.EventSystems.EventTrigger;
+using TMPro;
 
 [RequireComponent(typeof(Character))]
 
@@ -15,17 +16,16 @@ public class Hunter : MonoBehaviour
     public HunterModel Model { get => _model; }
     public bool IsReadyToBoost { get => _isBoosterReady; }
     public int Lifes { get => _health; }
-    
-    public void Boost() => StartCoroutine(BoosterActivation()); 
-    public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.Move(direction); }
-    public void AddDamage(int value) => GetDamage(value); 
+
+    public void Boost() { StartCoroutine(BoosterActivation()); } 
+    public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
+    public void AddDamage(int value) { GetDamage(value); } 
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
 
     [SerializeField] private HunterModel _model;    
-    private Character _character;
-        
+    private Character _character;        
 
     private bool _isBoosterReady = true;
     private bool _isMovingWithBoost = false;
@@ -34,32 +34,46 @@ public class Hunter : MonoBehaviour
     private int _health = 0;
     private Action<int> _onHealthChanged;
 
-    private EntityType _entityTypeForSpawn;    
+    private bool _isGrowing = false;
+    private IEnumerator _currentGrowingProcess = null;
+
+    private EntityType _entityTypeForSpawn;
+    private int _maxEnititySpawnCountPerFrame = 10;    
+    private int _spawningEntitiesQueueSummaryHealth = 0;
+    private float _timeBetweenSpawnFrames = 0.05f;
+        
+    private Renderer[] _visualComponents;
+    private Collider _collider;
+    private Rigidbody _rigidbody;
+
 
     private void Awake()
     {
-        _character = GetComponent<Character>();        
+        _character = GetComponent<Character>();
+        _visualComponents = GetComponentsInChildren<Renderer>();
+        _collider = GetComponent<Collider>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
     private void Start()
     {        
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
-        
         SetColorOnColoredComponents(_model.Color);
-        ChangeHealth(_model.StartEntity);         
-        
-        SetBoostReady();        
+        transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);
+        ChangeHealth(_model.StartEntity); 
+        SetBoostReady();
+        StartCoroutine(EntitySpawning());
     }
     private void OnDestroy()
     {
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
     }
 
-
     private void SetColorOnColoredComponents(Color color)
     {
-        foreach (Renderer coloredComponent in _model.ColoredComponents) coloredComponent.material.color = color;
-    }    
-    
+        foreach (Renderer coloredComponent in _model.ColoredComponents) 
+            coloredComponent.material.color = color;
+    }   
+
     private IEnumerator BoosterActivation()
     {
         if (!_isBoosterReady) yield break;
@@ -85,57 +99,115 @@ public class Hunter : MonoBehaviour
     {
         while (_isMovingWithBoost)
         {
-            _character.Move(new Vector2(transform.forward.x, transform.forward.z));
+            _character.GetMovingCommand(new Vector2(transform.forward.x, transform.forward.z));
             yield return null;
         }  
+    }    
+    private void SetBoostReady() 
+    { 
+        _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice); 
     }
-    
-    private void SetBoostReady() { _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice); }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out Entity entity))
         {
-            ChangeHealth(entity.HealthCount);
-            Destroy(entity.gameObject);            
+            if (!entity.TryGetComponent(out Rigidbody _)) StartCoroutine(EatingSomebody(entity));                     
         }
     }
     private void OnCollisionEnter(Collision collision)
     {   
-        if (collision.gameObject.TryGetComponent(out Hunter hunter) && (_health > hunter.Lifes))
-        { 
-            ChangeHealth(hunter.Lifes);                
-            Destroy(hunter.gameObject);                       
+        if (collision.gameObject.TryGetComponent(out Hunter hunter))
+        {
+            if (_health > hunter.Lifes) StartCoroutine(EatingSomebody(hunter));                                
         }
     }
-    
 
+    private IEnumerator EatingSomebody(MonoBehaviour somebody) 
+    {
+        if (!(somebody is Entity) && !(somebody is Hunter)) { yield break; }
+        float eatingSpeed = 10f;
+        float destroyingTime = 0;     
+        GameObject somebodyObject = somebody?.gameObject;
+        Collider collider = somebodyObject?.GetComponent<Collider>();
+        if (collider != null) Destroy(collider);
+        if (somebody is Entity)
+        {
+            ChangeHealth((somebody as Entity).HealthCount);
+            eatingSpeed = 7f * _character.SpeedMultiplier;
+            destroyingTime = 1f;            
+        }
+        else if (somebody is Hunter)
+        {
+            ChangeHealth((somebody as Hunter).Lifes);
+            eatingSpeed = 7f * _character.SpeedMultiplier;
+            destroyingTime = 3f;
+        }
+        Destroy(somebody);  
+        Destroy(somebodyObject, destroyingTime);        
+        while (somebodyObject != null)
+        {
+            somebodyObject.transform.position = Vector3.Lerp(somebodyObject.transform.position, transform.position, eatingSpeed * Time.deltaTime);
+            somebodyObject.transform.localScale = Vector3.Lerp(somebodyObject.transform.localScale, somebodyObject.transform.localScale / 10f, eatingSpeed * Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    private void GetDamage(int value)
+    {
+        ChangeHealth(-value);
+        _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
+        if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
+    }
     private void ChangeHealth(int value)
     {
         _health += value;
         _onHealthChanged?.Invoke(_health);
         SetBoostReady();
-        if (_model.IsScaleDependFromHealth) transform.localScale = Vector3.one * (1 + _health * 0.5f / 30);        
+        if (_model.IsScaleDependFromHealth) 
+        { 
+            if (_isGrowing) { StopCoroutine(_currentGrowingProcess); _isGrowing = false; }
+            _currentGrowingProcess = GrowingProcess(GetScaleDependingOnHealth(_health));
+            StartCoroutine(_currentGrowingProcess);
+        }        
     }
-
-    private void GetDamage(int value)
+    private Vector3 GetScaleDependingOnHealth(int health) 
+    { 
+        return Vector3.one * (1 + health * 0.5f / 30); 
+    }
+    private IEnumerator GrowingProcess(Vector3 targetScale)
     {
-        ChangeHealth(-value);        
-        SpawnOutEntities(Mathf.Min(value, _health + value));
-        if (_health <= 0) Destroy(gameObject);        
+        float growingSpeed = 0.01f;
+        float timeBetweenGrow = 0.01f;
+        _isGrowing = true;
+        while (transform.localScale != targetScale)
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, growingSpeed);
+            yield return new WaitForSeconds(timeBetweenGrow);
+        }
+        _isGrowing = false;
     }
 
-    private void SpawnOutEntities(int summaryHealth)
+    private IEnumerator EntitySpawning()
     {
-        while (summaryHealth > 0) { summaryHealth -= SpawnOutEntity().HealthCount; }
-    }
-
+        while (true)
+        {
+            int _spawnedEntitiesCount = 0;
+            while ((_spawningEntitiesQueueSummaryHealth > 0) && (_spawnedEntitiesCount < _maxEnititySpawnCountPerFrame))            
+            {
+                _spawningEntitiesQueueSummaryHealth -= SpawnOutEntity().HealthCount;                
+                _spawnedEntitiesCount++;
+            }            
+            _spawningEntitiesQueueSummaryHealth = Math.Max(0, _spawningEntitiesQueueSummaryHealth);            
+            yield return new WaitForSeconds(_timeBetweenSpawnFrames);
+        }
+    }    
     private Entity SpawnOutEntity()
     {
         float pullOutForceUp = 5f;
         float pullOutForceHorizontal = 3f;
-        float positionVerticalOffset = transform.localScale.x * 1f;
-        float positionHorisontalOffset = transform.localScale.x * 1f;        
+        float positionVerticalOffset = transform.localScale.x * 1f + 0.3f;
+        float positionHorisontalOffset = transform.localScale.x * 1f + 0.3f;        
         Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;        
         Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
         spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
@@ -143,7 +215,14 @@ public class Hunter : MonoBehaviour
         spawnedEntity.Color = _model.Color;
         return spawnedEntity;
     }
-
-
     
+    private IEnumerator DestroyingAfterEntitySpawning()
+    {        
+        Destroy(_rigidbody);
+        Destroy(_collider);
+        foreach (Renderer visualComponent in _visualComponents) { Destroy(visualComponent); }
+        while (_spawningEntitiesQueueSummaryHealth > 0) { yield return null; }
+        Destroy(gameObject);        
+    }
+        
 }

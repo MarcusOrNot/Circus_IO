@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 
@@ -16,78 +17,86 @@ public class Entity : MonoBehaviour
     private Rigidbody _rigidbody;
     private Collider _collider;
 
-    
+        
+    private bool _destroyingProcessIsStarted = false;
+    private IEnumerator _destroyingProcess;
+    private float _maxFallingTime = 10f;
+
 
     private void Awake()
     {
         _coloredComponents = GetComponentsInChildren<Renderer>();
         _rigidbody = GetComponentInChildren<Rigidbody>();
         _collider = GetComponentInChildren<Collider>();
-        
+        _rigidbody.isKinematic = false;
+        _collider.isTrigger = true;
     }
-
     private void Start()
     {        
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
-        transform.localScale = Vector3.one * (0.5f + Mathf.Min(_model.HealCount / 10f, 1f));
-    }
+        transform.localScale = Vector3.one * (0.5f + Mathf.Min(_model.HealCount / 10f, 1f));        
+        StartCoroutine(CheckFallingStatus());        
+    }   
 
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        float collisionPrecision = 0.01f;
-        if ((collision.GetContact(0).point - transform.position).normalized.y + 1 <= collisionPrecision)
-        {
-            if (collision.gameObject.TryGetComponent(out Hunter _))
-            {
-                _rigidbody.isKinematic = false;
-                _collider.isTrigger = true;
-            }
-            else if (collision.gameObject.TryGetComponent(out Entity _))
-            {
-                _rigidbody.isKinematic = false;
-                _collider.isTrigger = false;
-                PhysicalRebound();
-            }
-            else
-            {
-                _rigidbody.isKinematic = true;
-                _collider.isTrigger = true;
-            }            
-        }
-    }
-    private void OnCollisionStay(Collision collision)
-    {
-        OnCollisionEnter(collision);
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        float maxSpeed = 10f;
-        float velocitySlowMultiplier = 0.3f;
-        if (_rigidbody.velocity.magnitude > maxSpeed) _rigidbody.velocity *= velocitySlowMultiplier;
-    }
     private void OnTriggerEnter(Collider other)
+    {        
+        if (_rigidbody == null) return;        
+        if (other.TryGetComponent(out Entity _))
+        {             
+            PhysicalRebound();
+        }
+        else if (!other.TryGetComponent(out Hunter _))
+        {            
+            Destroy(_rigidbody);            
+        }        
+    }
+    private void OnTriggerStay(Collider other)
     {
+        if (_rigidbody == null) return;
         if (other.TryGetComponent(out Entity _))
         {            
-            _rigidbody.isKinematic = false;
-            _collider.isTrigger = false;
             PhysicalRebound();
         }
     }
 
-    
-    private void PhysicalRebound()
+    private IEnumerator CheckFallingStatus()
     {
-        float reboundForce = 0.5f;   
-        _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);
+        float fallingStatusCheckPeriod = 1f;
+        float verticalVelocityTrigger = -0.3f;
+        bool isFalling;  
+        while (true)
+        {            
+            isFalling = (_rigidbody != null) && (_rigidbody.velocity.y < verticalVelocityTrigger);
+            if (isFalling) 
+            { 
+                if (!_destroyingProcessIsStarted) { _destroyingProcess = DestroyingProcess(); StartCoroutine(_destroyingProcess); } 
+            }
+            else if (_destroyingProcessIsStarted) 
+            {                
+                _destroyingProcessIsStarted = false; 
+                if (_destroyingProcess != null) StopCoroutine(_destroyingProcess); 
+            }             
+            yield return new WaitForSeconds(fallingStatusCheckPeriod);
+        }  
+    }
+    private IEnumerator DestroyingProcess()
+    {            
+        _destroyingProcessIsStarted = true;        
+        yield return new WaitForSeconds(_maxFallingTime);        
+        Destroy(gameObject);
+    }
+
+    private void PhysicalRebound()
+    {        
+        float reboundForce = 0.5f;
+        float verticalVelocityTrigger = 0.1f;
+        if (_rigidbody.velocity.y > verticalVelocityTrigger) { return; }        
+        _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);        
     }
 
     private void SetColor(Color color)
     {
-        foreach (Renderer coloredComponent in _coloredComponents)
-            coloredComponent.material.color += color;
+        foreach (Renderer coloredComponent in _coloredComponents) { coloredComponent.material.color += color; }            
     }
-    
     
 }
