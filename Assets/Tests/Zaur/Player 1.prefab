@@ -249,6 +249,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _model:
     Speed: 10
+    RotationSpeed: 1000
+    SensivityTreshold: 0.3
 --- !u!114 &4417518082458132220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,13 +263,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46e5b079881179741a0074c47bf0360b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsReadyToBoost: 1
   _model:
     StartEntity: 10
     BoostValue: 3
     Color: {r: 0, g: 0, b: 1, a: 1}
-  _valuableColoredComponents:
-  - {fileID: 8800014978469739307}
+    BoostTime: 0.5
+    BoostRestartTime: 7
+    ColoredComponents:
+    - {fileID: 8800014978469739307}
 --- !u!143 &5511835259696588282
 CharacterController:
   m_ObjectHideFlags: 0

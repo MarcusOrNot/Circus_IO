@@ -1,144 +1,228 @@
 using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-
+using Zenject;
+using static UnityEngine.EventSystems.EventTrigger;
+using TMPro;
 
 [RequireComponent(typeof(Character))]
 
 public class Hunter : MonoBehaviour
 {
-    public bool IsReadyToBoost = true;
+    [Inject] private EntityFactory _factory;
+    [Inject] private IEventBus _eventBus;
+    
 
-    public void Boost()
-    {
-        StartCoroutine(BoostMoving());
-    }
+    public HunterModel Model { get => _model; }
+    public bool IsReadyToBoost { get => _isBoosterReady; }
+    public int Lifes { get => _health; }
 
+    public void Boost() { StartCoroutine(BoosterActivation()); } 
+    public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
+    public void AddDamage(int value) { GetDamage(value); } 
 
+    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
 
 
     [SerializeField] private HunterModel _model;    
-    private Character _character;
+    private Character _character;        
 
-    private float _boostTime = 0.5f;    
-    private float _boosterCooldownTime = 7f;
-    private bool _isBoosting = false;
+    private bool _isBoosterReady = true;
+    private bool _isMovingWithBoost = false;
+    private bool _boosterIsReloading = false;
 
-    private float _unvulnerablityTimer = 5f;
-    private bool _isUnvulnerable = true;
+    private int _health = 0;
+    private Action<int> _onHealthChanged;
 
-    private int _health;
+    private bool _isGrowing = false;
+    private IEnumerator _currentGrowingProcess = null;
 
-    [SerializeField] private Renderer[] _valuableColoredComponents;
+    private EntityType _entityTypeForSpawn;
+    private int _maxEnititySpawnCountPerFrame = 10;    
+    private int _spawningEntitiesQueueSummaryHealth = 0;
+    private float _timeBetweenSpawnFrames = 0.05f;
+        
+    private Renderer[] _visualComponents;
+    private Collider _collider;
+    private Rigidbody _rigidbody;
 
 
     private void Awake()
     {
-        _character = GetComponent<Character>();        
+        _character = GetComponent<Character>();
+        _visualComponents = GetComponentsInChildren<Renderer>();
+        _collider = GetComponent<Collider>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
-
     private void Start()
-    {
+    {        
+        _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
         SetColorOnColoredComponents(_model.Color);
-        _health = _model.StartEntity;
-        StartCoroutine(SetUnvulnerablity());
-        SetScale();
+        transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);
+        ChangeHealth(_model.StartEntity); 
+        SetBoostReady();
+        StartCoroutine(EntitySpawning());
     }
-
-    private void Update()
+    private void OnDestroy()
     {
-        if (_isBoosting) _character.Move(new Vector2(transform.forward.y, transform.forward.x));
+        _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
     }
-
 
     private void SetColorOnColoredComponents(Color color)
     {
-        foreach (Renderer valuableColoredComponent in _valuableColoredComponents)
-            valuableColoredComponent.material.color = _model.Color;
-    }
+        foreach (Renderer coloredComponent in _model.ColoredComponents) 
+            coloredComponent.material.color = color;
+    }   
 
-    private void SetScale()
+    private IEnumerator BoosterActivation()
     {
-        transform.localScale = Vector3.one * (1 + (float)_health / 10);
-    }
-
-    /*
-      
-    [SerializeField] private List<Entity> _entitiesPrefabs = new List<Entity>();
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent(out Entity entity))
-            EatEntity(entity);
-
-    }
-
-    private void GetDamage()
-    {
-        if (_isUnvulnerable) return;
-        int health = _health;
-        _health /= 2;
-        StartCoroutine(SetUnvulnerablityTimer());
-        GenerateEntities(health - _health);
-        SetScale();
-        if (_health <= 0) Destroy(gameObject);
-    }
-
-    private void GenerateEntities(int count)
-    {
-        float entityPullOutForce = 0.05f;
-        for (int i = 1; i <= count; i++)
-        {
-            Instantiate(_entitiesPrefabs[Random.Range(0, _entitiesPrefabs.Count)], transform.position, Quaternion.identity)
-                .GetComponent<Rigidbody>().AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * entityPullOutForce, ForceMode.Impulse);
-        }
-    }
-
-    private void EatEntity(Entity entity)
-    {
-        Destroy(entity.gameObject);
-        _health++;
-        SetScale();
-    }
-    */
-
-
-    private IEnumerator SetUnvulnerablity()
-    {
-        _isUnvulnerable = true;
-        Physics.IgnoreLayerCollision(8, 9, true);
-        StartCoroutine(ColorFlashing());
-        yield return new WaitForSeconds(_unvulnerablityTimer);
-        Physics.IgnoreLayerCollision(8, 9, false);
-        _isUnvulnerable = false;
-    }
-    private IEnumerator ColorFlashing()
-    {
-        while (_isUnvulnerable)
-        {
-            SetColorOnColoredComponents(Color.white);
-            yield return new WaitForSeconds(0.2f);
-            SetColorOnColoredComponents(_model.Color);
-            yield return new WaitForSeconds(0.2f);
-        }
-    }
-
-
-    private IEnumerator BoostMoving()
-    {
-        StartCoroutine(BoosterCooldown());
-        _isBoosting = true;
+        if (!_isBoosterReady) yield break;
+        StartCoroutine(BoosterReloading());
+        _isMovingWithBoost = true;
+        if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
         _character.SpeedMultiplier = _model.BoostValue;
-        yield return new WaitForSeconds(_boostTime);
+        StartCoroutine(MovingWithBoost());
+        yield return new WaitForSeconds(_model.BoostTime);
         _character.SpeedMultiplier = savedBoostSpeed;
-        _isBoosting = false;
+        _isMovingWithBoost = false;
     }
-    private IEnumerator BoosterCooldown()
+    private IEnumerator BoosterReloading()
     {
-        IsReadyToBoost = false;
-        yield return new WaitForSeconds(_boosterCooldownTime);
-        IsReadyToBoost = true;
+        _isBoosterReady = false;
+        _boosterIsReloading = true;
+        yield return new WaitForSeconds(_model.BoostRestartTime);
+        _boosterIsReloading = false;
+        SetBoostReady();
+    }
+    private IEnumerator MovingWithBoost()
+    {
+        while (_isMovingWithBoost)
+        {
+            _character.GetMovingCommand(new Vector2(transform.forward.x, transform.forward.z));
+            yield return null;
+        }  
+    }    
+    private void SetBoostReady() 
+    { 
+        _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice); 
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out Entity entity))
+        {
+            if (!entity.TryGetComponent(out Rigidbody _)) StartCoroutine(EatingSomebody(entity));                     
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {   
+        if (collision.gameObject.TryGetComponent(out Hunter hunter))
+        {
+            if (_health > hunter.Lifes) StartCoroutine(EatingSomebody(hunter));                                
+        }
+    }
+
+    private IEnumerator EatingSomebody(MonoBehaviour somebody) 
+    {
+        if (!(somebody is Entity) && !(somebody is Hunter)) { yield break; }
+        float eatingSpeed = 10f;
+        float destroyingTime = 0;     
+        GameObject somebodyObject = somebody?.gameObject;
+        Collider collider = somebodyObject?.GetComponent<Collider>();
+        if (collider != null) Destroy(collider);
+        if (somebody is Entity)
+        {
+            ChangeHealth((somebody as Entity).HealthCount);
+            eatingSpeed = 7f * _character.SpeedMultiplier;
+            destroyingTime = 1f;            
+        }
+        else if (somebody is Hunter)
+        {
+            ChangeHealth((somebody as Hunter).Lifes);
+            eatingSpeed = 7f * _character.SpeedMultiplier;
+            destroyingTime = 3f;
+        }
+        Destroy(somebody);  
+        Destroy(somebodyObject, destroyingTime);        
+        while (somebodyObject != null)
+        {
+            somebodyObject.transform.position = Vector3.Lerp(somebodyObject.transform.position, transform.position, eatingSpeed * Time.deltaTime);
+            somebodyObject.transform.localScale = Vector3.Lerp(somebodyObject.transform.localScale, somebodyObject.transform.localScale / 10f, eatingSpeed * Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    private void GetDamage(int value)
+    {
+        ChangeHealth(-value);
+        _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
+        if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
+    }
+    private void ChangeHealth(int value)
+    {
+        _health += value;
+        _onHealthChanged?.Invoke(_health);
+        SetBoostReady();
+        if (_model.IsScaleDependFromHealth) 
+        { 
+            if (_isGrowing) { StopCoroutine(_currentGrowingProcess); _isGrowing = false; }
+            _currentGrowingProcess = GrowingProcess(GetScaleDependingOnHealth(_health));
+            StartCoroutine(_currentGrowingProcess);
+        }        
+    }
+    private Vector3 GetScaleDependingOnHealth(int health) 
+    { 
+        return Vector3.one * (1 + health * 0.5f / 30); 
+    }
+    private IEnumerator GrowingProcess(Vector3 targetScale)
+    {
+        float growingSpeed = 0.01f;
+        float timeBetweenGrow = 0.01f;
+        _isGrowing = true;
+        while (transform.localScale != targetScale)
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, growingSpeed);
+            yield return new WaitForSeconds(timeBetweenGrow);
+        }
+        _isGrowing = false;
+    }
+
+    private IEnumerator EntitySpawning()
+    {
+        while (true)
+        {
+            int _spawnedEntitiesCount = 0;
+            while ((_spawningEntitiesQueueSummaryHealth > 0) && (_spawnedEntitiesCount < _maxEnititySpawnCountPerFrame))            
+            {
+                _spawningEntitiesQueueSummaryHealth -= SpawnOutEntity().HealthCount;                
+                _spawnedEntitiesCount++;
+            }            
+            _spawningEntitiesQueueSummaryHealth = Math.Max(0, _spawningEntitiesQueueSummaryHealth);            
+            yield return new WaitForSeconds(_timeBetweenSpawnFrames);
+        }
+    }    
+    private Entity SpawnOutEntity()
+    {
+        float pullOutForceUp = 5f;
+        float pullOutForceHorizontal = 3f;
+        float positionVerticalOffset = transform.localScale.x * 1f + 0.3f;
+        float positionHorisontalOffset = transform.localScale.x * 1f + 0.3f;        
+        Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;        
+        Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
+        spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
+        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);        
+        spawnedEntity.Color = _model.Color;
+        return spawnedEntity;
+    }
+    
+    private IEnumerator DestroyingAfterEntitySpawning()
+    {        
+        Destroy(_rigidbody);
+        Destroy(_collider);
+        foreach (Renderer visualComponent in _visualComponents) { Destroy(visualComponent); }
+        while (_spawningEntitiesQueueSummaryHealth > 0) { yield return null; }
+        Destroy(gameObject);        
+    }
+        
 }
