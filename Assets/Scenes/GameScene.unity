@@ -374,6 +374,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3954873966858999010, guid: c8738a057f9f7fe46add9a3c46888756, type: 3}
+      propertyPath: _model.Speed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4417518082458132220, guid: c8738a057f9f7fe46add9a3c46888756, type: 3}
       propertyPath: _model.StartEntity
       value: 10

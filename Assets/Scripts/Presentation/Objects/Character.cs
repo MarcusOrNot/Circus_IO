@@ -22,6 +22,7 @@ public class Character : MonoBehaviour
 
     [SerializeField] private CharacterModel _model;
     private Rigidbody _rigidbody;
+    private Animator _animator;
     
     private float _speedMultiplier = 1.0f;
     private bool _isMoving = false;
@@ -35,6 +36,7 @@ public class Character : MonoBehaviour
 
     private void Awake()
     {        
+        _animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionY;
         _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
@@ -46,6 +48,7 @@ public class Character : MonoBehaviour
     {
         SetBodyPositionFreezeStatus(!isMoving);
         _isMoving = isMoving;
+        if (_animator != null) { _animator.SetBool("IsGoing", _isMoving); }
     }
     private void SetBodyPositionFreezeStatus(bool isFreeze)
     {
@@ -85,12 +88,14 @@ public class Character : MonoBehaviour
         
 
     private void OnCollisionEnter()
-    {      
+    {
+        if (_rigidbody == null) return;
         _rigidbody.constraints |= RigidbodyConstraints.FreezePositionY;
         StartCoroutine(CollisionExitTimer());
     }     
     private void OnCollisionExit()
     {
+        if (_rigidbody == null) return;
         _rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY;
     }
     private IEnumerator CollisionExitTimer()
@@ -104,6 +109,6 @@ public class Character : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_isMoving) { Move(_movingDirection); }
+        if (_isMoving) { Move(_movingDirection); }       
     }
 }

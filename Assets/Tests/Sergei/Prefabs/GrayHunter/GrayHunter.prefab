@@ -898,7 +898,7 @@ GameObject:
   - component: {fileID: 4417518082458132220}
   - component: {fileID: 896055348293074514}
   - component: {fileID: 8771609089846911496}
-  - component: {fileID: -6195694117806173483}
+  - component: {fileID: 5546098377427123100}
   m_Layer: 0
   m_Name: GrayHunter
   m_TagString: Untagged
@@ -981,8 +981,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.77, y: 1.27, z: 0.71}
-  m_Center: {x: 0, y: 0, z: 0.3}
+  m_Size: {x: 2.26, y: 1.27, z: 1.34}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8771609089846911496
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1010,7 +1010,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 122
   m_CollisionDetection: 0
---- !u!95 &-6195694117806173483
+--- !u!95 &5546098377427123100
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
