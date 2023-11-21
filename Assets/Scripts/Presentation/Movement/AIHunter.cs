@@ -47,7 +47,7 @@ public class AIHunter : MonoBehaviour
             resDirection = FoodCollectLayer();
         //resDirection = HunterFollowLayer();
         
-        Debug.Log(resDirection);
+        //Debug.Log(resDirection);
 
 
         return resDirection;
@@ -100,7 +100,7 @@ public class AIHunter : MonoBehaviour
         }
         if (nearest != null)
         {
-            Debug.Log("Now hunter should go "+_hunter.name);
+            //Debug.Log("Now hunter should go "+_hunter.name);
             var between = (nearest.transform.position - transform.position).normalized;
             //Debug.Log("cross " + between.ToString());            
             return new Vector2(between.x, between.z);
