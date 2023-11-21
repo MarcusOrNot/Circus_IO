@@ -29,4 +29,12 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
     {
         _actionButton.onClick.RemoveAllListeners();
     }
+
+    private void Update()
+    {
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Space))
+            _onClickAction?.Invoke();
+#endif
+    }
 }
