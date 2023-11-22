@@ -61,7 +61,7 @@ public class Character : MonoBehaviour
 
     private void SetGoingAnimationSpeed()
     {        
-        _animator?.SetFloat("Speed", _model.Speed * _speedMultiplier / 10 / transform.localScale.x);
+        _animator?.SetFloat("Speed", _model.Speed * _speedMultiplier / 10 / Mathf.Pow(transform.localScale.x, 0.3f));
     }
 
     private void SetMovingStatus(bool isMoving)

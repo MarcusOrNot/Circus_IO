@@ -182,8 +182,8 @@ public class Hunter : MonoBehaviour
         }        
     }
     private Vector3 GetScaleDependingOnHealth(int health) 
-    { 
-        return Vector3.one * (1 + health * 0.5f / 30); 
+    {
+        return Vector3.one * (Mathf.Pow(health, 0.3f) / 1.5f); 
     }
     private IEnumerator GrowingProcess(Vector3 targetScale)
     {
