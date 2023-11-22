@@ -34,7 +34,8 @@ public class Entity : MonoBehaviour
     private void Start()
     {        
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
-        transform.localScale = Vector3.one * (0.5f + Mathf.Min(_model.HealCount / 10f, 1f));        
+        //
+        //ENTITY SCALE DEPENDING FROM MODEL.HEALCOUNT   transform.localScale = Vector3.one * (0.5f + Mathf.Min(_model.HealCount / 10f, 1f));   
         StartCoroutine(CheckFallingStatus());        
     }   
 

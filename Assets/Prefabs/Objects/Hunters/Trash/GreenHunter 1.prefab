@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 8771609089846911496}
   - component: {fileID: 3756957110124700103}
   m_Layer: 0
-  m_Name: GreenHunter
+  m_Name: GreenHunter 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

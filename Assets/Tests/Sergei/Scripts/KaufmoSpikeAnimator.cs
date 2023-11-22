@@ -15,11 +15,12 @@ public class KaufmoSpikeAnimator : MonoBehaviour, INeedKaufmoColor
     [SerializeField] private float _maxScaleMultiplierZ = 2f;
     [SerializeField] private float _minScaleMultiplierZ = 0.01f;
 
-    [SerializeField] private float _maxAnimationChangePeriod = 0.1f;
-    [SerializeField] private float _minAnimationChangePeriod = 0.05f;
+    [SerializeField] private float _maxAnimationChangePeriod = 0.5f;
+    [SerializeField] private float _minAnimationChangePeriod = 0.1f;
 
-    [SerializeField] private int _maxAnimationFramesCount = 50;
-    [SerializeField] private int _minAnimationFramesCount = 1;
+    [SerializeField] private float _timeBetweenAnimationFrames = 0.05f;
+    [SerializeField] private int _maxAnimationFramesCount = 250;
+    [SerializeField] private int _minAnimationFramesCount = 50;
 
     private void Start()
     {   
@@ -30,18 +31,17 @@ public class KaufmoSpikeAnimator : MonoBehaviour, INeedKaufmoColor
     {
         Vector3 baseScale = transform.localScale;
         while (true)
-        {
-            yield return new WaitForSeconds(Random.Range(_minAnimationChangePeriod, _maxAnimationChangePeriod));
-            Vector3 targetScale = new Vector3(baseScale.x * Random.Range(_minScaleMultiplierX, _maxScaleMultiplierX),
-                baseScale.y * Random.Range(_minScaleMultiplierY, _maxScaleMultiplierY),
-                baseScale.z * Random.Range(_minScaleMultiplierZ, _maxScaleMultiplierZ));
-            transform.rotation = Random.rotation;
-            int animationFramesCount = Random.Range(_minAnimationFramesCount, _maxAnimationFramesCount);
+        {            
+            Vector3 targetScale = Vector3.Scale(baseScale, new Vector3(Random.Range(_minScaleMultiplierX, _maxScaleMultiplierX), 
+                Random.Range(_minScaleMultiplierY, _maxScaleMultiplierY), Random.Range(_minScaleMultiplierZ, _maxScaleMultiplierZ)));
+            int animationFramesCount = Random.Range(_minAnimationFramesCount, _maxAnimationFramesCount + 1);
+            transform.localScale = Vector3.Scale(baseScale, new Vector3(_minScaleMultiplierX, _minScaleMultiplierY, _minScaleMultiplierZ));
             for (int i = animationFramesCount; i > 0; i--)
             {
-                transform.localScale = targetScale / i;
-                yield return null;
+                transform.localScale = targetScale / i;                
+                yield return new WaitForSeconds(_timeBetweenAnimationFrames);
             }
+            yield return new WaitForSeconds(Random.Range(_minAnimationChangePeriod, _maxAnimationChangePeriod));
         }
     }
 
