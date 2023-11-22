@@ -5,14 +5,14 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     public EntityModel Model { get => _model; }
-    public Color Color { set => SetColor(value); }
-    public int HealthCount { get => _model.HealCount; }
+    //public Color Color { set => SetColor(value); }
+    public int HealthCount { get => _model.HealCount; set { _model.HealCount = value; } }
 
 
     [SerializeField] private EntityModel _model;
     
         
-    private Renderer[] _coloredComponents;
+    //private Renderer[] _coloredComponents;
 
     private Rigidbody _rigidbody;
     private Collider _collider;
@@ -25,7 +25,7 @@ public class Entity : MonoBehaviour
 
     private void Awake()
     {
-        _coloredComponents = GetComponentsInChildren<Renderer>();
+        //_coloredComponents = GetComponentsInChildren<Renderer>();
         _rigidbody = GetComponentInChildren<Rigidbody>();
         _collider = GetComponentInChildren<Collider>();
         _rigidbody.isKinematic = false;
@@ -95,9 +95,11 @@ public class Entity : MonoBehaviour
         _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);        
     }
 
+    /*
     private void SetColor(Color color)
     {
         foreach (Renderer coloredComponent in _coloredComponents) { coloredComponent.material.color += color; }            
     }
+    */
     
 }

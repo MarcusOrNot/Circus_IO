@@ -38,30 +38,31 @@ public class Hunter : MonoBehaviour
     private IEnumerator _currentGrowingProcess = null;
 
     private EntityType _entityTypeForSpawn;
-    private int _maxEnititySpawnCountPerFrame = 10;    
-    private int _spawningEntitiesQueueSummaryHealth = 0;
-    private float _timeBetweenSpawnFrames = 0.05f;
+    //private int _maxEnititySpawnCountPerFrame = 10;    
+    //private int _spawningEntitiesQueueSummaryHealth = 0;
+    //private float _timeBetweenSpawnFrames = 0.05f;
         
-    private Renderer[] _visualComponents;
-    private Collider _collider;
+    //private Renderer[] _visualComponents;
+    //private Collider _collider;
     private Rigidbody _rigidbody;
 
     
     private void Awake()
     {
         _character = GetComponent<Character>();
-        _visualComponents = GetComponentsInChildren<Renderer>();
-        _collider = GetComponent<Collider>();
+        //_visualComponents = GetComponentsInChildren<Renderer>();
+        //_collider = GetComponent<Collider>();
         _rigidbody = GetComponent<Rigidbody>();
     }
     private void Start()
     {                
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
-        SetColorOnColoredComponents(_model.Color);
+        //SetColorOnColoredComponents(_model.Color);
         transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);
         ChangeHealth(_model.StartEntity); 
         SetBoostReady();
-        StartCoroutine(EntitySpawning());
+
+        //StartCoroutine(EntitySpawning());
 
         Material meshMaterial = GetComponentInChildren<SkinnedMeshRenderer>()?.materials?[0];
         if (meshMaterial != null) meshMaterial.color = _model.Color;
@@ -73,11 +74,13 @@ public class Hunter : MonoBehaviour
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
     }
 
+    /*
     private void SetColorOnColoredComponents(Color color)
     {
         foreach (Renderer coloredComponent in _model.ColoredComponents) 
             coloredComponent.material.color = color;
-    }   
+    }
+    */
 
     private IEnumerator BoosterActivation()
     {
@@ -161,6 +164,7 @@ public class Hunter : MonoBehaviour
         }
     }
 
+    /*
     private void GetDamage(int value)
     {
         ChangeHealth(-value);
@@ -168,6 +172,15 @@ public class Hunter : MonoBehaviour
         _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
         if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
     }
+    */
+    private void GetDamage(int value)
+    {
+        ChangeHealth(-value);
+        if (_rigidbody == null) return;
+        EntitySpawning(value / 5);        
+        if (_health <= 0) Destroy(gameObject);
+    }
+
     private void ChangeHealth(int value)
     {
         _health += value;
@@ -198,6 +211,46 @@ public class Hunter : MonoBehaviour
         _isGrowing = false;
     }
 
+
+
+
+
+    private void EntitySpawning(int summaryHealth)
+    {
+        int entityCountForSpawn = Mathf.Min(5, summaryHealth);
+        for (int i = entityCountForSpawn; i > 0; i--)
+        {
+            int currentEntityHealth = summaryHealth / i + (summaryHealth % i == 0 ? 0 : 1);
+            SpawnOutEntity(currentEntityHealth);
+            summaryHealth -= currentEntityHealth;
+        }  
+    }
+    private Entity SpawnOutEntity(int entityHealth)
+    {
+        float pullOutForceUp = 5f;
+        float pullOutForceHorizontal = 3f;
+        float positionVerticalOffset = transform.localScale.x * 1f + 0.3f;
+        float positionHorisontalOffset = transform.localScale.x * 1f + 0.3f;
+        Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;
+        Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
+        spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
+        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
+        INeedKaufmoColor colorNeedable = spawnedEntity.GetComponentInChildren<INeedKaufmoColor>();
+        if (colorNeedable != null) colorNeedable.Color = _model.Color;
+        spawnedEntity.HealthCount = entityHealth;
+        spawnedEntity.transform.localScale *= entityHealth switch
+        {
+            >= 1 and < 10 => 1f,
+            >= 10 and < 50 => 1.5f,
+            >= 50 and < 100 => 1.8f,
+            >= 100 and < 500 => 2f,
+            >= 500 => 2.2f,
+            _ => 1f
+        };  
+        return spawnedEntity;
+    }
+
+    /*
     private IEnumerator EntitySpawning()
     {
         while (true)
@@ -211,7 +264,9 @@ public class Hunter : MonoBehaviour
             _spawningEntitiesQueueSummaryHealth = Math.Max(0, _spawningEntitiesQueueSummaryHealth);            
             yield return new WaitForSeconds(_timeBetweenSpawnFrames);
         }
-    }    
+    }
+    */
+    /*
     private Entity SpawnOutEntity()
     {
         float pullOutForceUp = 5f;
@@ -221,11 +276,13 @@ public class Hunter : MonoBehaviour
         Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;        
         Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
         spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
-        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);        
-        spawnedEntity.Color = _model.Color;
+        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
+        INeedKaufmoColor colorNeedable = spawnedEntity.GetComponentInChildren<INeedKaufmoColor>();
+        if (colorNeedable != null) colorNeedable.Color = _model.Color;            
         return spawnedEntity;
     }
-    
+    */
+    /*
     private IEnumerator DestroyingAfterEntitySpawning()
     {        
         Destroy(_rigidbody);
@@ -234,5 +291,6 @@ public class Hunter : MonoBehaviour
         while (_spawningEntitiesQueueSummaryHealth > 0) { yield return null; }
         Destroy(gameObject);        
     }
-        
+    */
+
 }

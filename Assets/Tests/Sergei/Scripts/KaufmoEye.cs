@@ -41,12 +41,17 @@ public class KaufmoEye : MonoBehaviour, INeedKaufmoColor
 
     private IEnumerator EyepupilAnimator()
     {
-        float offsetX = 7f * transform.localScale.x;
-        float offsetZ = 3.5f * transform.localScale.z;
+        //float offsetX = 7f * transform.localScale.x;
+        //float offsetZ = 3.5f * transform.localScale.z;
+        //float offsetX = 0.07f * transform.lossyScale.x;
+        //float offsetZ = 0.035f * transform.lossyScale.z;
+
         Vector3 eyepupilStartPosition = _eyepupil.transform.localPosition;
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(_minAnimationChangePeriod, _maxAnimationChangePeriod));
+            float offsetX = 0.05f * _eyepupil.transform.localScale.x;
+            float offsetZ = 0.025f * _eyepupil.transform.localScale.z;
             Vector3 currentEyepupilPosition = _eyepupil.transform.localPosition;
             Vector3 newEyepupilPosition = eyepupilStartPosition 
                 + new Vector3(Random.Range(-offsetX, offsetX), 0, Random.Range(-offsetZ, offsetZ));
