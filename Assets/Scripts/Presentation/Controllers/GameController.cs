@@ -6,6 +6,8 @@ public class GameController : MonoBehaviour, IGameEventObserver
 {
     [Inject] private IEventBus _eventBus;
     [Inject] private IGameUI _gameUI;
+    [Inject] private IAudioEffect _effect;
+    [Inject] private IMusicPlayer _music;
     
     void Start()
     {
@@ -33,6 +35,9 @@ public class GameController : MonoBehaviour, IGameEventObserver
         {
             PauseGame();
             _gameUI.ShowGameOver();
+            _music.Stop();
+            _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+            
         }
         else if (gameEvent==GameEventType.HUNTER_DEAD)
         {
@@ -49,6 +54,8 @@ public class GameController : MonoBehaviour, IGameEventObserver
             {
                 PauseGame();
                 _gameUI.ShowWin();
+                _music.Stop();
+                _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
             }
         }
     }
