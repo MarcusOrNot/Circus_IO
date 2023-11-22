@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2966948482365626971}
-  - component: {fileID: 4697270141305713628}
   - component: {fileID: 2759645223893985125}
   - component: {fileID: 3499900512743183094}
+  - component: {fileID: 5908117232906158156}
   m_Layer: 0
   m_Name: Meat
   m_TagString: Untagged
@@ -35,29 +35,6 @@ Transform:
   - {fileID: 5470826310081832796}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &4697270141305713628
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5470607718356268361}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.78
-  m_Height: 2.55
-  m_Direction: 1
-  m_Center: {x: 0, y: -0.44, z: 0}
 --- !u!54 &2759645223893985125
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -100,6 +77,27 @@ MonoBehaviour:
   _model:
     EntityType: 3
     HealCount: 10
+--- !u!135 &5908117232906158156
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470607718356268361}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.71
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9065408347560369450
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,7 +125,7 @@ Transform:
   m_GameObject: {fileID: 9065408347560369450}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.014592, y: 0.0016562, z: -0.12661}
+  m_LocalPosition: {x: -0.014592, y: -0.45, z: -0.12661}
   m_LocalScale: {x: 5.324528, y: 9.592137, z: 5.324528}
   m_ConstrainProportionsScale: 0
   m_Children: []

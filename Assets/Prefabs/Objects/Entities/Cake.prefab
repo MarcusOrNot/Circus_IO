@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 6712970141197556258}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.6437739, z: -0, w: 0.76521575}
-  m_LocalPosition: {x: 0.10381623, y: -0.30548, z: -0.0024128705}
+  m_LocalPosition: {x: 0.10381623, y: -0.63, z: -0.0024128705}
   m_LocalScale: {x: 7.3221374, y: 7.3221374, z: 7.3221374}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -93,8 +93,8 @@ GameObject:
   m_Component:
   - component: {fileID: 504927751145242980}
   - component: {fileID: 5479850329234931721}
-  - component: {fileID: 4736613813556414616}
   - component: {fileID: 1658008878911475776}
+  - component: {fileID: 5041396866357168530}
   m_Layer: 0
   m_Name: Cake
   m_TagString: Untagged
@@ -145,8 +145,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!136 &4736613813556414616
-CapsuleCollider:
+--- !u!114 &1658008878911475776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6889351951217427651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad364b138eebaeb4b86caf4c0bee24fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _model:
+    EntityType: 4
+    HealCount: 6
+--- !u!135 &5041396866357168530
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -163,23 +178,6 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.78
-  m_Height: 2.55
-  m_Direction: 1
-  m_Center: {x: 0, y: -0.44, z: 0}
---- !u!114 &1658008878911475776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6889351951217427651}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad364b138eebaeb4b86caf4c0bee24fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _model:
-    EntityType: 4
-    HealCount: 6
+  serializedVersion: 3
+  m_Radius: 0.66
+  m_Center: {x: 0, y: 0, z: 0}

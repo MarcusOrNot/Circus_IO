@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using Zenject;
 
@@ -5,7 +6,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
 {
     [Inject] private IEventBus _eventBus;
     [Inject] private IGameUI _gameUI;
-    // Start is called before the first frame update
+    
     void Start()
     {
         //_eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
@@ -14,13 +15,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         ResumeGame();
         
         
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    }   
 
     private void OnEnable()
     {
@@ -41,14 +36,19 @@ public class GameController : MonoBehaviour, IGameEventObserver
         }
         else if (gameEvent==GameEventType.HUNTER_DEAD)
         {
-            var hunters = FindObjectsOfType<Hunter>();
-            if (hunters.Length == 1)
+            StartCoroutine(CheckHuntersCount());
+        }
+    }
+    private IEnumerator CheckHuntersCount()
+    {
+        for (int i = 0; i < 2; i++) yield return null;        
+        var hunters = FindObjectsOfType<Hunter>();
+        if (hunters.Length == 1)
+        {
+            if (hunters[0].GetComponent<PlayerHunter>() != null)
             {
-                if (hunters[0].GetComponent<PlayerHunter>()!=null)
-                {
-                    PauseGame();
-                    _gameUI.ShowWin();
-                }
+                PauseGame();
+                _gameUI.ShowWin();
             }
         }
     }

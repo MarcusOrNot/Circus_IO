@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3911462482116522739}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.333, z: 0}
   m_LocalScale: {x: 2.9866772, y: 7.7895527, z: 2.9866772}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -293,8 +293,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5056755419146408085}
   - component: {fileID: 6861698988408371405}
-  - component: {fileID: 2890285482113295035}
   - component: {fileID: -5613602110651627536}
+  - component: {fileID: 7550849910968564757}
   m_Layer: 0
   m_Name: Corrupted
   m_TagString: Untagged
@@ -345,8 +345,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!136 &2890285482113295035
-CapsuleCollider:
+--- !u!114 &-5613602110651627536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7959948954985011266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad364b138eebaeb4b86caf4c0bee24fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _model:
+    EntityType: 0
+    HealCount: 1
+--- !u!135 &7550849910968564757
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -363,23 +378,6 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.78
-  m_Height: 2.55
-  m_Direction: 1
-  m_Center: {x: 0, y: -0.44, z: 0}
---- !u!114 &-5613602110651627536
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7959948954985011266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad364b138eebaeb4b86caf4c0bee24fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _model:
-    EntityType: 0
-    HealCount: 1
+  serializedVersion: 3
+  m_Radius: 0.88
+  m_Center: {x: 0, y: 0, z: 0}

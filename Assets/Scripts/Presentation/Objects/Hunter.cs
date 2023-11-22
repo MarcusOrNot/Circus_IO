@@ -46,7 +46,7 @@ public class Hunter : MonoBehaviour
     private Collider _collider;
     private Rigidbody _rigidbody;
 
-
+    
     private void Awake()
     {
         _character = GetComponent<Character>();
@@ -55,16 +55,21 @@ public class Hunter : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
     private void Start()
-    {        
+    {                
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
         SetColorOnColoredComponents(_model.Color);
         transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);
         ChangeHealth(_model.StartEntity); 
         SetBoostReady();
         StartCoroutine(EntitySpawning());
+
+        Material meshMaterial = GetComponentInChildren<SkinnedMeshRenderer>()?.materials?[0];
+        if (meshMaterial != null) meshMaterial.color = _model.Color;
+        INeedKaufmoColor[] coloredElements = GetComponentsInChildren<INeedKaufmoColor>();
+        foreach (INeedKaufmoColor coloredElement in coloredElements) coloredElement.Color = _model.Color;   
     }
     private void OnDestroy()
-    {
+    {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
     }
 
@@ -127,7 +132,8 @@ public class Hunter : MonoBehaviour
     {
         if (!(somebody is Entity) && !(somebody is Hunter)) { yield break; }
         float eatingSpeed = 10f;
-        float destroyingTime = 0;     
+        float objectDestroyingTime = 0;
+        float monobehaviourDestroyingTime = 0;
         GameObject somebodyObject = somebody?.gameObject;
         Collider collider = somebodyObject?.GetComponent<Collider>();
         if (collider != null) Destroy(collider);
@@ -135,16 +141,18 @@ public class Hunter : MonoBehaviour
         {
             ChangeHealth((somebody as Entity).HealthCount);
             eatingSpeed = 7f * _character.SpeedMultiplier;
-            destroyingTime = 1f;            
+            objectDestroyingTime = 1f;
+            monobehaviourDestroyingTime = 0;
         }
         else if (somebody is Hunter)
         {
             ChangeHealth((somebody as Hunter).Lifes);
             eatingSpeed = 7f * _character.SpeedMultiplier;
-            destroyingTime = 3f;
+            objectDestroyingTime = 3f;
+            monobehaviourDestroyingTime = 0.5f;
         }
-        Destroy(somebody);  
-        Destroy(somebodyObject, destroyingTime);        
+        Destroy(somebody, monobehaviourDestroyingTime);
+        Destroy(somebodyObject, objectDestroyingTime);        
         while (somebodyObject != null)
         {
             somebodyObject.transform.position = Vector3.Lerp(somebodyObject.transform.position, transform.position, eatingSpeed * Time.deltaTime);
@@ -156,6 +164,7 @@ public class Hunter : MonoBehaviour
     private void GetDamage(int value)
     {
         ChangeHealth(-value);
+        if (_rigidbody == null) return;
         _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
         if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
     }
@@ -164,6 +173,7 @@ public class Hunter : MonoBehaviour
         _health += value;
         _onHealthChanged?.Invoke(_health);
         SetBoostReady();
+        if (_rigidbody == null) return;
         if (_model.IsScaleDependFromHealth) 
         { 
             if (_isGrowing) { StopCoroutine(_currentGrowingProcess); _isGrowing = false; }
