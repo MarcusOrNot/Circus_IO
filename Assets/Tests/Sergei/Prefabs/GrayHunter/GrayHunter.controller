@@ -9,7 +9,25 @@ AnimatorController:
   m_Name: GrayHunter
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: IsGoing
+  - m_Name: Speed
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: Go
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: TurnRight
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: TurnLeft
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -42,7 +60,7 @@ AnimatorStateMachine:
     m_Position: {x: 362.13385, y: 3.5374603, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6115914464600607922}
-    m_Position: {x: 452.21716, y: 105.47386, z: 0}
+    m_Position: {x: 310, y: 120, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -62,7 +80,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: IsGoing
+    m_ConditionEvent: Go
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5776468242577241163}
@@ -87,7 +105,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: IsGoing
+    m_ConditionEvent: Go
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6115914464600607922}

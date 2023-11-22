@@ -46,7 +46,7 @@ public class Hunter : MonoBehaviour
     private Collider _collider;
     private Rigidbody _rigidbody;
 
-
+    
     private void Awake()
     {
         _character = GetComponent<Character>();
@@ -55,13 +55,18 @@ public class Hunter : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
     private void Start()
-    {        
+    {                
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
         SetColorOnColoredComponents(_model.Color);
         transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);
         ChangeHealth(_model.StartEntity); 
         SetBoostReady();
         StartCoroutine(EntitySpawning());
+
+        Material meshMaterial = GetComponentInChildren<SkinnedMeshRenderer>()?.materials?[0];
+        if (meshMaterial != null) meshMaterial.color = _model.Color;
+        INeedKaufmoColor[] coloredElements = GetComponentsInChildren<INeedKaufmoColor>();
+        foreach (INeedKaufmoColor coloredElement in coloredElements) coloredElement.Color = _model.Color;   
     }
     private void OnDestroy()
     {        
