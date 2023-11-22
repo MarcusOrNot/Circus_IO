@@ -5,7 +5,7 @@ using UnityEngine;
 using DG.Tweening;
 
 [RequireComponent(typeof(AudioSource))]
-public class MusicPlayController : MonoBehaviour
+public class MusicPlayController : MonoBehaviour, IMusicPlayer
 {
     [SerializeField] private List<AudioClip> _musicClips;
     private AudioSource _musicSource;
