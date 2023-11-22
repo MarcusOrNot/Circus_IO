@@ -201,6 +201,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _warningAvoidDistance: 10
+  Agressive: 1
+  Appetite: 0.5
 --- !u!1001 &504464121
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -515,6 +517,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _warningAvoidDistance: 10
+  Agressive: 1
+  Appetite: 0.5
 --- !u!1 &1380153460
 GameObject:
   m_ObjectHideFlags: 0
@@ -816,6 +820,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _warningAvoidDistance: 10
+  Agressive: 1
+  Appetite: 0.5
 --- !u!1001 &234478424549693681
 PrefabInstance:
   m_ObjectHideFlags: 0

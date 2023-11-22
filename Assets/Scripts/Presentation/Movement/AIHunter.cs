@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -6,7 +7,11 @@ using UnityEngine;
 public class AIHunter : MonoBehaviour
 {
     [SerializeField] private int _warningAvoidDistance= 15;
+    //[SerializeField] private int _aggressionDistance = 10;
+    [Range(0, 1)] public float Agressive = 0.6f;
+    [Range(0, 1)] public float Appetite = 0.5f;
     private Hunter _hunter;
+    private List<AIBehavior> _behaviors = new List<AIBehavior>();
     private Vector2 _aiDirection = Vector2.zero;
     private void Awake()
     {
@@ -16,6 +21,10 @@ public class AIHunter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Собираем поведение
+        _behaviors.Add(new HunterFollowBehaviour(Agressive, _hunter));
+        _behaviors.Add(new FoodCollectBehavior(Appetite, transform));
+
         StartCoroutine(AIControlCoroutine());
         
     }
@@ -26,13 +35,36 @@ public class AIHunter : MonoBehaviour
         _hunter.Move(_aiDirection);
     }
 
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
     private IEnumerator AIControlCoroutine()
     {
         while (true)
         {
+            _aiDirection = GetResultVector();
             yield return new WaitForSeconds(0.5f);
-            _aiDirection = RefreshDirection();
+            //_aiDirection = RefreshDirection();
         }
+    }
+
+    private Vector2 GetResultVector()
+    {
+        Vector2 result = Vector2.zero;
+        float weight = 0;
+        foreach (AIBehavior behavior in _behaviors)
+        {
+            var behaviorModel = behavior.Update();
+            if (behaviorModel.Weight>weight)
+            {
+                result = behaviorModel.Direction;
+                weight = behaviorModel.Weight;
+            }
+        }
+
+        return result;
     }
 
     private Vector2 RefreshDirection()
@@ -47,7 +79,7 @@ public class AIHunter : MonoBehaviour
             resDirection = FoodCollectLayer();
         //resDirection = HunterFollowLayer();
         
-        Debug.Log(resDirection);
+        //Debug.Log(resDirection);
 
 
         return resDirection;
@@ -100,7 +132,7 @@ public class AIHunter : MonoBehaviour
         }
         if (nearest != null)
         {
-            Debug.Log("Now hunter should go "+_hunter.name);
+            //Debug.Log("Now hunter should go "+_hunter.name);
             var between = (nearest.transform.position - transform.position).normalized;
             //Debug.Log("cross " + between.ToString());            
             return new Vector2(between.x, between.z);
