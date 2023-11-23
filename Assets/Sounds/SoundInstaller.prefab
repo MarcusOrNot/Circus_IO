@@ -51,3 +51,12 @@ MonoBehaviour:
   - Effect: 2
     EffectSource: {fileID: 8300000, guid: 9a697c94a781bc74cb64ef3c75075233, type: 3}
     Volume: 1
+  - Effect: 3
+    EffectSource: {fileID: 8300000, guid: e39921441378cb34c93a75efeb3e2db1, type: 3}
+    Volume: 1
+  - Effect: 0
+    EffectSource: {fileID: 8300000, guid: 8edbe11cd8404c84d8d20ea63b811eb5, type: 3}
+    Volume: 1
+  - Effect: 4
+    EffectSource: {fileID: 8300000, guid: 2c66323c43dbe81409fb2fd225db2bab, type: 3}
+    Volume: 1
