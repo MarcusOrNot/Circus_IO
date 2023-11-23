@@ -25,6 +25,7 @@ public class Hunter : MonoBehaviour
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }
     public void SetOnScaleChanged(Action<Vector3> onScaleChanged) { _onScaleChanged = onScaleChanged; }
+    public void SetOnBoostStateChanged(Action<bool> onBoostStateChanged) { _onBoostStateChanged = onBoostStateChanged; }
     
 
 
@@ -39,6 +40,7 @@ public class Hunter : MonoBehaviour
 
     private List<Action<int>> _onHealthChanged = new List<Action<int>>();
     private Action<Vector3> _onScaleChanged;
+    private Action<bool> _onBoostStateChanged;
     
 
     private bool _isGrowing = false;
@@ -124,6 +126,7 @@ public class Hunter : MonoBehaviour
     private IEnumerator BoosterReloading()
     {
         _isBoosterReady = false;
+        _onBoostStateChanged?.Invoke(_isBoosterReady);
         _boosterIsReloading = true;
         yield return new WaitForSeconds(_model.BoostRestartTime);
         _boosterIsReloading = false;
@@ -139,7 +142,8 @@ public class Hunter : MonoBehaviour
     }    
     private void SetBoostReady() 
     { 
-        _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice); 
+        _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice);
+        _onBoostStateChanged?.Invoke(_isBoosterReady);
     }
 
     private void OnTriggerEnter(Collider other)
