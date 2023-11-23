@@ -37,4 +37,9 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
             _onClickAction?.Invoke();
 #endif
     }
+
+    public void SetActionEnabled(bool enabled)
+    {
+        _actionButton.gameObject.SetActive(enabled);
+    }
 }
