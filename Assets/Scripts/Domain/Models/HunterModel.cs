@@ -17,5 +17,5 @@ public class HunterModel
 
     public bool IsScaleDependFromHealth = true;
 
-    public Renderer[] ColoredComponents;    
+    //public Renderer[] ColoredComponents;    
 }
