@@ -79,6 +79,7 @@ GameObject:
   - component: {fileID: 8771609089846911496}
   - component: {fileID: 6912611891989166798}
   - component: {fileID: 1682393910809011798}
+  - component: {fileID: 1485028560777501402}
   m_Layer: 0
   m_Name: BlueHunter
   m_TagString: Untagged
@@ -295,6 +296,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7846a0c0ebdeebd4bae16728f6467498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1485028560777501402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312247504195273182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34cf8c25ede0cb6469d9d84339b7227a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _warningAvoidDistance: 15
+  Agressive: 0.6
+  Appetite: 0.5
 --- !u!1 &5844555715057723559
 GameObject:
   m_ObjectHideFlags: 0
