@@ -18,14 +18,15 @@ public class HunterFollowBehaviour : AIBehavior
 
     public override AIBehaviorModel Update()
     {
-        Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter);
+        Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter, null);
         if (nearest != null && nearest.Lifes<_hunter.Lifes)
         {
             //Debug.Log("Now hunter should go "+_hunter.name);
             var between = (nearest.transform.position - _hunter.transform.position).normalized;
+            var accelerate = Vector3.Angle(between, _hunter.transform.forward)<10;
             //Debug.Log("cross " + between.ToString());            
             //return new Vector2(between.x, between.z);
-            return new AIBehaviorModel(1, new Vector2(between.x, between.z));
+            return new AIBehaviorModel(_agressive, new Vector2(between.x, between.z), accelerate);
         }
         return new AIBehaviorModel();
     }

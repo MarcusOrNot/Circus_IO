@@ -67,7 +67,7 @@ public class DamageZoneConroller : MonoBehaviour
     private IEnumerator ZoneCoroutine(int zoneTime)
     {
         yield return new WaitForSeconds(zoneTime);
-        ShowZone(_currentPos+1, 2);
+        ShowZone(_currentPos+1, 5);
     }
 
     private void DamageHunters()
@@ -75,7 +75,7 @@ public class DamageZoneConroller : MonoBehaviour
         var hunters = FindObjectsOfType<Hunter>();
         foreach (var hunter in hunters)
         {
-            if (Vector3.Distance(_startPos, hunter.transform.position) > _currentSize * 3)
+            if (IsDanger(hunter.transform.position))
             {
                 //Debug.Log("char is outside");
                 hunter.AddDamage(Mathf.Max(hunter.Lifes/2, MinDamage));
@@ -87,5 +87,11 @@ public class DamageZoneConroller : MonoBehaviour
     {
         _currentSize = size;
         _visual.transform.localScale = new Vector3(size, 1, size);
+    }
+
+    //public float Size => _currentSize;
+    public bool IsDanger(Vector3 position)
+    {
+        return Vector3.Distance(_startPos, position) > _currentSize * 3.2f;
     }
 }

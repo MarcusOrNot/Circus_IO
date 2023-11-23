@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac4542a3196f9b74eb680f7de77e5ad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartGenerationCount: 200
-  GenerationAreaSize: 200
-  MinAmountInField: 150
+  StartGenerationCount: 100
+  GenerationAreaSize: 250
+  MinAmountInField: 50
   GenTypes: 

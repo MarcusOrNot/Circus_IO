@@ -6,22 +6,25 @@ public class FoodCollectBehavior : AIBehavior
 {
     private float _appetite;
     private Transform _transform;
-    public FoodCollectBehavior(float appetite, Transform sourceTransform)
+    private DamageZoneConroller _damageZone;
+    public FoodCollectBehavior(float appetite, Transform sourceTransform, DamageZoneConroller damageZone)
     {
         _appetite = appetite;
         _transform = sourceTransform;
+        _damageZone = damageZone;
     }
 
     public override AIBehaviorModel Update()
     {
         //סכמי סבמנא זנאעגû
-        Entity nearest = GetNearestObject<Entity>(_transform.position);
+        Entity nearest = GetNearestObject<Entity>(_transform.position, null, _damageZone);
+        
         if (nearest != null)
         {
             var between = (nearest.transform.position - _transform.position).normalized;
             //Debug.Log("cross " + between.ToString());            
             //_direction = new Vector2(between.x, between.z);
-            return new AIBehaviorModel(0.5f, new Vector2(between.x, between.z));
+            return new AIBehaviorModel(_appetite, new Vector2(between.x, between.z), false);
         }
 
 

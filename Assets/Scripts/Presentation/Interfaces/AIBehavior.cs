@@ -10,9 +10,9 @@ public abstract class AIBehavior
 
     protected T GetNearestObject<T>(Vector3 position) where T : MonoBehaviour
     {
-        return GetNearestObject<T>(position, null);
+        return GetNearestObject<T>(position, null, null);
     }
-    protected T GetNearestObject<T>(Vector3 position, T exceptObject) where T: MonoBehaviour
+    protected T GetNearestObject<T>(Vector3 position, T exceptObject, DamageZoneConroller damageZone) where T: MonoBehaviour
     {
         float currentDist = 1000000.0f;
         T nearest = null;
@@ -24,7 +24,7 @@ public abstract class AIBehavior
         foreach (var elem in allObjects)
         {
             var dist = Vector3.Distance(elem.transform.position, position);
-            if (dist < currentDist)
+            if (dist < currentDist) //&& damageZone!=null?true:damageZone.IsDanger(elem.transform.position))
             {
                 nearest = elem;
                 currentDist = dist;

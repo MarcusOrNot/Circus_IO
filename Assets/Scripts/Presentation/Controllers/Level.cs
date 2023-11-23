@@ -6,10 +6,12 @@ using UnityEngine.SceneManagement;
 public class Level : MonoBehaviour
 {
     private PlayerHunter _player;
+    private DamageZoneConroller _damageZoneConroller;
     public static Level Instance { get; private set; }
     private void Awake()
     {
         Instance = this;
+        _damageZoneConroller = FindObjectOfType<DamageZoneConroller>();
     }
 
     public IPlayer GetPlayer()
@@ -19,6 +21,8 @@ public class Level : MonoBehaviour
         _player = FindObjectOfType<PlayerHunter>();
         return _player;
     }
+
+    public DamageZoneConroller GetDamageZone() => _damageZoneConroller;
 
     public void RestartLevel()
     {
