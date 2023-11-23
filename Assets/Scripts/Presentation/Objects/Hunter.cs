@@ -4,6 +4,8 @@ using UnityEngine;
 using Zenject;
 using static UnityEngine.EventSystems.EventTrigger;
 using TMPro;
+using System.Collections.Generic;
+using UnityEngine.ProBuilder;
 
 [RequireComponent(typeof(Character))]
 
@@ -21,7 +23,9 @@ public class Hunter : MonoBehaviour
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
     public void AddDamage(int value) { GetDamage(value); } 
 
-    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
+    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }
+    public void SetOnScaleChanged(Action<Vector3> onScaleChanged) { _onScaleChanged = onScaleChanged; }
+    
 
 
     [SerializeField] private HunterModel _model;    
@@ -32,37 +36,60 @@ public class Hunter : MonoBehaviour
     private bool _boosterIsReloading = false;
 
     private int _health = 0;
-    private Action<int> _onHealthChanged;
+
+    private List<Action<int>> _onHealthChanged = new List<Action<int>>();
+    private Action<Vector3> _onScaleChanged;
+    
 
     private bool _isGrowing = false;
     private IEnumerator _currentGrowingProcess = null;
 
     private EntityType _entityTypeForSpawn;
-    //private int _maxEnititySpawnCountPerFrame = 10;    
-    //private int _spawningEntitiesQueueSummaryHealth = 0;
-    //private float _timeBetweenSpawnFrames = 0.05f;
-        
-    //private Renderer[] _visualComponents;
-    //private Collider _collider;
-    private Rigidbody _rigidbody;
 
     
+
+    private Rigidbody _rigidbody;
+
+
+    private EffectPlayController _soundEffectsController;
+
+    private ParticleSystem _dustParticles;
+    private Vector3 _startDustParticleShapeScale;
+    private float _startEmissionRate;
+
     private void Awake()
     {
+        _dustParticles = GetComponentInChildren<ParticleSystem>();
+        if (_dustParticles != null)
+        {
+            _startDustParticleShapeScale = _dustParticles.shape.scale;
+            _startEmissionRate = _dustParticles.emission.rateOverTime.constant;            
+        }
+
         _character = GetComponent<Character>();
-        //_visualComponents = GetComponentsInChildren<Renderer>();
-        //_collider = GetComponent<Collider>();
+                
+
         _rigidbody = GetComponent<Rigidbody>();
+
+        _soundEffectsController = GetComponent<EffectPlayController>();
     }
     private void Start()
     {                
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
-        //SetColorOnColoredComponents(_model.Color);
+
+        _dustParticles?.Stop();
+
+
+
         transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);
-        ChangeHealth(_model.StartEntity); 
+        _onScaleChanged?.Invoke(transform.localScale);
+        ChangeHealth(_model.StartEntity);
+
+        
+
         SetBoostReady();
 
-        //StartCoroutine(EntitySpawning());
+        
 
         Material meshMaterial = GetComponentInChildren<SkinnedMeshRenderer>()?.materials?[0];
         if (meshMaterial != null) meshMaterial.color = _model.Color;
@@ -72,27 +99,26 @@ public class Hunter : MonoBehaviour
     private void OnDestroy()
     {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
+        _onHealthChanged.Clear();
+        _onScaleChanged = null;
     }
-
-    /*
-    private void SetColorOnColoredComponents(Color color)
-    {
-        foreach (Renderer coloredComponent in _model.ColoredComponents) 
-            coloredComponent.material.color = color;
-    }
-    */
+    
+    
 
     private IEnumerator BoosterActivation()
     {
         if (!_isBoosterReady) yield break;
         StartCoroutine(BoosterReloading());
         _isMovingWithBoost = true;
+        _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_ACCELERATED);
+        _dustParticles?.Play();
         if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
         _character.SpeedMultiplier = _model.BoostValue;
         StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
         _character.SpeedMultiplier = savedBoostSpeed;
+        _dustParticles?.Stop();
         _isMovingWithBoost = false;
     }
     private IEnumerator BoosterReloading()
@@ -146,6 +172,7 @@ public class Hunter : MonoBehaviour
             eatingSpeed = 7f * _character.SpeedMultiplier;
             objectDestroyingTime = 1f;
             monobehaviourDestroyingTime = 0;
+            _soundEffectsController?.PlayEffect(SoundEffectType.ENTITY_EAT);
         }
         else if (somebody is Hunter)
         {
@@ -162,17 +189,9 @@ public class Hunter : MonoBehaviour
             somebodyObject.transform.localScale = Vector3.Lerp(somebodyObject.transform.localScale, somebodyObject.transform.localScale / 10f, eatingSpeed * Time.deltaTime);
             yield return null;
         }
-    }
+    }    
 
-    /*
-    private void GetDamage(int value)
-    {
-        ChangeHealth(-value);
-        if (_rigidbody == null) return;
-        _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
-        if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
-    }
-    */
+    
     private void GetDamage(int value)
     {
         ChangeHealth(-value);
@@ -184,7 +203,10 @@ public class Hunter : MonoBehaviour
     private void ChangeHealth(int value)
     {
         _health += value;
-        _onHealthChanged?.Invoke(_health);
+        foreach (var item in _onHealthChanged) item.Invoke(_health);
+
+        
+                    
         SetBoostReady();
         if (_rigidbody == null) return;
         if (_model.IsScaleDependFromHealth) 
@@ -205,12 +227,22 @@ public class Hunter : MonoBehaviour
         _isGrowing = true;
         while (transform.localScale != targetScale)
         {
-            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, growingSpeed);
+            transform.localScale = Vector3.MoveTowards(transform.localScale, targetScale, growingSpeed);
+            _onScaleChanged?.Invoke(transform.localScale);
+            
             yield return new WaitForSeconds(timeBetweenGrow);
+        }
+        
+        if (_dustParticles != null)
+        {
+            var shape = _dustParticles.shape; shape.scale = Vector3.Scale(_startDustParticleShapeScale, transform.localScale); 
+            
+            // var rate = _dustParticles.emission.rateOverTime; rate.constant = 0.5f;
+            
         }
         _isGrowing = false;
     }
-
+    
 
 
 
@@ -250,6 +282,35 @@ public class Hunter : MonoBehaviour
         return spawnedEntity;
     }
 
+
+
+    //private int _maxEnititySpawnCountPerFrame = 10;    
+    //private int _spawningEntitiesQueueSummaryHealth = 0;
+    //private float _timeBetweenSpawnFrames = 0.05f;
+    //private Renderer[] _visualComponents;
+    //private Collider _collider;
+    //_visualComponents = GetComponentsInChildren<Renderer>();
+    //_collider = GetComponent<Collider>();
+
+    //SetColorOnColoredComponents(_model.Color);
+    //StartCoroutine(EntitySpawning());
+
+    /*
+    private void SetColorOnColoredComponents(Color color)
+    {
+        foreach (Renderer coloredComponent in _model.ColoredComponents) 
+            coloredComponent.material.color = color;
+    }
+    */
+    /*
+    private void GetDamage(int value)
+    {
+        ChangeHealth(-value);
+        if (_rigidbody == null) return;
+        _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
+        if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
+    }
+    */
     /*
     private IEnumerator EntitySpawning()
     {
@@ -292,5 +353,7 @@ public class Hunter : MonoBehaviour
         Destroy(gameObject);        
     }
     */
-
 }
+
+
+

@@ -5,18 +5,14 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     public EntityModel Model { get => _model; }
-    //public Color Color { set => SetColor(value); }
+    
     public int HealthCount { get => _model.HealCount; set { _model.HealCount = value; } }
 
 
-    [SerializeField] private EntityModel _model;
-    
-        
-    //private Renderer[] _coloredComponents;
+    [SerializeField] private EntityModel _model;  
 
     private Rigidbody _rigidbody;
     private Collider _collider;
-
         
     private bool _destroyingProcessIsStarted = false;
     private IEnumerator _destroyingProcess;
@@ -25,7 +21,7 @@ public class Entity : MonoBehaviour
 
     private void Awake()
     {
-        //_coloredComponents = GetComponentsInChildren<Renderer>();
+        
         _rigidbody = GetComponentInChildren<Rigidbody>();
         _collider = GetComponentInChildren<Collider>();
         _rigidbody.isKinematic = false;
@@ -34,8 +30,7 @@ public class Entity : MonoBehaviour
     private void Start()
     {        
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
-        //
-        //ENTITY SCALE DEPENDING FROM MODEL.HEALCOUNT   transform.localScale = Vector3.one * (0.5f + Mathf.Min(_model.HealCount / 10f, 1f));   
+        
         StartCoroutine(CheckFallingStatus());        
     }   
 
@@ -95,11 +90,26 @@ public class Entity : MonoBehaviour
         _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);        
     }
 
+
+    //public Color Color { set => SetColor(value); }
+
+    //private Renderer[] _coloredComponents;
+
+    //_coloredComponents = GetComponentsInChildren<Renderer>();
+
+    /*
+    private void Start()
+    {
+        transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
+        transform.localScale = Vector3.one * (0.5f + Mathf.Min(_model.HealCount / 10f, 1f));   
+        StartCoroutine(CheckFallingStatus());
+    }
+    */  
     /*
     private void SetColor(Color color)
     {
         foreach (Renderer coloredComponent in _coloredComponents) { coloredComponent.material.color += color; }            
     }
     */
-    
+
 }
