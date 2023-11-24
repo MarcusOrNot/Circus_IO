@@ -199,7 +199,7 @@ public class Hunter : MonoBehaviour
         {
             ChangeHealth((somebody as Hunter).Lifes);
             eatingSpeed = 7f * _character.SpeedMultiplier;
-            objectDestroyingTime = 3f;
+            objectDestroyingTime = 0.3f;
             monobehaviourDestroyingTime = 0.5f;
         }
         Destroy(somebody, monobehaviourDestroyingTime);
