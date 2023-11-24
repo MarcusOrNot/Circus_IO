@@ -31,17 +31,23 @@ public class GameController : MonoBehaviour, IGameEventObserver
 
     public void Notify(GameEventType gameEvent)
     {
-        if (gameEvent==GameEventType.PLAYER_DEAD)
+        switch(gameEvent)
         {
-            PauseGame();
-            _gameUI.ShowGameOver();
-            _music.Stop();
-            _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
-            
-        }
-        else if (gameEvent==GameEventType.HUNTER_DEAD)
-        {
-            StartCoroutine(CheckHuntersCount());
+            case GameEventType.PLAYER_DEAD:
+                PauseGame();
+                _gameUI.ShowGameOver();
+                _music.Stop();
+                _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+                break;
+            case GameEventType.HUNTER_DEAD:
+                StartCoroutine(CheckHuntersCount());
+                break;
+            case GameEventType.GAME_PAUSED:
+                PauseGame();
+                break;
+            case GameEventType.GAME_CONTINUE:
+                ResumeGame();
+                break;
         }
     }
     private IEnumerator CheckHuntersCount()
@@ -62,11 +68,13 @@ public class GameController : MonoBehaviour, IGameEventObserver
 
     public void PauseGame()
     {
+        _music.Pause();
         Time.timeScale = 0f;
     }
 
     public void ResumeGame()
     {
+        _music.Continue();
         Time.timeScale = 1f;
     }
 }

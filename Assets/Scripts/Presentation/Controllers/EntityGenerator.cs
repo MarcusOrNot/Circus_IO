@@ -10,7 +10,7 @@ public class EntityGenerator : MonoBehaviour
     public int StartGenerationCount = 100;
     public int GenerationAreaSize = 10;
     public int MinAmountInField = 90;
-    public List<EntityType> GenTypes = new List<EntityType>();
+    //public List<EntityType> GenTypes = new List<EntityType>();
     [Inject] private EntityFactory _entityFactory;
 
     private void Start()

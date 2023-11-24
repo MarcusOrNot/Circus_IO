@@ -6,18 +6,18 @@ public class FoodCollectBehavior : AIBehavior
 {
     private float _appetite;
     private Transform _transform;
-    private DamageZoneConroller _damageZone;
-    public FoodCollectBehavior(float appetite, Transform sourceTransform, DamageZoneConroller damageZone)
+    //private DamageZoneConroller _damageZone;
+    public FoodCollectBehavior(float appetite, Transform sourceTransform)
     {
         _appetite = appetite;
         _transform = sourceTransform;
-        _damageZone = damageZone;
+        //_damageZone = damageZone;
     }
 
     public override AIBehaviorModel Update()
     {
         //סכמי סבמנא זנאעגû
-        Entity nearest = GetNearestObject<Entity>(_transform.position, null, _damageZone);
+        Entity nearest = GetNearestObject<Entity>(_transform.position, null);
         
         if (nearest != null)
         {

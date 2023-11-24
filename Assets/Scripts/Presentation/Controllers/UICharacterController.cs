@@ -40,6 +40,9 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
 
     public void SetActionEnabled(bool enabled)
     {
-        _actionButton.gameObject.SetActive(enabled);
+        //_actionButton.gameObject.SetActive(enabled);
+        var tempColor = _actionButton.GetComponent<Image>().color;
+        tempColor.a = enabled?1:0.3f;
+        _actionButton.GetComponent<Image>().color = tempColor;
     }
 }

@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
 public class AvoidHunterBehaviour : AIBehavior
 {
+    private const float _dangerDistance = 20;
     private float _fear;
     private Hunter _hunter;
 
@@ -16,11 +18,16 @@ public class AvoidHunterBehaviour : AIBehavior
 
     public override AIBehaviorModel Update()
     {
-        Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter, null);
-        if (nearest != null && nearest.Lifes < _hunter.Lifes)
+        Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter);
+        if (nearest != null && nearest.Lifes > _hunter.Lifes)
         {
-            var between = -(nearest.transform.position - _hunter.transform.position).normalized;
-            return new AIBehaviorModel(_fear, new Vector2(between.x, between.z), true);
+            var distance = Vector3.Distance(nearest.transform.position, _hunter.transform.position);
+            if (distance < _dangerDistance)
+            {
+                var acceleration = distance < _dangerDistance / 2;
+                var direction = -(nearest.transform.position - _hunter.transform.position).normalized;
+                return new AIBehaviorModel(_fear, new Vector2(direction.x, direction.z), acceleration);
+            }
         }
 
         return new AIBehaviorModel();

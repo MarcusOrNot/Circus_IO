@@ -5,6 +5,7 @@ using DG.Tweening;
 
 public class DamageZoneConroller : MonoBehaviour
 {
+    private const int TRANSITION_TIME = 10;
     public int MinDamage = 100;
     [SerializeField] private List<DamageZoneModel> _damageZones;
     private Transform _visual;
@@ -67,7 +68,7 @@ public class DamageZoneConroller : MonoBehaviour
     private IEnumerator ZoneCoroutine(int zoneTime)
     {
         yield return new WaitForSeconds(zoneTime);
-        ShowZone(_currentPos+1, 5);
+        ShowZone(_currentPos+1, TRANSITION_TIME);
     }
 
     private void DamageHunters()
