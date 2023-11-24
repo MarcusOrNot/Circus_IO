@@ -29,4 +29,20 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
     {
         _actionButton.onClick.RemoveAllListeners();
     }
+
+    private void Update()
+    {
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Space))
+            _onClickAction?.Invoke();
+#endif
+    }
+
+    public void SetActionEnabled(bool enabled)
+    {
+        //_actionButton.gameObject.SetActive(enabled);
+        var tempColor = _actionButton.GetComponent<Image>().color;
+        tempColor.a = enabled?1:0.3f;
+        _actionButton.GetComponent<Image>().color = tempColor;
+    }
 }

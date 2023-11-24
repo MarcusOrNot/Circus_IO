@@ -4,6 +4,9 @@ using UnityEngine;
 using Zenject;
 using static UnityEngine.EventSystems.EventTrigger;
 using TMPro;
+using System.Collections.Generic;
+using UnityEngine.ProBuilder;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(Character))]
 
@@ -14,14 +17,18 @@ public class Hunter : MonoBehaviour
     
 
     public HunterModel Model { get => _model; }
-    public bool IsReadyToBoost { get => _isBoosterReady; }
+    
     public int Lifes { get => _health; }
 
     public void Boost() { StartCoroutine(BoosterActivation()); } 
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
     public void AddDamage(int value) { GetDamage(value); } 
 
-    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged = onHealthChanged; }
+    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }    
+    public void SetOnBoostStateChanged(Action<bool> onBoostStateChanged) { _onBoostStateChanged = onBoostStateChanged; }
+    public void SetOnBoostingStateChanged(Action<bool> onBoostingStateChanged) { _onBoostingStateChanged = onBoostingStateChanged; }
+    public void SetOnScaleChanged(Action<Vector3> onScaleChanged) { _onScaleChanged = onScaleChanged; }
+    
 
 
     [SerializeField] private HunterModel _model;    
@@ -32,65 +39,112 @@ public class Hunter : MonoBehaviour
     private bool _boosterIsReloading = false;
 
     private int _health = 0;
-    private Action<int> _onHealthChanged;
+
+    private List<Action<int>> _onHealthChanged = new List<Action<int>>();    
+    private Action<bool> _onBoostStateChanged;
+    private Action<bool> _onBoostingStateChanged;
+    private Action<Vector3> _onScaleChanged;
+
 
     private bool _isGrowing = false;
     private IEnumerator _currentGrowingProcess = null;
 
     private EntityType _entityTypeForSpawn;
-    private int _maxEnititySpawnCountPerFrame = 10;    
-    private int _spawningEntitiesQueueSummaryHealth = 0;
-    private float _timeBetweenSpawnFrames = 0.05f;
-        
-    private Renderer[] _visualComponents;
-    private Collider _collider;
+
+    
+
     private Rigidbody _rigidbody;
 
 
+    private EffectPlayController _soundEffectsController;
+
+    private const float MAX_SCALE = 7f;
+
+    private Camera _camera = null;
+    private PlayerHunter _player = null;
+    private AudioListener _playerAudioListener = null;
+    private AudioListener _cameraAudioListener = null;
+
     private void Awake()
     {
+        if (TryGetComponent(out PlayerHunter player))
+        {
+            _player = player;
+            if (TryGetComponent(out AudioListener playerAudioListener)) { _playerAudioListener = playerAudioListener; }
+            else { _playerAudioListener = _player.AddComponent<AudioListener>(); }
+            _playerAudioListener.enabled = true;
+
+            _camera = Camera.main;
+            if (_camera.TryGetComponent(out AudioListener cameraAudioListener)) { _cameraAudioListener = cameraAudioListener; }
+            else { _cameraAudioListener = _camera.AddComponent<AudioListener>(); }
+            _cameraAudioListener.enabled = false;
+        }
+        
+        
+
         _character = GetComponent<Character>();
-        _visualComponents = GetComponentsInChildren<Renderer>();
-        _collider = GetComponent<Collider>();
+                
+
         _rigidbody = GetComponent<Rigidbody>();
+
+        _soundEffectsController = GetComponent<EffectPlayController>();
     }
     private void Start()
-    {        
+    {                
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
-        SetColorOnColoredComponents(_model.Color);
+
+        
+
+
+
         transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);
-        ChangeHealth(_model.StartEntity); 
+        _onScaleChanged?.Invoke(transform.localScale);
+        ChangeHealth(_model.StartEntity);
+
+        
+
         SetBoostReady();
-        StartCoroutine(EntitySpawning());
+
+        
+
+        Material meshMaterial = GetComponentInChildren<SkinnedMeshRenderer>()?.materials?[0];
+        if (meshMaterial != null) meshMaterial.color = _model.Color;
+        INeedKaufmoColor[] coloredElements = GetComponentsInChildren<INeedKaufmoColor>();
+        foreach (INeedKaufmoColor coloredElement in coloredElements) coloredElement.Color = _model.Color;   
     }
     private void OnDestroy()
-    {
+    {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
-    }
+        _onHealthChanged.Clear();
+        if (_player != null) { if ( _playerAudioListener != null ) _playerAudioListener.enabled = false; _cameraAudioListener.enabled = true; }
 
-    private void SetColorOnColoredComponents(Color color)
-    {
-        foreach (Renderer coloredComponent in _model.ColoredComponents) 
-            coloredComponent.material.color = color;
-    }   
+        
+    }
+    
+    
 
     private IEnumerator BoosterActivation()
     {
         if (!_isBoosterReady) yield break;
         StartCoroutine(BoosterReloading());
         _isMovingWithBoost = true;
+        _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_ACCELERATED);
+        
+        _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
         if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
         _character.SpeedMultiplier = _model.BoostValue;
         StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
         _character.SpeedMultiplier = savedBoostSpeed;
+        
         _isMovingWithBoost = false;
+        _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
     }
     private IEnumerator BoosterReloading()
-    {
-        _isBoosterReady = false;
+    {        
         _boosterIsReloading = true;
+        SetBoostReady();
         yield return new WaitForSeconds(_model.BoostRestartTime);
         _boosterIsReloading = false;
         SetBoostReady();
@@ -105,7 +159,8 @@ public class Hunter : MonoBehaviour
     }    
     private void SetBoostReady() 
     { 
-        _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice); 
+        _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice);
+        _onBoostStateChanged?.Invoke(_isBoosterReady);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -127,7 +182,8 @@ public class Hunter : MonoBehaviour
     {
         if (!(somebody is Entity) && !(somebody is Hunter)) { yield break; }
         float eatingSpeed = 10f;
-        float destroyingTime = 0;     
+        float objectDestroyingTime = 0;
+        float monobehaviourDestroyingTime = 0;
         GameObject somebodyObject = somebody?.gameObject;
         Collider collider = somebodyObject?.GetComponent<Collider>();
         if (collider != null) Destroy(collider);
@@ -135,35 +191,45 @@ public class Hunter : MonoBehaviour
         {
             ChangeHealth((somebody as Entity).HealthCount);
             eatingSpeed = 7f * _character.SpeedMultiplier;
-            destroyingTime = 1f;            
+            objectDestroyingTime = 1f;
+            monobehaviourDestroyingTime = 0;
+            _soundEffectsController?.PlayEffect(SoundEffectType.ENTITY_EAT);
         }
         else if (somebody is Hunter)
         {
             ChangeHealth((somebody as Hunter).Lifes);
             eatingSpeed = 7f * _character.SpeedMultiplier;
-            destroyingTime = 3f;
+            objectDestroyingTime = 0.3f;
+            monobehaviourDestroyingTime = 0.5f;
         }
-        Destroy(somebody);  
-        Destroy(somebodyObject, destroyingTime);        
+        Destroy(somebody, monobehaviourDestroyingTime);
+        Destroy(somebodyObject, objectDestroyingTime);        
         while (somebodyObject != null)
         {
             somebodyObject.transform.position = Vector3.Lerp(somebodyObject.transform.position, transform.position, eatingSpeed * Time.deltaTime);
             somebodyObject.transform.localScale = Vector3.Lerp(somebodyObject.transform.localScale, somebodyObject.transform.localScale / 10f, eatingSpeed * Time.deltaTime);
             yield return null;
         }
-    }
+    }    
 
+    
     private void GetDamage(int value)
     {
         ChangeHealth(-value);
-        _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
-        if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
+        if (_rigidbody == null) return;
+        EntitySpawning(value / 5);        
+        if (_health <= 0) Destroy(gameObject);
     }
+
     private void ChangeHealth(int value)
     {
         _health += value;
-        _onHealthChanged?.Invoke(_health);
+        foreach (var item in _onHealthChanged) item.Invoke(_health);
+
+        
+                    
         SetBoostReady();
+        if (_rigidbody == null) return;
         if (_model.IsScaleDependFromHealth) 
         { 
             if (_isGrowing) { StopCoroutine(_currentGrowingProcess); _isGrowing = false; }
@@ -172,8 +238,8 @@ public class Hunter : MonoBehaviour
         }        
     }
     private Vector3 GetScaleDependingOnHealth(int health) 
-    { 
-        return Vector3.one * (1 + health * 0.5f / 30); 
+    {
+        return Vector3.one * Mathf.Min(Mathf.Pow(Mathf.Max(10, health), 0.3f) / 1.5f, MAX_SCALE); 
     }
     private IEnumerator GrowingProcess(Vector3 targetScale)
     {
@@ -182,12 +248,84 @@ public class Hunter : MonoBehaviour
         _isGrowing = true;
         while (transform.localScale != targetScale)
         {
-            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, growingSpeed);
+            transform.localScale = Vector3.MoveTowards(transform.localScale, targetScale, growingSpeed);
+                        
             yield return new WaitForSeconds(timeBetweenGrow);
         }
+        _onScaleChanged?.Invoke(transform.localScale);
+
         _isGrowing = false;
     }
+    
 
+
+
+
+    private void EntitySpawning(int summaryHealth)
+    {
+        int entityCountForSpawn = Mathf.Min(5, summaryHealth);
+        for (int i = entityCountForSpawn; i > 0; i--)
+        {
+            int currentEntityHealth = summaryHealth / i + (summaryHealth % i == 0 ? 0 : 1);
+            SpawnOutEntity(currentEntityHealth);
+            summaryHealth -= currentEntityHealth;
+        }  
+    }
+    private Entity SpawnOutEntity(int entityHealth)
+    {
+        float pullOutForceUp = 5f;
+        float pullOutForceHorizontal = 3f;
+        float positionVerticalOffset = transform.localScale.x * 1f + 0.3f;
+        float positionHorisontalOffset = transform.localScale.x * 1f + 0.3f;
+        Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;
+        Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
+        spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
+        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
+        INeedKaufmoColor colorNeedable = spawnedEntity.GetComponentInChildren<INeedKaufmoColor>();
+        if (colorNeedable != null) colorNeedable.Color = _model.Color;
+        spawnedEntity.HealthCount = entityHealth;
+        spawnedEntity.transform.localScale *= entityHealth switch
+        {
+            >= 1 and < 10 => 1f,
+            >= 10 and < 50 => 1.5f,
+            >= 50 and < 100 => 1.8f,
+            >= 100 and < 500 => 2f,
+            >= 500 => 2.2f,
+            _ => 1f
+        };  
+        return spawnedEntity;
+    }
+
+
+
+    //private int _maxEnititySpawnCountPerFrame = 10;    
+    //private int _spawningEntitiesQueueSummaryHealth = 0;
+    //private float _timeBetweenSpawnFrames = 0.05f;
+    //private Renderer[] _visualComponents;
+    //private Collider _collider;
+    //_visualComponents = GetComponentsInChildren<Renderer>();
+    //_collider = GetComponent<Collider>();
+
+    //SetColorOnColoredComponents(_model.Color);
+    //StartCoroutine(EntitySpawning());
+
+    /*
+    private void SetColorOnColoredComponents(Color color)
+    {
+        foreach (Renderer coloredComponent in _model.ColoredComponents) 
+            coloredComponent.material.color = color;
+    }
+    */
+    /*
+    private void GetDamage(int value)
+    {
+        ChangeHealth(-value);
+        if (_rigidbody == null) return;
+        _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
+        if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
+    }
+    */
+    /*
     private IEnumerator EntitySpawning()
     {
         while (true)
@@ -201,7 +339,9 @@ public class Hunter : MonoBehaviour
             _spawningEntitiesQueueSummaryHealth = Math.Max(0, _spawningEntitiesQueueSummaryHealth);            
             yield return new WaitForSeconds(_timeBetweenSpawnFrames);
         }
-    }    
+    }
+    */
+    /*
     private Entity SpawnOutEntity()
     {
         float pullOutForceUp = 5f;
@@ -211,11 +351,13 @@ public class Hunter : MonoBehaviour
         Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;        
         Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
         spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
-        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);        
-        spawnedEntity.Color = _model.Color;
+        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
+        INeedKaufmoColor colorNeedable = spawnedEntity.GetComponentInChildren<INeedKaufmoColor>();
+        if (colorNeedable != null) colorNeedable.Color = _model.Color;            
         return spawnedEntity;
     }
-    
+    */
+    /*
     private IEnumerator DestroyingAfterEntitySpawning()
     {        
         Destroy(_rigidbody);
@@ -224,5 +366,8 @@ public class Hunter : MonoBehaviour
         while (_spawningEntitiesQueueSummaryHealth > 0) { yield return null; }
         Destroy(gameObject);        
     }
-        
+    */
 }
+
+
+

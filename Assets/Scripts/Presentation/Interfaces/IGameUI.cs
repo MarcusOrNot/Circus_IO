@@ -7,4 +7,5 @@ public interface IGameUI
     public void SetLifesValue(int lifes);
     public void ShowWin();
     public void ShowGameOver();
+    public void ShowPause();
 }

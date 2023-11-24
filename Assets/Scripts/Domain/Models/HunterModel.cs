@@ -6,16 +6,16 @@ using UnityEngine;
 public class HunterModel
 {
     public int StartEntity = 10;
-    public float BoostValue = 30f;
+    public float BoostValue = 3f;
 
     public HunterType HunterType;
     public Color Color;
 
     public float BoostTime = 0.5f;
-    public float BoostRestartTime = 7f;
+    public float BoostRestartTime = 3f;
     public int BoostPrice = 0;
 
     public bool IsScaleDependFromHealth = true;
 
-    public Renderer[] ColoredComponents;    
+    //public Renderer[] ColoredComponents;    
 }

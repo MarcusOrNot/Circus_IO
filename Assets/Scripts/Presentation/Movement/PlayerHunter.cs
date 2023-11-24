@@ -25,6 +25,10 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             {
                 _gameUI.SetLifesValue(lifes);
             });
+            _hunter.SetOnBoostStateChanged((state) =>
+            {
+                _controller.SetActionEnabled(state);
+            });
         }
     }
 

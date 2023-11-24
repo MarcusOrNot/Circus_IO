@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using Zenject;
 
@@ -5,7 +6,9 @@ public class GameController : MonoBehaviour, IGameEventObserver
 {
     [Inject] private IEventBus _eventBus;
     [Inject] private IGameUI _gameUI;
-    // Start is called before the first frame update
+    [Inject] private IAudioEffect _effect;
+    [Inject] private IMusicPlayer _music;
+    
     void Start()
     {
         //_eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
@@ -14,13 +17,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         ResumeGame();
         
         
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    }   
 
     private void OnEnable()
     {
@@ -34,32 +31,50 @@ public class GameController : MonoBehaviour, IGameEventObserver
 
     public void Notify(GameEventType gameEvent)
     {
-        if (gameEvent==GameEventType.PLAYER_DEAD)
+        switch(gameEvent)
         {
-            PauseGame();
-            _gameUI.ShowGameOver();
+            case GameEventType.PLAYER_DEAD:
+                PauseGame();
+                _gameUI.ShowGameOver();
+                _music.Stop();
+                _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+                break;
+            case GameEventType.HUNTER_DEAD:
+                StartCoroutine(CheckHuntersCount());
+                break;
+            case GameEventType.GAME_PAUSED:
+                PauseGame();
+                break;
+            case GameEventType.GAME_CONTINUE:
+                ResumeGame();
+                break;
         }
-        else if (gameEvent==GameEventType.HUNTER_DEAD)
+    }
+    private IEnumerator CheckHuntersCount()
+    {
+        for (int i = 0; i < 2; i++) yield return null;        
+        var hunters = FindObjectsOfType<Hunter>();
+        if (hunters.Length == 1)
         {
-            var hunters = FindObjectsOfType<Hunter>();
-            if (hunters.Length == 1)
+            if (hunters[0].GetComponent<PlayerHunter>() != null)
             {
-                if (hunters[0].GetComponent<PlayerHunter>()!=null)
-                {
-                    PauseGame();
-                    _gameUI.ShowWin();
-                }
+                PauseGame();
+                _gameUI.ShowWin();
+                _music.Stop();
+                _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
             }
         }
     }
 
     public void PauseGame()
     {
+        _music.Pause();
         Time.timeScale = 0f;
     }
 
     public void ResumeGame()
     {
+        _music.Continue();
         Time.timeScale = 1f;
     }
 }
