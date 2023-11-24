@@ -20,7 +20,7 @@ public class TestController : MonoBehaviour
         if (Input.GetKey(KeyCode.D)) { _hunter.Move(Vector2.right); }
         if (Input.GetKey(KeyCode.W)) { _hunter.Move(Vector2.up); }
         if (Input.GetKey(KeyCode.S)) { _hunter.Move(Vector2.down); }
-        if (Input.GetKey(KeyCode.Space)) { if (_hunter.IsReadyToBoost) _hunter.Boost(); }
+        //if (Input.GetKey(KeyCode.Space)) { if (_hunter.IsReadyToBoost) _hunter.Boost(); }
         if (Input.GetKey(KeyCode.X)) { _hunter.AddDamage(40); }
 
         //if (Input.GetKey(KeyCode.A)) { Turn(-_turnSensivity * Time.deltaTime); }

@@ -6,6 +6,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 using TMPro;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(Character))]
 
@@ -16,16 +17,17 @@ public class Hunter : MonoBehaviour
     
 
     public HunterModel Model { get => _model; }
-    public bool IsReadyToBoost { get => _isBoosterReady; }
+    
     public int Lifes { get => _health; }
 
     public void Boost() { StartCoroutine(BoosterActivation()); } 
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
     public void AddDamage(int value) { GetDamage(value); } 
 
-    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }
-    public void SetOnScaleChanged(Action<Vector3> onScaleChanged) { _onScaleChanged = onScaleChanged; }
+    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }    
     public void SetOnBoostStateChanged(Action<bool> onBoostStateChanged) { _onBoostStateChanged = onBoostStateChanged; }
+    public void SetOnBoostingStateChanged(Action<bool> onBoostingStateChanged) { _onBoostingStateChanged = onBoostingStateChanged; }
+    public void SetOnScaleChanged(Action<Vector3> onScaleChanged) { _onScaleChanged = onScaleChanged; }
     
 
 
@@ -38,10 +40,11 @@ public class Hunter : MonoBehaviour
 
     private int _health = 0;
 
-    private List<Action<int>> _onHealthChanged = new List<Action<int>>();
-    private Action<Vector3> _onScaleChanged;
+    private List<Action<int>> _onHealthChanged = new List<Action<int>>();    
     private Action<bool> _onBoostStateChanged;
-    
+    private Action<bool> _onBoostingStateChanged;
+    private Action<Vector3> _onScaleChanged;
+
 
     private bool _isGrowing = false;
     private IEnumerator _currentGrowingProcess = null;
@@ -55,18 +58,29 @@ public class Hunter : MonoBehaviour
 
     private EffectPlayController _soundEffectsController;
 
-    private ParticleSystem _dustParticles;
-    private Vector3 _startDustParticleShapeScale;
-    private float _startEmissionRate;
+    private const float MAX_SCALE = 7f;
+
+    private Camera _camera = null;
+    private PlayerHunter _player = null;
+    private AudioListener _playerAudioListener = null;
+    private AudioListener _cameraAudioListener = null;
 
     private void Awake()
     {
-        _dustParticles = GetComponentInChildren<ParticleSystem>();
-        if (_dustParticles != null)
+        if (TryGetComponent(out PlayerHunter player))
         {
-            _startDustParticleShapeScale = _dustParticles.shape.scale;
-            _startEmissionRate = _dustParticles.emission.rateOverTime.constant;            
+            _player = player;
+            if (TryGetComponent(out AudioListener playerAudioListener)) { _playerAudioListener = playerAudioListener; }
+            else { _playerAudioListener = _player.AddComponent<AudioListener>(); }
+            _playerAudioListener.enabled = true;
+
+            _camera = Camera.main;
+            if (_camera.TryGetComponent(out AudioListener cameraAudioListener)) { _cameraAudioListener = cameraAudioListener; }
+            else { _cameraAudioListener = _camera.AddComponent<AudioListener>(); }
+            _cameraAudioListener.enabled = false;
         }
+        
+        
 
         _character = GetComponent<Character>();
                 
@@ -79,7 +93,7 @@ public class Hunter : MonoBehaviour
     {                
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0);
 
-        _dustParticles?.Stop();
+        
 
 
 
@@ -102,7 +116,9 @@ public class Hunter : MonoBehaviour
     {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
         _onHealthChanged.Clear();
-        _onScaleChanged = null;
+        if (_player != null) { _playerAudioListener.enabled = false; _cameraAudioListener.enabled = true; }
+
+        
     }
     
     
@@ -113,21 +129,22 @@ public class Hunter : MonoBehaviour
         StartCoroutine(BoosterReloading());
         _isMovingWithBoost = true;
         _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_ACCELERATED);
-        _dustParticles?.Play();
+        
+        _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
         if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
         _character.SpeedMultiplier = _model.BoostValue;
         StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
         _character.SpeedMultiplier = savedBoostSpeed;
-        _dustParticles?.Stop();
+        
         _isMovingWithBoost = false;
+        _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
     }
     private IEnumerator BoosterReloading()
-    {
-        _isBoosterReady = false;
-        _onBoostStateChanged?.Invoke(_isBoosterReady);
+    {        
         _boosterIsReloading = true;
+        SetBoostReady();
         yield return new WaitForSeconds(_model.BoostRestartTime);
         _boosterIsReloading = false;
         SetBoostReady();
@@ -222,7 +239,7 @@ public class Hunter : MonoBehaviour
     }
     private Vector3 GetScaleDependingOnHealth(int health) 
     {
-        return Vector3.one * (Mathf.Pow(Mathf.Max(10, health), 0.3f) / 1.5f); 
+        return Vector3.one * Mathf.Min(Mathf.Pow(Mathf.Max(10, health), 0.3f) / 1.5f, MAX_SCALE); 
     }
     private IEnumerator GrowingProcess(Vector3 targetScale)
     {
@@ -232,18 +249,11 @@ public class Hunter : MonoBehaviour
         while (transform.localScale != targetScale)
         {
             transform.localScale = Vector3.MoveTowards(transform.localScale, targetScale, growingSpeed);
-            _onScaleChanged?.Invoke(transform.localScale);
-            
+                        
             yield return new WaitForSeconds(timeBetweenGrow);
         }
-        
-        if (_dustParticles != null)
-        {
-            var shape = _dustParticles.shape; shape.scale = Vector3.Scale(_startDustParticleShapeScale, transform.localScale); 
-            
-            // var rate = _dustParticles.emission.rateOverTime; rate.constant = 0.5f;
-            
-        }
+        _onScaleChanged?.Invoke(transform.localScale);
+
         _isGrowing = false;
     }
     

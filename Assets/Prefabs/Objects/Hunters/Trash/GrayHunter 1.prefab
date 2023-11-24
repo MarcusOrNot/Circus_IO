@@ -959,9 +959,6 @@ MonoBehaviour:
     BoostRestartTime: 3
     BoostPrice: 0
     IsScaleDependFromHealth: 1
-    ColoredComponents:
-    - {fileID: 8800014978469739307}
-    - {fileID: 2610952528250196675}
 --- !u!65 &896055348293074514
 BoxCollider:
   m_ObjectHideFlags: 0

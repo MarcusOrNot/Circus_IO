@@ -17,5 +17,6 @@ public enum HunterType
     HUNTER_PINK,
     HUNTER_VIOLET,
     HUNTER_SKYCOLOR,
-    HUNTER_GRAY
+    HUNTER_GRAY,
+    HUNTER_SPIDER
 }
