@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1113,6 +1113,11 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &50271549 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4946953231398831676, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+  m_PrefabInstance: {fileID: 580159258}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &63941591
 Mesh:
   m_ObjectHideFlags: 0
@@ -10848,6 +10853,11 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &501089077 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7037381707240947430, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+  m_PrefabInstance: {fileID: 580159258}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &504082945
 Mesh:
   m_ObjectHideFlags: 0
@@ -11681,7 +11691,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7320275163181482786, guid: b4fcd205897d67f4090cc6259cd1418d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: b4fcd205897d67f4090cc6259cd1418d, type: 3}
 --- !u!43 &512051664
 Mesh:
@@ -13180,6 +13193,22 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 308429498}
+    - target: {fileID: 143349432060518867, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+      propertyPath: _lids
+      value: 
+      objectReference: {fileID: 50271549}
+    - target: {fileID: 143349432060518867, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+      propertyPath: _eyeball
+      value: 
+      objectReference: {fileID: 501089077}
+    - target: {fileID: 143349432060518867, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+      propertyPath: _eyepupil
+      value: 
+      objectReference: {fileID: 1377551758}
+    - target: {fileID: 143349432060518867, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+      propertyPath: _eyecornea
+      value: 
+      objectReference: {fileID: 751535298}
     - target: {fileID: 311926971625573387, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -13671,7 +13700,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6895232077293038309, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
 --- !u!43 &583262727
 Mesh:
@@ -19291,8 +19323,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2648208117429918136, guid: 8f9d70c5299e0c245adad6715765b452, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 8f9d70c5299e0c245adad6715765b452, type: 3}
+--- !u!1 &751535298 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 314389658185255913, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+  m_PrefabInstance: {fileID: 580159258}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &758772582
 Mesh:
   m_ObjectHideFlags: 0
@@ -26836,7 +26876,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 541077861390396259, guid: 648d346c2b81ffe4db1911f51893ddbb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 648d346c2b81ffe4db1911f51893ddbb, type: 3}
 --- !u!43 &1035914142
 Mesh:
@@ -30146,7 +30189,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7720769495347680561, guid: 46f1234dc07a7f74bb15d23d155c2606, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 46f1234dc07a7f74bb15d23d155c2606, type: 3}
 --- !u!43 &1217963988
 Mesh:
@@ -34768,6 +34814,11 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1377551758 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6417720974032250940, guid: f9b4c85e39bf23041b762d06d3fc07f8, type: 3}
+  m_PrefabInstance: {fileID: 580159258}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1380153460
 GameObject:
   m_ObjectHideFlags: 0
