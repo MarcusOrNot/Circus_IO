@@ -116,7 +116,7 @@ public class Hunter : MonoBehaviour
     {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
         _onHealthChanged.Clear();
-        if (_player != null) { _playerAudioListener.enabled = false; _cameraAudioListener.enabled = true; }
+        if (_player != null) { if ( _playerAudioListener != null ) _playerAudioListener.enabled = false; _cameraAudioListener.enabled = true; }
 
         
     }

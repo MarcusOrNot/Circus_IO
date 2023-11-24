@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
 public class HunterHUD : MonoBehaviour
 {
     private Camera _camera;
-    private TextMesh _HUD;
+    private TextMeshPro _HUD;
     private Hunter _hunter;
     private bool _hudIsReady;    
     [SerializeField] private bool _hudOnlyOnAI = true;
@@ -15,7 +16,7 @@ public class HunterHUD : MonoBehaviour
     private void Awake()
     {        
         _camera = Camera.main;
-        _HUD = GetComponentInChildren<TextMesh>();
+        _HUD = GetComponentInChildren<TextMeshPro>();        
         _hunter = GetComponentInParent<Hunter>();
         _hunter?.SetOnHealthChanged(health => ChangeText(health));   
     }
