@@ -30962,7 +30962,7 @@ PrefabInstance:
       objectReference: {fileID: 822197655}
     - target: {fileID: 4417518082458132220, guid: 46f1234dc07a7f74bb15d23d155c2606, type: 3}
       propertyPath: _model.StartEntity
-      value: 1000
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4455498259816597331, guid: 46f1234dc07a7f74bb15d23d155c2606, type: 3}
       propertyPath: m_Mesh
