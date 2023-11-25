@@ -15,7 +15,5 @@ public class HunterModel
     public float BoostRestartTime = 3f;
     public int BoostPrice = 0;
 
-    public bool IsScaleDependFromHealth = true;
-
-    //public Renderer[] ColoredComponents;    
+    public bool IsScaleDependFromHealth = true;    
 }

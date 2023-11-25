@@ -22973,8 +22973,8 @@ GameObject:
   m_Component:
   - component: {fileID: 897271940}
   - component: {fileID: 897271939}
-  - component: {fileID: 897271938}
   - component: {fileID: 897271941}
+  - component: {fileID: 897271942}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -22982,14 +22982,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &897271938
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 897271937}
-  m_Enabled: 1
 --- !u!20 &897271939
 Camera:
   m_ObjectHideFlags: 0
@@ -23069,6 +23061,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startOffset: {x: 0, y: 30, z: -20}
+--- !u!114 &897271942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897271937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!43 &898793130
 Mesh:
   m_ObjectHideFlags: 0
@@ -29898,6 +29934,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 211094450}
+    - target: {fileID: 4417518082458132220, guid: 46f1234dc07a7f74bb15d23d155c2606, type: 3}
+      propertyPath: _model.StartEntity
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4499414911037193438, guid: 46f1234dc07a7f74bb15d23d155c2606, type: 3}
       propertyPath: m_Mesh
       value: 

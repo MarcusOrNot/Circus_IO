@@ -24,7 +24,6 @@ public class HunterDust : MonoBehaviour
             _startDustParticleShapeScale = _dustParticles.shape.scale;
             _startEmissionRate = _dustParticles.emission.rateOverTime.constant;
         }
-
     }
 
     private void Start()
@@ -43,6 +42,5 @@ public class HunterDust : MonoBehaviour
         var shape = _dustParticles.shape; shape.scale = Vector3.Scale(_startDustParticleShapeScale, scale);
         var emission = _dustParticles.emission; emission.rateOverTime = _startEmissionRate * scale.x; 
     }
-
     
 }

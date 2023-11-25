@@ -8,13 +8,12 @@ public class Character : MonoBehaviour
     { 
         get { return _speedMultiplier; } 
         set { _speedMultiplier = Mathf.Max(0, value); SetGoingAnimationSpeed(); } 
-    }
-       
+    }       
 
     public void GetMovingCommand(Vector2 direction)
     {
-        float fallingTrigger = -5f;
         if (_rigidbody == null) return;
+        float fallingTrigger = -5f;        
         _isMoveCommandGet = !((direction.magnitude < _model.SensivityTreshold) || (_rigidbody.velocity.y < fallingTrigger));
         if (_isMoveCommandGet)
         {
@@ -44,25 +43,21 @@ public class Character : MonoBehaviour
 
     
     private void Awake()
-    {        
-        
+    {  
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionY;
-        _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-        _rigidbody.mass = 10;
-        _rigidbody.drag = 0;        
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Start()
-    {
-        _animator = GetComponentInChildren<Animator>();
+    {        
         SetGoingAnimationSpeed();
     }
-
     private void SetGoingAnimationSpeed()
     {        
         _animator?.SetFloat("Speed", _model.Speed * _speedMultiplier / 10 / Mathf.Pow(transform.localScale.x, 0.3f));
     }
+
 
     private void SetMovingStatus(bool isMoving)
     {
@@ -74,23 +69,29 @@ public class Character : MonoBehaviour
             _animator?.SetBool("Go", false);
             _animator?.SetBool("TurnLeft", false);
             _animator?.SetBool("TurnRight", false);
-        }
-        
+        }        
     }
     private void SetBodyPositionFreezeStatus(bool isFreeze)
     {
         if (_rigidbody == null) return;
-        if (isFreeze == _isBodyPositionFreezed) { return; } else { _isBodyPositionFreezed = isFreeze; }
+
+        if (isFreeze == _isBodyPositionFreezed) { return; } 
+        else { _isBodyPositionFreezed = isFreeze; }
+
         if (isFreeze) { _rigidbody.constraints |= RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ; }
         else { _rigidbody.constraints &= ~(RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ); }
-    } 
+    }
 
+
+    private void FixedUpdate()
+    {
+        if (_isMoving) { Move(_movingDirection); }
+    }
     private void Move(Vector2 direction)
     {
         if (_rigidbody == null) return;
         if (!TryRotateToDirection(direction))
         {
-
             if (!_isMovingForward) {   _isMovingForward = true; _animator?.SetBool("Go", true); }
             SetBodyPositionFreezeStatus(false);
             direction = direction.normalized * _model.Speed * _speedMultiplier;
@@ -128,6 +129,7 @@ public class Character : MonoBehaviour
         return transform.rotation != targetRotation;
     }
 
+
     private IEnumerator MoveStoppingProcess()
     {          
         while (_isMoveCommandGet)
@@ -157,13 +159,6 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         OnCollisionExit();
         _isInCollision = false;
-    }
+    }   
 
-    
-
-    private void FixedUpdate()
-    {
-        if (_isMoving) { Move(_movingDirection); }
-        
-    }
 }

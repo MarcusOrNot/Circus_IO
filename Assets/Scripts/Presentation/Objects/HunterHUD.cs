@@ -20,6 +20,7 @@ public class HunterHUD : MonoBehaviour
         _hunter = GetComponentInParent<Hunter>();
         _hunter?.SetOnHealthChanged(health => ChangeText(health));   
     }
+
     private void Start()
     {
         _hudIsReady = !(_HUD == null || _camera == null || _hunter == null || (_hudOnlyOnAI && _hunter.TryGetComponent(out PlayerHunter _)));
