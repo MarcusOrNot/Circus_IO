@@ -12,9 +12,9 @@ public class Character : MonoBehaviour
 
     public void GetMovingCommand(Vector2 direction)
     {
-        if (_rigidbody == null) return;
-        float fallingTrigger = -5f;        
-        _isMoveCommandGet = !((direction.magnitude < _model.SensivityTreshold) || (_rigidbody.velocity.y < fallingTrigger));
+        const float DIRECTION_MAGNITUDE_ZERO_TRIGGER = 0.3f, RIGIDBODY_FALLING_TRIGGER = -5f;
+        if (_rigidbody == null) return; 
+        _isMoveCommandGet = !((direction.magnitude < DIRECTION_MAGNITUDE_ZERO_TRIGGER) || (_rigidbody.velocity.y < RIGIDBODY_FALLING_TRIGGER));
         if (_isMoveCommandGet)
         {
             _movingDirection = direction;
@@ -27,7 +27,7 @@ public class Character : MonoBehaviour
     private Rigidbody _rigidbody;
     private Animator _animator;
     
-    private float _speedMultiplier = 1.0f;
+    private float _speedMultiplier = 1.0f;    
    
     private bool _isMoving = false;
     private bool _isRotatingToLeft = false;

@@ -41,11 +41,7 @@ public class Hunter : MonoBehaviour
     private EntityType _entityTypeForSpawn;
     private Rigidbody _rigidbody;
     private EffectPlayController _soundEffectsController;
-        
-    private AudioListener _cameraAudioListener = null;    
-    private AudioListener _playerAudioListener = null;
-    private bool _isPlayer = false;
-
+     
     private bool _isBoosterReady = true;
     private bool _isMovingWithBoost = false;
     private bool _boosterIsReloading = false;
@@ -58,15 +54,7 @@ public class Hunter : MonoBehaviour
     
 
     private void Awake()
-    {
-        if (TryGetComponent(out PlayerHunter _))
-        {  
-            _isPlayer = true;            
-            _cameraAudioListener = Camera.main.TryGetComponent(out AudioListener cameraAudioListener) ? cameraAudioListener : Camera.main.AddComponent<AudioListener>();            
-            _cameraAudioListener.enabled = false;
-            _playerAudioListener = TryGetComponent(out AudioListener playerAudioListener) ? playerAudioListener : gameObject.AddComponent<AudioListener>();            
-            _playerAudioListener.enabled = true;
-        } 
+    {        
         _character = GetComponent<Character>();  
         _rigidbody = GetComponent<Rigidbody>();
         _soundEffectsController = GetComponent<EffectPlayController>();
@@ -75,8 +63,8 @@ public class Hunter : MonoBehaviour
     private void Start()
     { 
         _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0); 
-        transform.localScale = GetScaleDependingOnHealth(_model.StartEntity);        
-        ChangeHealth(_model.StartEntity); 
+        transform.localScale = GetScaleDependingOnHealth(_model.StartHealth);        
+        ChangeHealth(_model.StartHealth); 
 
         Material meshMaterial = GetComponentInChildren<SkinnedMeshRenderer>()?.materials?[0];
         if (meshMaterial != null) meshMaterial.color = _model.Color;
@@ -85,12 +73,7 @@ public class Hunter : MonoBehaviour
     }
 
     private void OnDestroy()
-    {
-        if (_isPlayer)
-        {
-            _cameraAudioListener.enabled = true;
-            if (_playerAudioListener != null) _playerAudioListener.enabled = false;            
-        }
+    {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
         _onHealthChanged.Clear();       
     }    
@@ -99,16 +82,16 @@ public class Hunter : MonoBehaviour
     private IEnumerator BoosterActivation()
     {
         if (!_isBoosterReady) yield break;
-        StartCoroutine(BoosterReloading());        
-        _onBoostingStateChanged?.Invoke(_isMovingWithBoost = true);
+        StartCoroutine(BoosterReloading());
+        _isMovingWithBoost = true;  _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
         _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_ACCELERATED);  
         if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostValue;
+        _character.SpeedMultiplier = _model.BoostSpeed;
         StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
-        _character.SpeedMultiplier = savedBoostSpeed; 
-        _onBoostingStateChanged?.Invoke(_isMovingWithBoost = false);
+        _character.SpeedMultiplier = savedBoostSpeed;
+        _isMovingWithBoost = false;  _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
     }
     private IEnumerator BoosterReloading()
     {        
@@ -127,9 +110,8 @@ public class Hunter : MonoBehaviour
         }  
     }    
     private void SetBoostReadyState() 
-    { 
-        _isBoosterReady = !_boosterIsReloading  && (_health > _model.BoostPrice);
-        _onBoostStateChanged?.Invoke(_isBoosterReady);
+    {
+        _isBoosterReady = !_boosterIsReloading && (_health > _model.BoostPrice); _onBoostStateChanged?.Invoke(_isBoosterReady);
     }
 
 
@@ -144,9 +126,7 @@ public class Hunter : MonoBehaviour
     private IEnumerator EatingSomebody(MonoBehaviour somebody) 
     {
         if (!(somebody is Entity) && !(somebody is Hunter)) { yield break; }
-        float eatingSpeed = 10f;
-        float objectDestroyingTime = 0;
-        float monobehaviourDestroyingTime = 0;
+        float eatingSpeed = 10f, objectDestroyingTime = 0, monobehaviourDestroyingTime = 0;
         GameObject somebodyObject = somebody?.gameObject;
         Collider collider = somebodyObject?.GetComponent<Collider>();
         if (collider != null) Destroy(collider);
@@ -184,8 +164,7 @@ public class Hunter : MonoBehaviour
     }
     private void ChangeHealth(int value)
     {
-        _health += value;
-        foreach (var item in _onHealthChanged) item.Invoke(_health); 
+        _health += value; foreach (var item in _onHealthChanged) item.Invoke(_health); 
         SetBoostReadyState();
         if (_model.IsScaleDependFromHealth && _rigidbody != null)
         {
@@ -201,13 +180,12 @@ public class Hunter : MonoBehaviour
 
     private IEnumerator GrowingProcess(Vector3 targetScale)
     {
-        float growingSpeed = 0.01f;
-        float timeBetweenGrowFrames = 0.01f;
+        const float GROWING_SPEED = 0.01f, TIME_BETWEEN_GROW_FRAMES = 0.01f;        
         _isGrowing = true;
         while (transform.localScale != targetScale)
         {
-            transform.localScale = Vector3.MoveTowards(transform.localScale, targetScale, growingSpeed);                        
-            yield return new WaitForSeconds(timeBetweenGrowFrames);
+            transform.localScale = Vector3.MoveTowards(transform.localScale, targetScale, GROWING_SPEED);                        
+            yield return new WaitForSeconds(TIME_BETWEEN_GROW_FRAMES);
         }
         _onScaleChanged?.Invoke(transform.localScale);
         _isGrowing = false;

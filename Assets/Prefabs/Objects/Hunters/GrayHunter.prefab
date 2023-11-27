@@ -2374,6 +2374,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8145316464312372812}
     m_Modifications:
+    - target: {fileID: 958502629453027718, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
+      propertyPath: m_renderer
+      value: 
+      objectReference: {fileID: 598501093666677890}
     - target: {fileID: 2319437490736453318, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -2384,7 +2388,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7977965893073954659, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.21
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7977965893073954659, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2423,9 +2427,14 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
---- !u!4 &415668775984772921 stripped
-Transform:
+--- !u!224 &415668775984772921 stripped
+RectTransform:
   m_CorrespondingSourceObject: {fileID: 7977965893073954659, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
+  m_PrefabInstance: {fileID: 7742722645880328282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &598501093666677890 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7151118810991211736, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
   m_PrefabInstance: {fileID: 7742722645880328282}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8219402852042083690

@@ -101,13 +101,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _model:
-    StartEntity: 10
-    BoostValue: 3
-    HunterType: 2
-    Color: {r: 0.036693625, g: 0.014907437, b: 0.6320754, a: 0}
+    StartHealth: 10
+    BoostSpeed: 3
     BoostTime: 0.5
     BoostRestartTime: 3
     BoostPrice: 0
+    HunterType: 2
+    Color: {r: 0.036693625, g: 0.014907437, b: 0.6320754, a: 0}
     IsScaleDependFromHealth: 1
 --- !u!65 &896055348293074514
 BoxCollider:
@@ -2674,7 +2674,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7977965893073954659, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.21
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7977965893073954659, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2713,8 +2713,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
---- !u!4 &1676015172833790033 stripped
-Transform:
+--- !u!224 &1676015172833790033 stripped
+RectTransform:
   m_CorrespondingSourceObject: {fileID: 7977965893073954659, guid: 9ac53e2cacbc46c4e9a0cea6999287a9, type: 3}
   m_PrefabInstance: {fileID: 8787942748791942962}
   m_PrefabAsset: {fileID: 0}

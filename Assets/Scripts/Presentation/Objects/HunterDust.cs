@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[RequireComponent(typeof(ParticleSystem))]
+
 public class HunterDust : MonoBehaviour
 {
     private Hunter _hunter;
@@ -13,11 +16,11 @@ public class HunterDust : MonoBehaviour
     private void Awake()
     {
         _hunter = GetComponentInParent<Hunter>();
-        _dustParticles = GetComponentInChildren<ParticleSystem>();
+        _dustParticles = GetComponent<ParticleSystem>();
         if (_hunter == null || _dustParticles == null) Destroy(gameObject);
 
-        _hunter?.SetOnBoostingStateChanged(isBoosting => DustParticlesOn(isBoosting));
-        _hunter?.SetOnScaleChanged(scale => ChangeScale(scale));
+        _hunter?.SetOnBoostingStateChanged((isBoosting) => DustParticlesOn(isBoosting));
+        _hunter?.SetOnScaleChanged((scale) => ChangeScale(scale));
                 
         if (_dustParticles != null)
         {
@@ -38,9 +41,9 @@ public class HunterDust : MonoBehaviour
     }
 
     private void ChangeScale(Vector3 scale)
-    {       
+    {
         var shape = _dustParticles.shape; shape.scale = Vector3.Scale(_startDustParticleShapeScale, scale);
-        var emission = _dustParticles.emission; emission.rateOverTime = _startEmissionRate * scale.x; 
+        var emission = _dustParticles.emission; emission.rateOverTime = _startEmissionRate * scale.x;         
     }
     
 }
