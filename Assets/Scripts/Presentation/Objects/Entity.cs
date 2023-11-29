@@ -6,12 +6,7 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour, IBurnable
 {
-    public void Burn()
-    {
-        _fireParticles?.Play();
-        Destroy(this);
-        Destroy(gameObject, 2f);
-    }
+    public void Burn() {  _fireParticles?.Play();  Destroy(this); Destroy(gameObject, 2f);}
 
     public EntityModel Model { get => _model; }
     
