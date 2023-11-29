@@ -1,9 +1,18 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
-public class Entity : MonoBehaviour
+
+public class Entity : MonoBehaviour, IBurnable
 {
+    public void Burn()
+    {
+        _fireParticles?.Play();
+        Destroy(this);
+        Destroy(gameObject, 2f);
+    }
+
     public EntityModel Model { get => _model; }
     
     public int HealthCount { get => _model.HealCount; set { _model.HealCount = value; } }
@@ -11,21 +20,18 @@ public class Entity : MonoBehaviour
 
     [SerializeField] private EntityModel _model;  
 
-    private Rigidbody _rigidbody;
-    private Collider _collider;
+    private Rigidbody _rigidbody; 
+    private ParticleSystem _fireParticles;
         
     private bool _destroyingProcessIsStarted = false;
     private IEnumerator _destroyingProcess;
-    private float _maxFallingTime = 10f;
-
+    
 
     private void Awake()
-    {
-        
-        _rigidbody = GetComponentInChildren<Rigidbody>();
-        _collider = GetComponentInChildren<Collider>();
-        _rigidbody.isKinematic = false;
-        _collider.isTrigger = true;
+    {        
+        _rigidbody = GetComponent<Rigidbody>();
+        GetComponent<Collider>().isTrigger = true;
+        _fireParticles = GetComponent<ParticleSystem>();        
     }
     private void Start()
     {        
@@ -57,28 +63,34 @@ public class Entity : MonoBehaviour
 
     private IEnumerator CheckFallingStatus()
     {
-        float fallingStatusCheckPeriod = 1f;
-        float verticalVelocityTrigger = -0.3f;
-        bool isFalling;  
+        const float FALLING_STATUS_CHECK_PERIOD = 1f, VERTICAL_VELOCITY_TRIGGER = -0.3f;  
         while (true)
-        {            
-            isFalling = (_rigidbody != null) && (_rigidbody.velocity.y < verticalVelocityTrigger);
-            if (isFalling) 
-            { 
-                if (!_destroyingProcessIsStarted) { _destroyingProcess = DestroyingProcess(); StartCoroutine(_destroyingProcess); } 
+        {
+            if (_rigidbody == null)
+            {
+                if (_destroyingProcessIsStarted && _destroyingProcess != null) StopCoroutine(_destroyingProcess);
+                yield break;
             }
-            else if (_destroyingProcessIsStarted) 
-            {                
-                _destroyingProcessIsStarted = false; 
-                if (_destroyingProcess != null) StopCoroutine(_destroyingProcess); 
-            }             
-            yield return new WaitForSeconds(fallingStatusCheckPeriod);
+            else
+            {
+                if (_rigidbody.velocity.y < VERTICAL_VELOCITY_TRIGGER)
+                {
+                    if (!_destroyingProcessIsStarted) { _destroyingProcess = DestroyingProcess(); StartCoroutine(_destroyingProcess); }
+                }
+                else if (_destroyingProcessIsStarted)
+                {
+                    _destroyingProcessIsStarted = false;
+                    if (_destroyingProcess != null) StopCoroutine(_destroyingProcess);
+                }
+            }   
+            yield return new WaitForSeconds(FALLING_STATUS_CHECK_PERIOD);
         }  
     }
     private IEnumerator DestroyingProcess()
-    {            
+    {
+        const float MAX_FALLING_TIME = 10f;
         _destroyingProcessIsStarted = true;        
-        yield return new WaitForSeconds(_maxFallingTime);        
+        yield return new WaitForSeconds(MAX_FALLING_TIME);        
         Destroy(gameObject);
     }
 

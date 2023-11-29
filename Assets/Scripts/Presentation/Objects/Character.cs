@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
 
 public class Character : MonoBehaviour
@@ -7,8 +8,8 @@ public class Character : MonoBehaviour
     public float SpeedMultiplier 
     { 
         get { return _speedMultiplier; } 
-        set { _speedMultiplier = Mathf.Max(0, value); SetGoingAnimationSpeed(); } 
-    }       
+        set { _speedMultiplier = Mathf.Max(1f, value); SetGoingAnimationSpeed(); } 
+    }    
 
     public void GetMovingCommand(Vector2 direction)
     {
@@ -20,6 +21,12 @@ public class Character : MonoBehaviour
             _movingDirection = direction;
             if (!_isMoving) { SetMovingStatus(true); StartCoroutine(MoveStoppingProcess()); }
         }        
+    }
+
+    public void ChangeAnimator() 
+    {
+        _animator = GetComponentInChildren<Animator>();        
+        _isMovingForward = false;
     }
 
 
@@ -46,7 +53,7 @@ public class Character : MonoBehaviour
     {  
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionY;
-        _animator = GetComponentInChildren<Animator>();
+        _animator = GetComponentInChildren<Animator>();        
     }
 
     private void Start()
@@ -159,6 +166,6 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         OnCollisionExit();
         _isInCollision = false;
-    }   
-
+    }       
+        
 }
