@@ -21,6 +21,7 @@ public class HunterDust : MonoBehaviour
 
         _hunter?.SetOnBoostingStateChanged((isBoosting) => DustParticlesOn(isBoosting));
         _hunter?.SetOnScaleChanged((scale) => ChangeScale(scale));
+        
                 
         if (_dustParticles != null)
         {
@@ -28,6 +29,8 @@ public class HunterDust : MonoBehaviour
             _startEmissionRate = _dustParticles.emission.rateOverTime.constant;
         }
     }
+
+    
 
     private void Start()
     {

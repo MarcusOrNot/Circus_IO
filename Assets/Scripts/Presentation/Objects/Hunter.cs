@@ -10,8 +10,13 @@ using Unity.VisualScripting;
 
 [RequireComponent(typeof(Character))]
 
-public class Hunter : MonoBehaviour
+public class Hunter : MonoBehaviour, IBurnable
 {
+    public void Burn()
+    {
+
+    }
+
     [Inject] private EntityFactory _factory;
     [Inject] private IEventBus _eventBus;
 
@@ -19,11 +24,15 @@ public class Hunter : MonoBehaviour
     public int Lifes { get => _health; }
     public void Boost() => StartCoroutine(BoosterActivation());  
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
-    public void AddDamage(int value) => GetDamage(value);  
+    public void AddDamage(int value) => GetDamage(value);
+    public bool KaufmoIsActive { get => _kaufmoIsActivated; }
 
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }
     private List<Action<int>> _onHealthChanged = new List<Action<int>>();
+
+    public void SetOnHunterModeChanged(Action<bool> onKaufmoActivated) { _onKaufmoActivated.Add(onKaufmoActivated); }
+    private List<Action<bool>> _onKaufmoActivated = new List<Action<bool>>();
 
     public void SetOnBoostStateChanged(Action<bool> onBoostStateChanged) { _onBoostStateChanged = onBoostStateChanged; }
     private Action<bool> _onBoostStateChanged;
@@ -38,7 +47,7 @@ public class Hunter : MonoBehaviour
     [SerializeField] private HunterModel _model;
 
     private Character _character;
-    private EntityType _entityTypeForSpawn;
+    
     private Rigidbody _rigidbody;
     private EffectPlayController _soundEffectsController;
      
@@ -51,7 +60,13 @@ public class Hunter : MonoBehaviour
     private bool _isGrowing = false;
     private IEnumerator _currentGrowingProcess = null; 
     private const float MAX_SCALE = 7f;
-    
+
+    private bool _kaufmoIsActivated = false;
+    [SerializeField] GameObject _kaufmo;
+    [SerializeField] GameObject _bubble;
+
+    private float _defaultCharacterSpeedMultiplier = -1f;
+
 
     private void Awake()
     {        
@@ -60,22 +75,27 @@ public class Hunter : MonoBehaviour
         _soundEffectsController = GetComponent<EffectPlayController>();
     }
 
+    
+    
     private void Start()
-    { 
-        _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0); 
+    {
+        _defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);
+        
         transform.localScale = GetScaleDependingOnHealth(_model.StartHealth);        
         ChangeHealth(_model.StartHealth); 
 
-        Material meshMaterial = GetComponentInChildren<SkinnedMeshRenderer>()?.materials?[0];
+        Material meshMaterial = _kaufmo?.GetComponentInChildren<SkinnedMeshRenderer>(true)?.materials?[0];
         if (meshMaterial != null) meshMaterial.color = _model.Color;
-        INeedKaufmoColor[] coloredElements = GetComponentsInChildren<INeedKaufmoColor>();
-        foreach (INeedKaufmoColor coloredElement in coloredElements) coloredElement.Color = _model.Color;   
+        INeedKaufmoColor[] coloredElements = _kaufmo?.GetComponentsInChildren<INeedKaufmoColor>(true);
+        foreach (INeedKaufmoColor coloredElement in coloredElements) coloredElement.Color = _model.Color;
+        
     }
 
     private void OnDestroy()
     {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
-        _onHealthChanged.Clear();       
+        _onHealthChanged.Clear();     
+        _onKaufmoActivated.Clear();
     }    
     
 
@@ -87,23 +107,29 @@ public class Hunter : MonoBehaviour
         _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_ACCELERATED);  
         if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
         float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostSpeed;
+        _character.SpeedMultiplier = _model.BoostSpeedMultiplier;
         StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
-        _character.SpeedMultiplier = savedBoostSpeed;
-        _isMovingWithBoost = false;  _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
+        if (!_kaufmoIsActivated)
+        {
+            _character.SpeedMultiplier = savedBoostSpeed;
+            _isMovingWithBoost = false; _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
+        }        
     }
     private IEnumerator BoosterReloading()
     {        
         _boosterIsReloading = true;
         SetBoostReadyState();
         yield return new WaitForSeconds(_model.BoostRestartTime);
-        _boosterIsReloading = false;
-        SetBoostReadyState();
+        if (!_kaufmoIsActivated)
+        {
+            _boosterIsReloading = false;
+            SetBoostReadyState();
+        }            
     }
     private IEnumerator MovingWithBoost()
     {
-        while (_isMovingWithBoost)
+        while (_isMovingWithBoost && !_kaufmoIsActivated)
         {
             _character.GetMovingCommand(new Vector2(transform.forward.x, transform.forward.z));
             yield return null;
@@ -111,40 +137,63 @@ public class Hunter : MonoBehaviour
     }    
     private void SetBoostReadyState() 
     {
-        _isBoosterReady = !_boosterIsReloading && (_health > _model.BoostPrice); _onBoostStateChanged?.Invoke(_isBoosterReady);
+        _isBoosterReady = !_kaufmoIsActivated && !_boosterIsReloading && (_health > _model.BoostPrice); 
+        _onBoostStateChanged?.Invoke(_isBoosterReady);
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out Entity entity) && !entity.TryGetComponent(out Rigidbody _)) StartCoroutine(EatingSomebody(entity));       
+        if (!_kaufmoIsActivated)
+        {
+            if (other.TryGetComponent(out Entity entity) && !entity.TryGetComponent(out Rigidbody _)) StartCoroutine(EatingSomebody(entity));
+            else if (other.TryGetComponent(out Booster booster) && !booster.TryGetComponent(out Rigidbody _)) StartCoroutine(EatingSomebody(booster));
+        }        
     }
     private void OnCollisionEnter(Collision collision)
-    {   
-        if (collision.gameObject.TryGetComponent(out Hunter hunter) && (_health > hunter.Lifes)) StartCoroutine(EatingSomebody(hunter));        
+    {
+        if (!_kaufmoIsActivated)
+        {
+            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_health > hunter.Lifes)) StartCoroutine(EatingSomebody(hunter));
+        }                   
     }
     private IEnumerator EatingSomebody(MonoBehaviour somebody) 
-    {
-        if (!(somebody is Entity) && !(somebody is Hunter)) { yield break; }
+    {        
+        if (_kaufmoIsActivated || (!(somebody is Entity) && !(somebody is Hunter) && !(somebody is Booster))) { yield break; }
         float eatingSpeed = 10f, objectDestroyingTime = 0, monobehaviourDestroyingTime = 0;
         GameObject somebodyObject = somebody?.gameObject;
         Collider collider = somebodyObject?.GetComponent<Collider>();
         if (collider != null) Destroy(collider);
-        if (somebody is Entity)
+        switch (somebody)
         {
-            ChangeHealth((somebody as Entity).HealthCount);
-            eatingSpeed = 7f * _character.SpeedMultiplier;
-            objectDestroyingTime = 1f;
-            monobehaviourDestroyingTime = 0;
-            _soundEffectsController?.PlayEffect(SoundEffectType.ENTITY_EAT);
-        }
-        else if (somebody is Hunter)
-        {
-            ChangeHealth((somebody as Hunter).Lifes);
-            eatingSpeed = 7f * _character.SpeedMultiplier;
-            objectDestroyingTime = 0.3f;
-            monobehaviourDestroyingTime = 0.5f;
-        }
+            case Entity _:
+                ChangeHealth((somebody as Entity).HealthCount);
+                eatingSpeed = 7f * _character.SpeedMultiplier;
+                objectDestroyingTime = 1f;
+                monobehaviourDestroyingTime = 0;
+                _soundEffectsController?.PlayEffect(SoundEffectType.ENTITY_EAT);
+                break;                
+            case Hunter _:
+                ChangeHealth((somebody as Hunter).Lifes);
+                eatingSpeed = 7f * _character.SpeedMultiplier;
+                objectDestroyingTime = 0.3f;
+                monobehaviourDestroyingTime = 0.5f;
+                break;
+            case Booster _:
+                switch ((somebody as Booster).BoosterModel.BoosterType)
+                {
+                    case BoosterType.HEALTH_BOOSTER:
+                        ChangeHealth((somebody as Booster).BoosterModel.HealCount);
+                        break;
+                    case BoosterType.KAUFMO_CONVERTER:
+                        StartCoroutine(ActivateKaufmoMode((somebody as Booster).BoosterModel.KaufoModeTime));
+                        break;
+                } 
+                eatingSpeed = 7f * _character.SpeedMultiplier;
+                objectDestroyingTime = 0.3f;
+                monobehaviourDestroyingTime = 0.5f;
+                break;
+        }        
         Destroy(somebody, monobehaviourDestroyingTime);
         Destroy(somebodyObject, objectDestroyingTime);        
         while (somebodyObject != null)
@@ -158,8 +207,7 @@ public class Hunter : MonoBehaviour
     
     private void GetDamage(int value)
     {
-        ChangeHealth(-value);
-        if (_rigidbody != null) EntitySpawning(value / 5); 
+        ChangeHealth(-value);        
         if (_health <= 0) Destroy(gameObject);
     }
     private void ChangeHealth(int value)
@@ -189,8 +237,31 @@ public class Hunter : MonoBehaviour
         }
         _onScaleChanged?.Invoke(transform.localScale);
         _isGrowing = false;
-    }   
+    }
 
+    private IEnumerator ActivateKaufmoMode(float time)
+    {
+        _kaufmoIsActivated = true; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
+        SetBoostReadyState();
+        _boosterIsReloading = false;
+        _isMovingWithBoost = false; _onBoostingStateChanged?.Invoke(_isMovingWithBoost);
+        _kaufmo?.SetActive(true); 
+        _bubble?.SetActive(false);
+        _character.ChangeAnimator(); _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;
+        yield return new WaitForSeconds(time);
+        _bubble?.SetActive(true);
+        _kaufmo?.SetActive(false);
+        _character.ChangeAnimator(); _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier;
+        _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
+        SetBoostReadyState();        
+    }
+
+
+
+    // private EntityType _entityTypeForSpawn;
+    // IN "START"  _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0); 
+    // IN "GET_DAMAGE"     if (_rigidbody != null) EntitySpawning(value / 5); 
+    /*
     private void EntitySpawning(int summaryHealth)
     {
         int entityCountForSpawn = Mathf.Min(5, summaryHealth);
@@ -225,7 +296,7 @@ public class Hunter : MonoBehaviour
         };  
         return spawnedEntity;
     }
-
+    */
 
 
     //private int _maxEnititySpawnCountPerFrame = 10;    
