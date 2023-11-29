@@ -10,7 +10,7 @@
       "hash": "7f1bca00e5582aeb3e3c666f8389d31de1e80c67"
     },
     "com.google.external-dependency-manager": {
-      "version": "file:C:/Users/readi/Downloads/com.google.external-dependency-manager-1.2.176.tgz",
+      "version": "file:../GooglePackages/com.google.external-dependency-manager-1.2.176.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {}
