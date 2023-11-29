@@ -147,7 +147,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DiffuseStep: 0
+    - _DiffuseStep: 1
     - _DitherTexelSize: 1
     - _DitherThreshold: 1
     - _DstBlend: 10
@@ -214,14 +214,14 @@ Material:
     - _SrcBlendAlpha: 1
     - _StencilComp: 0
     - _StencilRef: 0
-    - _StepViaRampTexture: 1
+    - _StepViaRampTexture: 0
     - _Surface: 1
     - _UVSec: 0
     - _UseRampColor: 0
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 0.16981131, g: 0.16901031, b: 0.16901031, a: 0.8}
+    - _BaseColor: {r: 0.16981131, g: 0.16901031, b: 0.16901031, a: 1}
     - _Color: {r: 0.5661526, g: 0.35857958, b: 0.9622642, a: 0.54509807}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FaceFrontDirection: {r: 0, g: 0, b: 1, a: 0}
