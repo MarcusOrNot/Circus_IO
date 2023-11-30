@@ -166,24 +166,44 @@ public class Hunter : MonoBehaviour, IBurnable
         }
         else
         {
-            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive))
+            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_currentCollidedKaufmo == null))
             {
-                if (hunter != _currentCollidedKaufmo)
-                {
-                    hunter.AddDamage(Mathf.Max(100, hunter.Lifes / 2));
-                    _currentCollidedKaufmo = hunter;
-                    StartCoroutine(KaufmoDamaging(hunter));
-                }                
+                _currentCollidedKaufmo = hunter; 
+                StartCoroutine(KaufmoDamaging(hunter));                                
             }                
         }
-    }
-    private IEnumerator KaufmoDamaging(Hunter kaufmo)
+    }    
+    private void OnCollisionStay(Collision collision)
     {
-        yield return new WaitForSeconds(_collidedKaufmoDamagingPeriod);
+        if (!KaufmoIsActive)
+        {
+            if (collision.gameObject.TryGetComponent(out Hunter hunter) && !hunter.KaufmoIsActive && (_health > hunter.Lifes)) StartCoroutine(EatingSomebody(hunter));
+        }
+        else
+        {
+            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_currentCollidedKaufmo == null))
+            {
+                _currentCollidedKaufmo = hunter;
+                StartCoroutine(KaufmoDamaging(hunter));
+            }
+        }
+        
+    }    
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent(out Hunter hunter) && (hunter == _currentCollidedKaufmo))
+        {
+            _currentCollidedKaufmo = null;
+        }
     }
-
-
-
+    private IEnumerator KaufmoDamaging(Hunter hunter)
+    {
+        while ((hunter != null) && !hunter.KaufmoIsActive && (_currentCollidedKaufmo == hunter))
+        {
+            hunter.AddDamage(Mathf.Max(100, hunter.Lifes / 2));
+            yield return new WaitForSeconds(_collidedKaufmoDamagingPeriod);
+        }
+    }
     private IEnumerator EatingSomebody(MonoBehaviour somebody) 
     {        
         if (_kaufmoIsActivated || (!(somebody is Entity) && !(somebody is Hunter) && !(somebody is Booster))) { yield break; }
@@ -282,7 +302,7 @@ public class Hunter : MonoBehaviour, IBurnable
         _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
         _kaufmo?.SetActive(true); 
         _bubble?.SetActive(false);
-        _character.ChangeAnimator(); _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;
+        _character.ChangeAnimator(); _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;        
         yield return new WaitForSeconds(time);
         _bubble?.SetActive(true);
         _kaufmo?.SetActive(false);

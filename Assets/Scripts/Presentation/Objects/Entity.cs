@@ -31,9 +31,13 @@ public class Entity : MonoBehaviour, IBurnable
     private void Start()
     {        
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
-        
-        StartCoroutine(CheckFallingStatus());        
+        _fireParticles?.Stop();
+        StartCoroutine(CheckFallingStatus());
+
+       
     }   
+    
+
 
     private void OnTriggerEnter(Collider other)
     {        

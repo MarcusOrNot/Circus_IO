@@ -42,6 +42,7 @@ public class Booster : MonoBehaviour, IBurnable
 
     private void Start()
     {
+        _fireParticles?.Stop();
         _animator.speed = Random.Range(1f, 2f);
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
         StartCoroutine(CheckFallingStatus());

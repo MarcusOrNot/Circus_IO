@@ -41,7 +41,11 @@ public class HunterFire : MonoBehaviour
                 
     }
 
-    
+    private void Start()
+    {
+        _particles?.Stop();
+    }
+
 
 
     private void SetParticlesActivationState()
