@@ -44,7 +44,7 @@ public class Character : MonoBehaviour
     private bool _isMoveCommandGet = false;
     private float _stopMovingTimeMultiplier = 1f;
 
-    private bool _isInCollision = false;    
+    //private bool _isInCollision = false;    
 
     private Vector2 _movingDirection = Vector2.zero;
 
@@ -148,17 +148,26 @@ public class Character : MonoBehaviour
     }    
         
 
-    private void OnCollisionEnter()
+    private void OnCollisionEnter(Collision collision)
     {
         if (_rigidbody == null) return;
-        _rigidbody.constraints |= RigidbodyConstraints.FreezePositionY;
-        StartCoroutine(CollisionExitTimer());
+        if (collision.gameObject.TryGetComponent(out Hunter _))
+        {
+            _rigidbody.constraints |= RigidbodyConstraints.FreezePositionY;
+        }
+        
+        //StartCoroutine(CollisionExitTimer());
     }     
-    private void OnCollisionExit()
+    private void OnCollisionExit(Collision collision)
     {
         if (_rigidbody == null) return;
-        _rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY;
+        if (collision.gameObject.TryGetComponent(out Hunter _))
+        {
+            _rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY;
+        }
     }
+
+    /*
     private IEnumerator CollisionExitTimer()
     {
         if (_isInCollision) { yield break; }
@@ -166,6 +175,7 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         OnCollisionExit();
         _isInCollision = false;
-    }       
+    } 
+    */
         
 }

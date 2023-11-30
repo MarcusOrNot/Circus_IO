@@ -6,12 +6,7 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour, IBurnable
 {
-    public void Burn()
-    {
-        _fireParticles?.Play();
-        Destroy(this);
-        Destroy(gameObject, 2f);
-    }
+    public void Burn() {  _fireParticles?.Play();  Destroy(this); Destroy(gameObject, 2f);}
 
     public EntityModel Model { get => _model; }
     
@@ -36,9 +31,13 @@ public class Entity : MonoBehaviour, IBurnable
     private void Start()
     {        
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
-        
-        StartCoroutine(CheckFallingStatus());        
+        _fireParticles?.Stop();
+        StartCoroutine(CheckFallingStatus());
+
+       
     }   
+    
+
 
     private void OnTriggerEnter(Collider other)
     {        
