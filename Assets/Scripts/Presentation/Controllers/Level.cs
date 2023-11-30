@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Level : MonoBehaviour
 {
+    [SerializeField] private Canvas _canvasHUD;
     private PlayerHunter _player;
     private DamageZoneConroller _damageZoneConroller;
     public static Level Instance { get; private set; }
@@ -23,6 +24,7 @@ public class Level : MonoBehaviour
     }
 
     public DamageZoneConroller GetDamageZone() => _damageZoneConroller;
+    public Canvas GetHUDCanvas => _canvasHUD;
 
     public void RestartLevel()
     {

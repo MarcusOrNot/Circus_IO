@@ -21,6 +21,7 @@ public class HunterFollowBehaviour : AIBehavior
         Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter);
         if (nearest != null && nearest.Lifes<_hunter.Lifes)
         {
+            
             var distance = Vector3.Distance(nearest.transform.position, _hunter.transform.position);
             if (distance < _aggressionDistance*(_hunter.Lifes/ nearest.Lifes))
             {
@@ -30,6 +31,11 @@ public class HunterFollowBehaviour : AIBehavior
                 //Debug.Log("cross " + between.ToString());            
                 //return new Vector2(between.x, between.z);
                 return new AIBehaviorModel(_agressive, new Vector2(between.x, between.z), accelerate);
+            }
+            else
+            {
+                var between = (nearest.transform.position - _hunter.transform.position).normalized;
+                return new AIBehaviorModel(_agressive/10, new Vector2(between.x, between.z), false);
             }
         }
         return new AIBehaviorModel();

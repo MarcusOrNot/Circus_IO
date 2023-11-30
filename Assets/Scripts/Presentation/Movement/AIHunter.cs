@@ -14,6 +14,7 @@ public class AIHunter : MonoBehaviour
     [Range(0, 1)] public float Appetite = 0.5f;
     private Hunter _hunter;
     private List<AIBehavior> _behaviors = new List<AIBehavior>();
+    private List<AIBehavior> _ghostBehaviors = new List<AIBehavior>();
     //private Vector2 _aiDirection = Vector2.zero;
     private AIBehaviorModel _state = new AIBehaviorModel();
     private void Awake()
@@ -30,6 +31,9 @@ public class AIHunter : MonoBehaviour
         _behaviors.Add(new HunterFollowBehaviour(Agressive, _hunter));
         _behaviors.Add(new AvoidHunterBehaviour(FearHunter, _hunter));
         _behaviors.Add(new AvoidDamageZoneBehaviour(FearDamageZone, _hunter));
+
+        //Поведение в атакующем состоянии
+        _ghostBehaviors.Add(new HunterFollowBehaviour(Agressive*2, _hunter));
 
         StartCoroutine(AIControlCoroutine());
         
@@ -63,6 +67,8 @@ public class AIHunter : MonoBehaviour
         //Vector2 result = Vector2.zero;
         //float weight = 0;
         var currentState = new AIBehaviorModel();
+        //var behaviors = _hunter.Is
+
         foreach (AIBehavior behavior in _behaviors)
         {
             var newState = behavior.Update();
