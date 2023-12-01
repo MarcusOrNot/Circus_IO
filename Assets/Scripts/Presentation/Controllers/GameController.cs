@@ -66,7 +66,11 @@ public class GameController : MonoBehaviour, IGameEventObserver
                 PauseGame();
                 _gameUI.ShowWin();
                 _music.Stop();
-                _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
+                //_effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
+                _ads.ShowInterstitialAd((successfull) =>
+                {
+                    _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+                });
             }
         }
     }

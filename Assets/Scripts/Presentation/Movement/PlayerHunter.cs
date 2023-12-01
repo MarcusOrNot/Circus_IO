@@ -27,8 +27,12 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             });
             _hunter.SetOnBoostStateChanged((state) =>
             {
-                _controller.SetActionEnabled(state);
+                //Debug.Log("State changed "+state.ToString());
+                //_controller.SetActionEnabled(state);
+                if (state==false)
+                    _controller.SetActionCooldown(_hunter.Model.BoostRestartTime);
             });
+            _hunter.SetOnHunterModeChanged((state) => { _controller.SetActionEnabled(!state); });
         }
     }
 

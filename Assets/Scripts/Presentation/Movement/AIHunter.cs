@@ -28,8 +28,8 @@ public class AIHunter : MonoBehaviour
     {
         //var damageZone = Level.Instance.GetDamageZone();
         //Собираем поведение
-        _behaviors.Add(new FoodCollectBehavior(Appetite, transform));
-        _behaviors.Add(new BoosterCollectBehavior(BoosterAppetite, transform));
+        _behaviors.Add(new FoodCollectBehavior(Appetite, transform, _hunter));
+        _behaviors.Add(new BoosterCollectBehavior(BoosterAppetite, transform, _hunter));
         _behaviors.Add(new HunterFollowBehaviour(Agressive, _hunter));
         _behaviors.Add(new AvoidHunterBehaviour(FearHunter, _hunter));
         _behaviors.Add(new AvoidDamageZoneBehaviour(FearDamageZone, _hunter));

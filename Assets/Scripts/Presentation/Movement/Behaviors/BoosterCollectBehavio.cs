@@ -6,11 +6,13 @@ public class BoosterCollectBehavior : AIBehavior
 {
     private float _appetiteBooster;
     private Transform _transform;
+    private Hunter _hunter;
     //private DamageZoneConroller _damageZone;
-    public BoosterCollectBehavior(float appetiteBooster, Transform sourceTransform)
+    public BoosterCollectBehavior(float appetiteBooster, Transform sourceTransform, Hunter hunter)
     {
         _appetiteBooster = appetiteBooster;
         _transform = sourceTransform;
+        _hunter = hunter;
         //_damageZone = damageZone;
     }
 
@@ -19,7 +21,7 @@ public class BoosterCollectBehavior : AIBehavior
         //סכמי סבמנא זנאעגû
         Booster nearest = GetNearestObject<Booster>(_transform.position, null);
         
-        if (nearest != null)
+        if (nearest != null && _hunter.KaufmoIsActive == false)
         {
             var between = (nearest.transform.position - _transform.position).normalized;
             //Debug.Log("cross " + between.ToString());            
