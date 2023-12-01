@@ -21,7 +21,7 @@ public class HunterFollowBehaviour : AIBehavior
         Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter);
         if (nearest != null && nearest.Lifes<_hunter.Lifes)
         {
-            if (nearest.KaufmoIsActive == true) return new AIBehaviorModel();
+            if (nearest.KaufmoIsActive == true && _hunter.KaufmoIsActive==false) return new AIBehaviorModel();
             var distance = Vector3.Distance(nearest.transform.position, _hunter.transform.position);
             if (distance < _aggressionDistance*(Mathf.Min(_hunter.Lifes/ nearest.Lifes, 2)) || _hunter.KaufmoIsActive == true)
             {
