@@ -19,15 +19,15 @@ public class HunterFollowBehaviour : AIBehavior
     public override AIBehaviorModel Update()
     {
         Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter);
+        var between = (nearest.transform.position - _hunter.transform.position).normalized;
+        if (nearest.KaufmoIsActive == true && _hunter.KaufmoIsActive == false) return new AIBehaviorModel();
+        if (_hunter.KaufmoIsActive == true) return new AIBehaviorModel(_agressive, new Vector2(between.x, between.z), false);
         if (nearest != null && nearest.Lifes<_hunter.Lifes)
         {
-            if (nearest.KaufmoIsActive == true && _hunter.KaufmoIsActive==false) return new AIBehaviorModel();
             var distance = Vector3.Distance(nearest.transform.position, _hunter.transform.position);
             if (distance < _aggressionDistance*(Mathf.Min(_hunter.Lifes/ nearest.Lifes, 2)) || _hunter.KaufmoIsActive == true)
             {
                 //Debug.Log("Now hunter should go "+_hunter.name);
-                var between = (nearest.transform.position - _hunter.transform.position).normalized;
-                if (_hunter.KaufmoIsActive == true) return new AIBehaviorModel(_agressive, new Vector2(between.x, between.z), false);
                 var accelerate = Vector3.Angle(between, _hunter.transform.forward) < 10;
                 //Debug.Log("cross " + between.ToString());            
                 //return new Vector2(between.x, between.z);
@@ -35,7 +35,7 @@ public class HunterFollowBehaviour : AIBehavior
             }
             else
             {
-                var between = (nearest.transform.position - _hunter.transform.position).normalized;
+                //var between = (nearest.transform.position - _hunter.transform.position).normalized;
                 return new AIBehaviorModel(_agressive/10, new Vector2(between.x, between.z), false);
             }
         }
