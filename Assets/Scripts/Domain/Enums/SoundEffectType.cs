@@ -9,5 +9,7 @@ public enum SoundEffectType
     LEVEL_FAILED,
     ENTITY_EAT,
     HUNTER_ACCELERATED,
-    MELEE_ATTACK
+    MELEE_ATTACK,
+    HUNTER_DEATH,
+    BOOSTER_EAT
 }
