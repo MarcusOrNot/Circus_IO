@@ -75,6 +75,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerImage: {fileID: 7672850379681584873}
   _playerName: {fileID: 3777666897394636873}
+  _lifesValueText: {fileID: 5136404038844026652}
 --- !u!1 &2173352448510929437
 GameObject:
   m_ObjectHideFlags: 0
