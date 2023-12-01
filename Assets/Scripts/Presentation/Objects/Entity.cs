@@ -63,7 +63,7 @@ public class Entity : MonoBehaviour, IBurnable
     private void OnTriggerEnter(Collider other)
     {        
         if (_rigidbody == null) return;        
-        if (other.TryGetComponent(out Entity _))
+        if (other.TryGetComponent(out Entity _) || other.TryGetComponent(out Booster _))
         {             
             PhysicalRebound();
         }
@@ -75,7 +75,7 @@ public class Entity : MonoBehaviour, IBurnable
     private void OnTriggerStay(Collider other)
     {
         if (_rigidbody == null) return;
-        if (other.TryGetComponent(out Entity _))
+        if (other.TryGetComponent(out Entity _) || other.TryGetComponent(out Booster _))
         {            
             PhysicalRebound();
         }

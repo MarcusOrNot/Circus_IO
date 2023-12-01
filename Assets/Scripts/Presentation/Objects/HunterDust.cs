@@ -30,7 +30,7 @@ public class HunterDust : MonoBehaviour
         if (_particles != null)
         {
             _startParticleObjectScale = transform.lossyScale;
-            _startParticleShapeScale = _particles.shape.scale;
+            //_startParticleShapeScale = _particles.shape.scale;
             _startEmissionRate = _particles.emission.rateOverTime.constant;
         }
     }
@@ -62,7 +62,7 @@ public class HunterDust : MonoBehaviour
     {
         if (_particleSystemIsActivated) _particles?.Pause();
         float scaleMultiplier = transform.lossyScale.x / _startParticleObjectScale.x;
-        var shape = _particles.shape; shape.scale = _startParticleShapeScale * scaleMultiplier;
+        //var shape = _particles.shape; shape.scale = _startParticleShapeScale * scaleMultiplier;
         var emission = _particles.emission; emission.rateOverTime = _startEmissionRate * scaleMultiplier;
         if (_particleSystemIsActivated) _particles?.Play();
 
@@ -71,7 +71,8 @@ public class HunterDust : MonoBehaviour
 
     private void SaveParticlesAfterHunterDestroying()
     {
-        _particles.gameObject.transform.parent = null;
+        //_particles.gameObject.transform.parent = null;
+        _particles.gameObject.transform.SetParent(null, true);
         _particles?.Stop();
         Destroy(gameObject, 2f);
     }

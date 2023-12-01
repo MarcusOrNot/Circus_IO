@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 
 
-[RequireComponent(typeof(ParticleSystem))]
 
 public class HunterFire : MonoBehaviour
 {
@@ -24,7 +23,7 @@ public class HunterFire : MonoBehaviour
     private void Awake()
     {
         _hunter = GetComponentInParent<Hunter>();
-        _particles = GetComponent<ParticleSystem>();
+        _particles = GetComponentInChildren<ParticleSystem>();
         if (_hunter == null || _particles == null) Destroy(gameObject);
 
         _hunter?.SetOnBurning(() => SetParticlesActivationState());
@@ -34,9 +33,9 @@ public class HunterFire : MonoBehaviour
         if (_particles != null)
         {
             _startParticleObjectScale = transform.lossyScale;
-            _startParticleShapeScale = _particles.shape.scale;
+            //_startParticleShapeScale = _particles.shape.scale;
             _startEmissionRate = _particles.emission.rateOverTime.constant;
-            _startParticleSize = _particles.sizeOverLifetime.sizeMultiplier;
+            //_startParticleSize = _particles.sizeOverLifetime.sizeMultiplier;
         }
                 
     }
@@ -59,9 +58,9 @@ public class HunterFire : MonoBehaviour
     { 
         if (_particleSystemIsActivated) _particles?.Pause();
         float scaleMultiplier = 0.5f + transform.lossyScale.x / _startParticleObjectScale.x / 2f;
-        var shape = _particles.shape; shape.scale = _startParticleShapeScale * scaleMultiplier;
+        //var shape = _particles.shape; shape.scale = _startParticleShapeScale * scaleMultiplier;
         var emission = _particles.emission; emission.rateOverTime = _startEmissionRate * scaleMultiplier;        
-        var particleSize = _particles.sizeOverLifetime; particleSize.sizeMultiplier = _startParticleSize * scaleMultiplier;
+        //var particleSize = _particles.sizeOverLifetime; particleSize.sizeMultiplier = _startParticleSize * scaleMultiplier;
         if (_particleSystemIsActivated) _particles?.Play();
     }
 
@@ -76,7 +75,8 @@ public class HunterFire : MonoBehaviour
 
     private void SaveParticlesAfterHunterDestroying()
     {
-        _particles.gameObject.transform.parent = null;
+        //_particles.gameObject.transform.parent = null;
+        _particles.transform.SetParent(null, true);
         _particles?.Stop();
         Destroy(gameObject, 2f);
     }

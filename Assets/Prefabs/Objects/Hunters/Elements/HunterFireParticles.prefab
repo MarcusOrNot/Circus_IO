@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4445868178426829763}
   - component: {fileID: 5669859247074106274}
-  - component: {fileID: 7522599853291025803}
-  - component: {fileID: 6270504997976391044}
+  - component: {fileID: 1533713179048668806}
+  - component: {fileID: 6267049025522189483}
   m_Layer: 0
   m_Name: HunterFireParticles
   m_TagString: Untagged
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minBurningTime: 2
---- !u!198 &7522599853291025803
+--- !u!198 &1533713179048668806
 ParticleSystem:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,7 +122,7 @@ ParticleSystem:
       m_RotationOrder: 4
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
-  scalingMode: 1
+  scalingMode: 0
   randomSeed: 0
   InitialModule:
     serializedVersion: 3
@@ -183,7 +183,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 30
+      scalar: 10
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -301,7 +301,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 0.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4770,7 +4770,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!199 &6270504997976391044
+--- !u!199 &6267049025522189483
 ParticleSystemRenderer:
   serializedVersion: 6
   m_ObjectHideFlags: 0

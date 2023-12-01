@@ -24,7 +24,14 @@ public class Hunter : MonoBehaviour, IBurnable
     public void AddDamage(int value) => GetDamage(value);
     public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }
     public bool KaufmoIsActive { get => _kaufmoIsActivated; }
-    public void AttackCurrentCollidedHunter() { if (_currentCollidedKaufmo != null) _currentCollidedKaufmo.AddDamage(Mathf.Max(100, _currentCollidedKaufmo.Lifes / 2)); }
+    public void AttackCurrentCollidedHunter()
+    {
+        if (_currentCollidedKaufmo != null)
+        {
+            _currentCollidedKaufmo.AddDamage(Mathf.Max(100, _currentCollidedKaufmo.Lifes / 2));
+            _soundEffectsController?.PlayEffect(SoundEffectType.MELEE_ATTACK);
+        }
+    }
 
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }
@@ -215,6 +222,7 @@ public class Hunter : MonoBehaviour, IBurnable
         while ((hunter != null) && !hunter.KaufmoIsActive && (_currentCollidedKaufmo == hunter))
         {
             _character.StartAttackAnimation();
+            //_soundEffectsController?.PlayEffect(SoundEffectType.MELEE_ATTACK);
             //hunter.AddDamage(Mathf.Max(100, hunter.Lifes / 2));
             yield return new WaitForSeconds(_collidedKaufmoDamagingPeriod);
         }
@@ -256,6 +264,7 @@ public class Hunter : MonoBehaviour, IBurnable
                 eatingSpeed = 7f * _character.SpeedMultiplier;
                 objectDestroyingTime = 0.3f;
                 monobehaviourDestroyingTime = 0.5f;
+                _soundEffectsController?.PlayEffect(SoundEffectType.BOOSTER_EAT);
                 break;
         }        
         Destroy(somebody, monobehaviourDestroyingTime);
@@ -326,7 +335,7 @@ public class Hunter : MonoBehaviour, IBurnable
         //_character.ChangeAnimator();
         _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;        
         yield return new WaitForSeconds(time - HUNTER_MODEL_FLICKING_TIME_TRIGGER);
-        StartCoroutine(HunterModelFlicking());
+        StartCoroutine(HunterModelFlicking(HUNTER_MODEL_FLICKING_TIME_TRIGGER));
         yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);
         //_bubble?.SetActive(true);
         //_kaufmo?.SetActive(false);
@@ -337,17 +346,18 @@ public class Hunter : MonoBehaviour, IBurnable
         _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();        
     }
-    private IEnumerator HunterModelFlicking()
+    private IEnumerator HunterModelFlicking(float flickingTime)
     {
         const float HUNTER_FLICKING_PERIOD = 0.3f;
-        while (_kaufmoIsActivated)
+        while ((flickingTime > 0) && _kaufmoIsActivated)
         {
-            foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(false);
-            foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(true);
+            foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(!kaufmoChildrenObject.activeSelf);
+            foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(!bubbleChildrenObject.activeSelf);
             yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
-            foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(true);
-            foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(false);
-            yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
+            flickingTime -= HUNTER_FLICKING_PERIOD;
+            //foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(true);
+            //foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(false);
+            //yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
         }
         foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(false);
         foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(true);

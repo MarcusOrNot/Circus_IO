@@ -10,9 +10,9 @@ public class HunterDestroyParticles : MonoBehaviour
 {
     private Hunter _hunter;
 
-    private ParticleSystem _particles;  
+    private ParticleSystem _particles;
+    private EffectPlayController _soundEffectsController;
 
-    
 
     private void Awake()
     {
@@ -20,8 +20,10 @@ public class HunterDestroyParticles : MonoBehaviour
         _particles = GetComponent<ParticleSystem>();
         if (_hunter == null || _particles == null) { Destroy(gameObject); }
 
-        _hunter?.SetOnDestroying(() => ActivateParticles());        
-                
+        _hunter?.SetOnDestroying(() => ActivateParticles());
+
+        _soundEffectsController = GetComponent<EffectPlayController>();
+
     }
 
     private void Start()
@@ -36,7 +38,8 @@ public class HunterDestroyParticles : MonoBehaviour
         
         _particles.gameObject.transform.parent = null;
         _particles?.Play();
-        Destroy(gameObject, 2f);        
+        Destroy(gameObject, 2f);
+        _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_DEATH);
     }
 
     

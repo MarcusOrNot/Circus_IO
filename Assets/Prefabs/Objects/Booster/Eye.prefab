@@ -8690,8 +8690,8 @@ Transform:
   m_GameObject: {fileID: 1020772547521666239}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.028254, y: 0.8899, z: -0.25599}
-  m_LocalScale: {x: 3.2993307, y: 3.2993307, z: 3.2993307}
+  m_LocalPosition: {x: -0.028254, y: 2.22, z: -0.26}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4183957791689933608}
@@ -10601,7 +10601,7 @@ GameObject:
   m_Layer: 0
   m_Name: Eye
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -11304,12 +11304,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 8494108387781035754}
     m_Modifications:
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.0749042
+      objectReference: {fileID: 0}
+    - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.6756222
+      objectReference: {fileID: 0}
+    - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.0932908
+      objectReference: {fileID: 0}
+    - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.28
+      value: 3.17
       objectReference: {fileID: 0}
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalPosition.z
