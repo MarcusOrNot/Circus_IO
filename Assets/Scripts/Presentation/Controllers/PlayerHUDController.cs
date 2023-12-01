@@ -8,10 +8,10 @@ using Zenject;
 
 public class PlayerHUDController : MonoBehaviour
 {
+    private float OFFSET = -70.0f;
     [SerializeField] private Image _playerImage;
     [SerializeField] private TextMeshProUGUI _playerName;
     [Inject] private PlayersInfoService _playersInfoService;
-    private const float OFFSET = -50;
     private Hunter _hunter;
     private RectTransform _canvasRect = null;
     private Camera _camera = null;
@@ -38,6 +38,7 @@ public class PlayerHUDController : MonoBehaviour
             return;
         }
         var viewPos = _camera.WorldToViewportPoint(_hunter.transform.position);
+        //float cameraToHunterDistanceOffset = 18f / Vector3.Distance(_camera.transform.position, _hunter.transform.position);
         Vector2 finalPosition = new Vector2(viewPos.x * _canvasRect.sizeDelta.x, viewPos.y * _canvasRect.sizeDelta.y+OFFSET);
         GetComponent<RectTransform>().anchoredPosition = finalPosition;
     }
