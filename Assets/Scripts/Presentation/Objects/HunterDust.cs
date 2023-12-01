@@ -24,6 +24,7 @@ public class HunterDust : MonoBehaviour
 
         _hunter?.SetOnBoostingStateChanged((isBoosting) => SetParticlesActivationState(isBoosting));
         _hunter?.SetOnScaleChanged((scale) => ChangeScale());
+        _hunter?.SetOnDestroying(() => SaveParticlesAfterHunterDestroying());
         
                 
         if (_particles != null)
@@ -67,5 +68,11 @@ public class HunterDust : MonoBehaviour
 
                        
     }
-    
+
+    private void SaveParticlesAfterHunterDestroying()
+    {
+        _particles.gameObject.transform.parent = null;
+        _particles?.Stop();
+        Destroy(gameObject, 2f);
+    }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,14 @@ using UnityEngine;
 
 public class Booster : MonoBehaviour, IBurnable
 {
-    public void Burn() { _fireParticles?.Play(); Destroy(this); Destroy(gameObject, 2f); }
+    public void Burn() { foreach (var item in _onBurning) item?.Invoke(); Destroy(this); Destroy(gameObject, 1f); }
 
 
 
     public virtual BoosterType GetBoosterType() => BoosterType.HEALTH_BOOSTER;
-    
 
+    public void SetOnBurning(Action onBurning) { _onBurning.Add(onBurning); }
+    private List<Action> _onBurning = new List<Action>();
 
     private Rigidbody _rigidbody;    
     private Animator _animator;
@@ -23,7 +25,7 @@ public class Booster : MonoBehaviour, IBurnable
 
 
 
-    private ParticleSystem _fireParticles;
+    
 
 
 
@@ -37,17 +39,28 @@ public class Booster : MonoBehaviour, IBurnable
 
 
 
-        _fireParticles = GetComponent<ParticleSystem>();
+       
     }
 
     private void Start()
     {
-        _fireParticles?.Stop();
-        _animator.speed = Random.Range(1f, 2f);
+        
+        _animator.speed = UnityEngine.Random.Range(1f, 2f);
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
         StartCoroutine(CheckFallingStatus());
-    }
 
+
+        
+    }
+    
+
+
+
+
+    private void OnDestroy()
+    {
+        _onBurning.Clear();
+    }
 
 
     private IEnumerator CheckFallingStatus()
@@ -110,7 +123,7 @@ public class Booster : MonoBehaviour, IBurnable
         float reboundForce = 0.5f;
         float verticalVelocityTrigger = 0.1f;
         if (_rigidbody.velocity.y > verticalVelocityTrigger) { return; }
-        _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);
+        _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);
     }
 
     
