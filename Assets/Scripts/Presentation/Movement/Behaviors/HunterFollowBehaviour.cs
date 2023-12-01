@@ -27,7 +27,7 @@ public class HunterFollowBehaviour : AIBehavior
             {
                 //Debug.Log("Now hunter should go "+_hunter.name);
                 var between = (nearest.transform.position - _hunter.transform.position).normalized;
-                if (_hunter.KaufmoIsActive == true) return new AIBehaviorModel(_agressive / 10, new Vector2(between.x, between.z), false);
+                if (_hunter.KaufmoIsActive == true) return new AIBehaviorModel(_agressive, new Vector2(between.x, between.z), false);
                 var accelerate = Vector3.Angle(between, _hunter.transform.forward) < 10;
                 //Debug.Log("cross " + between.ToString());            
                 //return new Vector2(between.x, between.z);

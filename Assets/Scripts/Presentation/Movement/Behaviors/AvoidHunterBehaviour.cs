@@ -17,6 +17,7 @@ public class AvoidHunterBehaviour : AIBehavior
 
     public override AIBehaviorModel Update()
     {
+        if (_hunter.KaufmoIsActive == true) return new AIBehaviorModel();
         Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter);
         if (nearest != null && (nearest.Lifes > _hunter.Lifes || nearest.KaufmoIsActive == true))
         {
