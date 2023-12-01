@@ -7,6 +7,7 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using Unity.VisualScripting;
+using System.Runtime.CompilerServices;
 
 [RequireComponent(typeof(Character))]
 
@@ -23,6 +24,7 @@ public class Hunter : MonoBehaviour, IBurnable
     public void AddDamage(int value) => GetDamage(value);
     public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }
     public bool KaufmoIsActive { get => _kaufmoIsActivated; }
+    public void AttackCurrentCollidedHunter() { if (_currentCollidedKaufmo != null) _currentCollidedKaufmo.AddDamage(Mathf.Max(100, _currentCollidedKaufmo.Lifes / 2)); }
 
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }
@@ -42,6 +44,9 @@ public class Hunter : MonoBehaviour, IBurnable
 
     public void SetOnBurning(Action onBurning) { _onBurning.Add(onBurning); }
     private List<Action> _onBurning = new List<Action>();
+
+    public void SetOnDestroying(Action onDestroying) { _onDestroying.Add(onDestroying); }
+    private List<Action> _onDestroying = new List<Action>();
 
 
     [SerializeField] private HunterModel _model;
@@ -64,6 +69,9 @@ public class Hunter : MonoBehaviour, IBurnable
     private bool _kaufmoIsActivated = false;
     [SerializeField] GameObject _kaufmo;
     [SerializeField] GameObject _bubble;
+    private List<GameObject> _kaufmoChildrenObjects = new();
+    private List<GameObject> _bubbleChildrenObjects = new();
+
 
     private float _defaultCharacterSpeedMultiplier = -1f;
 
@@ -76,12 +84,17 @@ public class Hunter : MonoBehaviour, IBurnable
         _character = GetComponent<Character>();  
         _rigidbody = GetComponent<Rigidbody>();
         _soundEffectsController = GetComponent<EffectPlayController>();
+        for (int i = 0; i < _kaufmo.transform.childCount; i++) _kaufmoChildrenObjects.Add(_kaufmo.transform.GetChild(i).gameObject);
+        for (int i = 0; i < _kaufmo.transform.childCount; i++) _bubbleChildrenObjects.Add(_bubble.transform.GetChild(i).gameObject);
+
     }
 
     
     
     private void Start()
     {
+        foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(false);
+
         _defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);
         
         transform.localScale = GetScaleDependingOnHealth(_model.StartHealth);        
@@ -104,6 +117,7 @@ public class Hunter : MonoBehaviour, IBurnable
         _onBoostingStateChanged.Clear();
         _onBoostStateChanged.Clear();
         _onBurning.Clear();
+        _onDestroying.Clear();
     }    
     
 
@@ -200,7 +214,8 @@ public class Hunter : MonoBehaviour, IBurnable
     {
         while ((hunter != null) && !hunter.KaufmoIsActive && (_currentCollidedKaufmo == hunter))
         {
-            hunter.AddDamage(Mathf.Max(100, hunter.Lifes / 2));
+            _character.StartAttackAnimation();
+            //hunter.AddDamage(Mathf.Max(100, hunter.Lifes / 2));
             yield return new WaitForSeconds(_collidedKaufmoDamagingPeriod);
         }
     }
@@ -219,12 +234,14 @@ public class Hunter : MonoBehaviour, IBurnable
                 objectDestroyingTime = 1f;
                 monobehaviourDestroyingTime = 0;
                 _soundEffectsController?.PlayEffect(SoundEffectType.ENTITY_EAT);
+                (somebody as Entity).Eat();
                 break;                
             case Hunter _:
                 ChangeHealth((somebody as Hunter).Lifes);
                 eatingSpeed = 7f * _character.SpeedMultiplier;
                 objectDestroyingTime = 0.3f;
                 monobehaviourDestroyingTime = 0.5f;
+                (somebody as Hunter).AddDamage((somebody as Hunter).Lifes + 100);
                 break;
             case Booster _:
                 switch ((somebody as Booster).GetBoosterType())
@@ -254,8 +271,8 @@ public class Hunter : MonoBehaviour, IBurnable
     
     private void GetDamage(int value)
     {    
-        ChangeHealth(-value);        
-        if (_health <= 0) Destroy(gameObject);
+        ChangeHealth(-value);
+        if (_health <= 0) { foreach (var item in _onDestroying) item?.Invoke(); Destroy(gameObject); }
     }
     private void ChangeHealth(int value)
     {
@@ -280,7 +297,7 @@ public class Hunter : MonoBehaviour, IBurnable
         int frameCounter = SCALE_INFORMATION_SENDER_PERIOD_IN_FRAMES;
         _isGrowing = true;
         while (transform.localScale != targetScale)
-        {
+        {            
             if (frameCounter < 0) 
             { 
                 frameCounter = SCALE_INFORMATION_SENDER_PERIOD_IN_FRAMES; 
@@ -296,19 +313,45 @@ public class Hunter : MonoBehaviour, IBurnable
 
     private IEnumerator ActivateKaufmoMode(float time)
     {
+        const float HUNTER_MODEL_FLICKING_TIME_TRIGGER = 5f;
         _kaufmoIsActivated = true; foreach (var item in _onKaufmoActivated) item?.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();
         _boosterIsReloading = false;
         _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
-        _kaufmo?.SetActive(true); 
-        _bubble?.SetActive(false);
-        _character.ChangeAnimator(); _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;        
-        yield return new WaitForSeconds(time);
-        _bubble?.SetActive(true);
-        _kaufmo?.SetActive(false);
-        _character.ChangeAnimator(); _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier;
+        foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(true);
+        foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(false);
+        
+        //_kaufmo?.SetActive(true); 
+        //_bubble?.SetActive(false);
+        //_character.ChangeAnimator();
+        _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;        
+        yield return new WaitForSeconds(time - HUNTER_MODEL_FLICKING_TIME_TRIGGER);
+        StartCoroutine(HunterModelFlicking());
+        yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);
+        //_bubble?.SetActive(true);
+        //_kaufmo?.SetActive(false);
+        //_character.ChangeAnimator();
+        _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier;
+        foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(false);
+        foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(true);
         _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();        
+    }
+    private IEnumerator HunterModelFlicking()
+    {
+        const float HUNTER_FLICKING_PERIOD = 0.3f;
+        while (_kaufmoIsActivated)
+        {
+            foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(false);
+            foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(true);
+            yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
+            foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(true);
+            foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(false);
+            yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
+        }
+        foreach (GameObject kaufmoChildrenObject in _kaufmoChildrenObjects) kaufmoChildrenObject.SetActive(false);
+        foreach (GameObject bubbleChildrenObject in _bubbleChildrenObjects) bubbleChildrenObject.SetActive(true);
+
     }
 
     

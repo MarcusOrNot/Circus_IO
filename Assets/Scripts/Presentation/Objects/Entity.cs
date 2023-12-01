@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -6,17 +8,26 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour, IBurnable
 {
-    public void Burn() {  _fireParticles?.Play();  Destroy(this); Destroy(gameObject, 2f);}
+    public void Burn() { foreach (var item in _onBurning) item?.Invoke(); Destroy(this); Destroy(gameObject, 1f);}
+    public void Eat() { foreach (var item in _onEating) item?.Invoke(); }
 
     public EntityModel Model { get => _model; }
     
     public int HealthCount { get => _model.HealCount; set { _model.HealCount = value; } }
 
+    public void SetOnEating(Action onEating) { _onEating.Add(onEating); }
+    private List<Action> _onEating = new List<Action>();
+
+    public void SetOnBurning(Action onBurning) { _onBurning.Add(onBurning); }
+    private List<Action> _onBurning = new List<Action>();
+
+
 
     [SerializeField] private EntityModel _model;  
 
     private Rigidbody _rigidbody; 
-    private ParticleSystem _fireParticles;
+    
+    
         
     private bool _destroyingProcessIsStarted = false;
     private IEnumerator _destroyingProcess;
@@ -26,17 +37,27 @@ public class Entity : MonoBehaviour, IBurnable
     {        
         _rigidbody = GetComponent<Rigidbody>();
         GetComponent<Collider>().isTrigger = true;
-        _fireParticles = GetComponent<ParticleSystem>();        
+        
+        
     }
     private void Start()
     {        
         transform.rotation = Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up);
-        _fireParticles?.Stop();
+        
         StartCoroutine(CheckFallingStatus());
 
        
-    }   
-    
+    }
+   
+
+
+
+    private void OnDestroy()
+    {
+        _onEating.Clear();
+        _onBurning.Clear();
+    }
+
 
 
     private void OnTriggerEnter(Collider other)
@@ -98,7 +119,7 @@ public class Entity : MonoBehaviour, IBurnable
         float reboundForce = 0.5f;
         float verticalVelocityTrigger = 0.1f;
         if (_rigidbody.velocity.y > verticalVelocityTrigger) { return; }        
-        _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);        
+        _rigidbody.AddForce((Vector3.up + Quaternion.AngleAxis(UnityEngine.Random.Range(0, 359f), Vector3.up) * Vector3.forward) * reboundForce, ForceMode.Impulse);        
     }
 
 

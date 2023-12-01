@@ -29,7 +29,7 @@ public class HunterFire : MonoBehaviour
 
         _hunter?.SetOnBurning(() => SetParticlesActivationState());
         _hunter?.SetOnScaleChanged((scale) => ChangeScale());
-
+        _hunter?.SetOnDestroying(() => SaveParticlesAfterHunterDestroying());
 
         if (_particles != null)
         {
@@ -74,5 +74,10 @@ public class HunterFire : MonoBehaviour
         _particles?.Stop();
     }
 
-
+    private void SaveParticlesAfterHunterDestroying()
+    {
+        _particles.gameObject.transform.parent = null;
+        _particles?.Stop();
+        Destroy(gameObject, 2f);
+    }
 }

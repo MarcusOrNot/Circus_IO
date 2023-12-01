@@ -22,17 +22,23 @@ public class Character : MonoBehaviour
             if (!_isMoving) { SetMovingStatus(true); StartCoroutine(MoveStoppingProcess()); }
         }        
     }
-
+    /*
     public void ChangeAnimator() 
     {
         _animator = GetComponentInChildren<Animator>();        
         _isMovingForward = false;
     }
+    */
+    public void StartAttackAnimation()
+    {
+        //_animator.SetTrigger("Attack");
+        foreach (Animator animator in _animators) animator.SetTrigger("Attack");
+    }
 
 
     [SerializeField] private CharacterModel _model;
     private Rigidbody _rigidbody;
-    private Animator _animator;
+    private Animator[] _animators;
     
     private float _speedMultiplier = 1.0f;    
    
@@ -48,12 +54,14 @@ public class Character : MonoBehaviour
 
     private Vector2 _movingDirection = Vector2.zero;
 
+    private Hunter _currentCollidedHunter = null;
+
     
     private void Awake()
     {  
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionY;
-        _animator = GetComponentInChildren<Animator>();        
+        _animators = GetComponentsInChildren<Animator>();        
     }
 
     private void Start()
@@ -61,8 +69,9 @@ public class Character : MonoBehaviour
         SetGoingAnimationSpeed();
     }
     private void SetGoingAnimationSpeed()
-    {        
-        _animator?.SetFloat("Speed", _model.Speed * _speedMultiplier / 10 / Mathf.Pow(transform.localScale.x, 0.3f));
+    {
+        foreach (Animator animator in _animators) { animator?.SetFloat("Speed", _model.Speed * _speedMultiplier / 10 / Mathf.Pow(transform.localScale.x, 0.3f)); }
+        //_animator?.SetFloat("Speed", _model.Speed * _speedMultiplier / 10 / Mathf.Pow(transform.localScale.x, 0.3f));
     }
 
 
@@ -72,10 +81,16 @@ public class Character : MonoBehaviour
         _isMoving = isMoving;
         if (!_isMoving || _isMovingForward || _isRotatingToLeft || _isRotatingToRight)
         {      
-            _isMovingForward = _isRotatingToLeft = _isRotatingToRight = false;            
-            _animator?.SetBool("Go", false);
-            _animator?.SetBool("TurnLeft", false);
-            _animator?.SetBool("TurnRight", false);
+            _isMovingForward = _isRotatingToLeft = _isRotatingToRight = false;
+            foreach (Animator animator in _animators)
+            {
+                animator?.SetBool("Go", false);
+                animator?.SetBool("TurnLeft", false);
+                animator?.SetBool("TurnRight", false);
+            }
+            //_animator?.SetBool("Go", false);
+            //_animator?.SetBool("TurnLeft", false);
+            //_animator?.SetBool("TurnRight", false);
         }        
     }
     private void SetBodyPositionFreezeStatus(bool isFreeze)
@@ -99,14 +114,16 @@ public class Character : MonoBehaviour
         if (_rigidbody == null) return;
         if (!TryRotateToDirection(direction))
         {
-            if (!_isMovingForward) {   _isMovingForward = true; _animator?.SetBool("Go", true); }
+            //if (!_isMovingForward) {   _isMovingForward = true; _animator?.SetBool("Go", true); }
+            if (!_isMovingForward) { _isMovingForward = true; foreach (Animator animator in _animators) animator?.SetBool("Go", true); }
             SetBodyPositionFreezeStatus(false);
             direction = direction.normalized * _model.Speed * _speedMultiplier;
             _rigidbody.velocity = new Vector3(direction.x, _rigidbody.velocity.y, direction.y);
         }
         else 
-        {            
-            if (_isMovingForward) { _isMovingForward = false; _animator?.SetBool("Go", false); }
+        {
+            //if (_isMovingForward) { _isMovingForward = false; _animator?.SetBool("Go", false); }
+            if (_isMovingForward) { _isMovingForward = false; foreach (Animator animator in _animators) animator?.SetBool("Go", false); }
             SetBodyPositionFreezeStatus(true); 
         }
     }    
@@ -119,19 +136,25 @@ public class Character : MonoBehaviour
         {
             if (transform.rotation.eulerAngles.y < previousRotationAngle)
             {
-                if (_isRotatingToRight) { _isRotatingToRight = false; _animator?.SetBool("TurnRight", false); }
-                if (!_isRotatingToLeft) { _isRotatingToLeft = true; _animator?.SetBool("TurnLeft", true); }
+                //if (_isRotatingToRight) { _isRotatingToRight = false; _animator?.SetBool("TurnRight", false); }
+                if (_isRotatingToRight) { _isRotatingToRight = false; foreach (Animator animator in _animators) animator?.SetBool("TurnRight", false); }
+                //if (!_isRotatingToLeft) { _isRotatingToLeft = true; _animator?.SetBool("TurnLeft", true); }
+                if (!_isRotatingToLeft) { _isRotatingToLeft = true; foreach (Animator animator in _animators) animator?.SetBool("TurnLeft", true); }
             }
             else if (transform.rotation.eulerAngles.y > previousRotationAngle)
             {
-                if (_isRotatingToLeft) { _isRotatingToLeft = false; _animator?.SetBool("TurnLeft", false); }
-                if (!_isRotatingToRight) { _isRotatingToRight = true; _animator?.SetBool("TurnRight", true); }
+                //if (_isRotatingToLeft) { _isRotatingToLeft = false; _animator?.SetBool("TurnLeft", false); }
+                if (_isRotatingToLeft) { _isRotatingToLeft = false; foreach (Animator animator in _animators) animator?.SetBool("TurnLeft", false); }
+                //if (!_isRotatingToRight) { _isRotatingToRight = true; _animator?.SetBool("TurnRight", true); }
+                if (!_isRotatingToRight) { _isRotatingToRight = true; foreach (Animator animator in _animators) animator?.SetBool("TurnRight", true); }
             }
         }        
         else
         {
-            if (_isRotatingToLeft) { _isRotatingToLeft = false; _animator?.SetBool("TurnLeft", false); }
-            if (_isRotatingToRight) { _isRotatingToRight = false; _animator?.SetBool("TurnRight", false); }
+            //if (_isRotatingToLeft) { _isRotatingToLeft = false; _animator?.SetBool("TurnLeft", false); }
+            if (_isRotatingToLeft) { _isRotatingToLeft = false; foreach (Animator animator in _animators) animator?.SetBool("TurnLeft", false); }
+            //if (_isRotatingToRight) { _isRotatingToRight = false; _animator?.SetBool("TurnRight", false); }
+            if (_isRotatingToRight) { _isRotatingToRight = false; foreach (Animator animator in _animators) animator?.SetBool("TurnRight", false); }
         }        
         return transform.rotation != targetRotation;
     }
@@ -151,22 +174,36 @@ public class Character : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (_rigidbody == null) return;
-        if (collision.gameObject.TryGetComponent(out Hunter _))
+        if (collision.gameObject.TryGetComponent(out Hunter hunter))
         {
-            _rigidbody.constraints |= RigidbodyConstraints.FreezePositionY;
+            _currentCollidedHunter = hunter;
+            StartCoroutine(VerticalMoveFreezing(hunter));
+            
+            
         }
         
         //StartCoroutine(CollisionExitTimer());
-    }     
+    }    
+    private IEnumerator VerticalMoveFreezing(Hunter hunter)
+    {
+        _rigidbody.constraints |= RigidbodyConstraints.FreezePositionY;
+        while ((hunter != null) && (_currentCollidedHunter == hunter))
+        {            
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (hunter == null) { _rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY; _currentCollidedHunter = null; }
+        
+    }    
     private void OnCollisionExit(Collision collision)
     {
         if (_rigidbody == null) return;
-        if (collision.gameObject.TryGetComponent(out Hunter _))
+        if (collision.gameObject.TryGetComponent(out Hunter hunter) && (hunter == _currentCollidedHunter))
         {
-            _rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY;
+            _currentCollidedHunter = null;
+            _rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY;            
         }
     }
-
+    
     /*
     private IEnumerator CollisionExitTimer()
     {
