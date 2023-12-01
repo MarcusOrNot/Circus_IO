@@ -166,8 +166,12 @@ public class Hunter : MonoBehaviour, IBurnable
     }    
     private void SetBoostReadyState() 
     {
-        _isBoosterReady = !_kaufmoIsActivated && !_boosterIsReloading && (_health > _model.BoostPrice);
-        foreach (var item in _onBoostStateChanged) item?.Invoke(_isBoosterReady);        
+        bool isBoosterReady = !_kaufmoIsActivated && !_boosterIsReloading && (_health > _model.BoostPrice);
+        if (_isBoosterReady != isBoosterReady)
+        {
+            _isBoosterReady = isBoosterReady;
+            foreach (var item in _onBoostStateChanged) item?.Invoke(_isBoosterReady);
+        }          
     }
 
 
