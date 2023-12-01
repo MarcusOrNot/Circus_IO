@@ -1,4 +1,3 @@
-using AppodealStack.UnityEditor.SDKManager.Models;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
