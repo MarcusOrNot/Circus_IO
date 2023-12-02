@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &974939635763088089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1464686809747953253}
+  - component: {fileID: 2506022938962733832}
+  m_Layer: 0
+  m_Name: PlayersInfoInstaller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1464686809747953253
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974939635763088089}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2506022938962733832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974939635763088089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76417fe923b401b419a1411f9d5f92bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playersInfo:
+  - PlayerName: Blaze
+    PlayerIcon: {fileID: 21300000, guid: 49c11b2a4c64fe345b482642158f2c9b, type: 3}
+  - PlayerName: Ra5en666
+    PlayerIcon: {fileID: 21300000, guid: 79f66df5c3598b04a82042eab50cb999, type: 3}
+  - PlayerName: LuLuna
+    PlayerIcon: {fileID: 21300000, guid: 34fde495a9df9b84fb156c1f3eacaf8f, type: 3}
+  - PlayerName: ShadowWWW
+    PlayerIcon: {fileID: 21300000, guid: f0de17b47bf188d4294dafe8e15deb15, type: 3}
+  - PlayerName: NovaMila
+    PlayerIcon: {fileID: 21300000, guid: b9b438eaf28c92740a56dab8a41b4636, type: 3}
+  - PlayerName: Phoenixxx
+    PlayerIcon: {fileID: 21300000, guid: cef03acaba09473418e4e61396658660, type: 3}
+  - PlayerName: Xxavier5
+    PlayerIcon: {fileID: 21300000, guid: a7802e7c3d2f64941a96fee9fc9d8876, type: 3}
+  - PlayerName: StormHere
+    PlayerIcon: {fileID: 21300000, guid: f823ead78279f224f8e63b2ef4682d59, type: 3}
+  - PlayerName: Viperistic
+    PlayerIcon: {fileID: 21300000, guid: 79f66df5c3598b04a82042eab50cb999, type: 3}
+  - PlayerName: Titan Go
+    PlayerIcon: {fileID: 21300000, guid: 668afd3b5f8e06f41b639a98316d8aff, type: 3}
+  - PlayerName: Silent Ghost
+    PlayerIcon: {fileID: 21300000, guid: 28efe8ec48f999543a157f281daa51ed, type: 3}
+  - PlayerName: Jummy Jummy
+    PlayerIcon: {fileID: 21300000, guid: f823ead78279f224f8e63b2ef4682d59, type: 3}
+  - PlayerName: Ramsy B
+    PlayerIcon: {fileID: 21300000, guid: c0aed96e3153fa148abb7059c152ebef, type: 3}

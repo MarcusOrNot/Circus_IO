@@ -2,47 +2,78 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[RequireComponent(typeof(ParticleSystem))]
+
 public class HunterDust : MonoBehaviour
 {
     private Hunter _hunter;
 
-    private ParticleSystem _dustParticles;
-    private Vector3 _startDustParticleShapeScale;
+    private ParticleSystem _particles;
+    private Vector3 _startParticleShapeScale;
     private float _startEmissionRate;
+    private Vector3 _startParticleObjectScale;
+
+    private bool _particleSystemIsActivated = false;
 
     private void Awake()
     {
         _hunter = GetComponentInParent<Hunter>();
-        _dustParticles = GetComponentInChildren<ParticleSystem>();
-        if (_hunter == null || _dustParticles == null) Destroy(gameObject);
+        _particles = GetComponent<ParticleSystem>();
+        if (_hunter == null || _particles == null) Destroy(gameObject);
 
-        _hunter?.SetOnBoostingStateChanged(isBoosting => DustParticlesOn(isBoosting));
-        _hunter?.SetOnScaleChanged(scale => ChangeScale(scale));
+        _hunter?.SetOnBoostingStateChanged((isBoosting) => SetParticlesActivationState(isBoosting));
+        _hunter?.SetOnScaleChanged((scale) => ChangeScale());
+        _hunter?.SetOnDestroying(() => SaveParticlesAfterHunterDestroying());
+        
                 
-        if (_dustParticles != null)
+        if (_particles != null)
         {
-            _startDustParticleShapeScale = _dustParticles.shape.scale;
-            _startEmissionRate = _dustParticles.emission.rateOverTime.constant;
+            _startParticleObjectScale = transform.lossyScale;
+            //_startParticleShapeScale = _particles.shape.scale;
+            _startEmissionRate = _particles.emission.rateOverTime.constant;
         }
-
     }
 
     private void Start()
     {
-        _dustParticles?.Stop();
+        _particles?.Stop();
     }
 
-    private void DustParticlesOn(bool isEnabled)
+
+
+
+    private void SetParticlesActivationState(bool isEnabled)
     {
-        if (isEnabled) _dustParticles?.Play();
-        else _dustParticles?.Stop();
+        if (isEnabled)
+        {
+            _particleSystemIsActivated = true;
+            _particles?.Play();
+        }        
+        else
+        {
+            _particleSystemIsActivated = false;
+            _particles?.Stop();
+        }
+            
     }
 
-    private void ChangeScale(Vector3 scale)
-    {       
-        var shape = _dustParticles.shape; shape.scale = Vector3.Scale(_startDustParticleShapeScale, scale);
-        var emission = _dustParticles.emission; emission.rateOverTime = _startEmissionRate * scale.x; 
+    private void ChangeScale()
+    {
+        if (_particleSystemIsActivated) _particles?.Pause();
+        float scaleMultiplier = transform.lossyScale.x / _startParticleObjectScale.x;
+        //var shape = _particles.shape; shape.scale = _startParticleShapeScale * scaleMultiplier;
+        var emission = _particles.emission; emission.rateOverTime = _startEmissionRate * scaleMultiplier;
+        if (_particleSystemIsActivated) _particles?.Play();
+
+                       
     }
 
-    
+    private void SaveParticlesAfterHunterDestroying()
+    {
+        //_particles.gameObject.transform.parent = null;
+        _particles.gameObject.transform.SetParent(null, true);
+        _particles?.Stop();
+        Destroy(gameObject, 2f);
+    }
 }

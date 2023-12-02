@@ -11,9 +11,11 @@ public class AIHunter : MonoBehaviour
     [Range(0, 1)] public float FearDamageZone = 0.8f;
     [Range(0, 1)] public float FearHunter = 0.7f;
     [Range(0, 1)] public float Agressive = 0.6f;
-    [Range(0, 1)] public float Appetite = 0.5f;
+    [Range(0, 1)] public float BoosterAppetite = 0.5f;
+    [Range(0, 1)] public float Appetite = 0.4f;
     private Hunter _hunter;
     private List<AIBehavior> _behaviors = new List<AIBehavior>();
+    //private List<AIBehavior> _ghostBehaviors = new List<AIBehavior>();
     //private Vector2 _aiDirection = Vector2.zero;
     private AIBehaviorModel _state = new AIBehaviorModel();
     private void Awake()
@@ -26,10 +28,14 @@ public class AIHunter : MonoBehaviour
     {
         //var damageZone = Level.Instance.GetDamageZone();
         //Собираем поведение
-        _behaviors.Add(new FoodCollectBehavior(Appetite, transform));
+        _behaviors.Add(new FoodCollectBehavior(Appetite, transform, _hunter));
+        _behaviors.Add(new BoosterCollectBehavior(BoosterAppetite, transform, _hunter));
         _behaviors.Add(new HunterFollowBehaviour(Agressive, _hunter));
         _behaviors.Add(new AvoidHunterBehaviour(FearHunter, _hunter));
         _behaviors.Add(new AvoidDamageZoneBehaviour(FearDamageZone, _hunter));
+
+        //Поведение в атакующем состоянии
+        //_ghostBehaviors.Add(new HunterFollowBehaviour(Agressive*2, _hunter));
 
         StartCoroutine(AIControlCoroutine());
         
@@ -63,18 +69,21 @@ public class AIHunter : MonoBehaviour
         //Vector2 result = Vector2.zero;
         //float weight = 0;
         var currentState = new AIBehaviorModel();
+        //var behaviors = _hunter.Is
+
         foreach (AIBehavior behavior in _behaviors)
         {
             var newState = behavior.Update();
-            if (newState.Weight > currentState.Weight * 2)
+            /*if (newState.Weight > currentState.Weight * 2)
             {
                 //result = behaviorModel.Direction;
                 //weight = behaviorModel.Weight;
                 currentState = newState;
             }
             else if (newState.Weight > currentState.Weight)
-                currentState = SumStates(currentState, newState);
-                //currentState = newState;
+                currentState = SumStates(currentState, newState);*/
+            if (newState.Weight > currentState.Weight)
+                currentState = newState;
         }
         _state = currentState;
     }

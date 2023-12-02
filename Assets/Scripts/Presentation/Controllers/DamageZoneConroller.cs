@@ -61,7 +61,8 @@ public class DamageZoneConroller : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(2);
-            DamageHunters();
+            //DamageHunters();
+            DamageBurnables();
         }
     }
 
@@ -80,6 +81,19 @@ public class DamageZoneConroller : MonoBehaviour
             {
                 //Debug.Log("char is outside");
                 hunter.AddDamage(Mathf.Max(hunter.Lifes/2, MinDamage));
+            }
+        }
+    }
+
+    private void DamageBurnables()
+    {
+        var gameObjects = FindObjectsOfType<GameObject>();
+        foreach (GameObject gameObject in gameObjects)
+        {
+            var current = gameObject.GetComponent<IBurnable>();
+            if (current != null && IsDanger(gameObject.transform.position))
+            {
+                current.Burn();
             }
         }
     }

@@ -3,12 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class UICharacterController : MonoBehaviour, IControlCharacter
 {
     [SerializeField] private Button _actionButton;
+    [SerializeField] private RectTransform _buttonMask;
     [SerializeField] private Joystick _joystick;
     private Action _onClickAction;
+    private Sequence _buttonAnim;
+    private Vector2 _maskSize;
+
+    private void Awake()
+    {
+        _maskSize = _buttonMask.sizeDelta;
+    }
+
+    private void Start()
+    {
+        //SetActionCooldown(5);
+    }
 
     public Vector2 Direction => _joystick.Direction;
 
@@ -40,9 +54,21 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
 
     public void SetActionEnabled(bool enabled)
     {
-        //_actionButton.gameObject.SetActive(enabled);
-        var tempColor = _actionButton.GetComponent<Image>().color;
+        _buttonAnim.Kill();
+        _actionButton.gameObject.SetActive(enabled);
+        /*var tempColor = _actionButton.GetComponent<Image>().color;
         tempColor.a = enabled?1:0.3f;
-        _actionButton.GetComponent<Image>().color = tempColor;
+        _actionButton.GetComponent<Image>().color = tempColor;*/
+    }
+
+    public void SetActionCooldown(float seconds)
+    {
+        if (_actionButton.gameObject.activeSelf == false) return;
+        _buttonAnim.Kill();
+        _buttonAnim = DOTween.Sequence();
+        _buttonMask.sizeDelta = new Vector2(_maskSize.x, 0);
+        //DOTween.To(y => _buttonMask.sizeDelta = new Vector2(_maskSize.x, y), 0, _maskSize.y, 5);
+        _buttonAnim.Append(DOTween.To(y => _buttonMask.sizeDelta = new Vector2(_maskSize.x, y), 0, _maskSize.y, seconds));
+        _buttonAnim.PlayForward();
     }
 }
