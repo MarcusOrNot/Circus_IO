@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     [Inject] private IGameUI _gameUI;
     [Inject] private IAudioEffect _effect;
     [Inject] private IMusicPlayer _music;
-    [Inject] private IAds _ads;
+    [Inject] private AdService _adService;
     
     void Start()
     {
@@ -39,7 +39,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
                 _gameUI.ShowGameOver();
                 _music.Stop();
                 //_effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
-                _ads.ShowInterstitialAd((successfull) =>
+                _adService.ShowInterstitialIfAllowed((successfull) =>
                 {
                     _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
                 });
@@ -67,7 +67,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
                 _gameUI.ShowWin();
                 _music.Stop();
                 //_effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
-                _ads.ShowInterstitialAd((successfull) =>
+                _adService.ShowInterstitialIfAllowed((successfull) =>
                 {
                     _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
                 });
