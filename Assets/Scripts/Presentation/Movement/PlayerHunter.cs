@@ -59,4 +59,9 @@ public class PlayerHunter : MonoBehaviour, IPlayer
     {
         _eventBus?.NotifyObservers(GameEventType.PLAYER_DEAD);
     }
+
+    public int GetLifes()
+    {
+        return _hunter.Lifes;
+    }
 }

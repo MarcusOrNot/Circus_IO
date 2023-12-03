@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 public class GameUI : MonoBehaviour, IGameUI
 {
     [Inject] private IEventBus _eventBus;
     [SerializeField] private GameObject _gameOverPanel;
-    [SerializeField] private GameObject _winPanel;
+    [SerializeField] private PanelWin _winPanel;
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private TextMeshProUGUI _lifesValueText;
     public void SetLifesValue(int lifes)
@@ -25,13 +26,13 @@ public class GameUI : MonoBehaviour, IGameUI
     public void ShowWin()
     {
         HideAll();
-        _winPanel.SetActive(true);
+        _winPanel.Show();
     }
 
     private void HideAll()
     {
         _gameOverPanel.SetActive(false);
-        _winPanel.SetActive(false);
+        _winPanel.Hide();
         _pausePanel.SetActive(false);
     }
 
@@ -56,5 +57,10 @@ public class GameUI : MonoBehaviour, IGameUI
     {
         HideAll();
         _pausePanel.SetActive(true);
+    }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }
