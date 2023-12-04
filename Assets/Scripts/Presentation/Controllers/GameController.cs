@@ -35,7 +35,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         switch(gameEvent)
         {
             case GameEventType.PLAYER_DEAD:
-                PauseGame();
+                //PauseGame();
                 _gameUI.ShowGameOver();
                 _music.Stop();
                 //_effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
@@ -78,12 +78,12 @@ public class GameController : MonoBehaviour, IGameEventObserver
     public void PauseGame()
     {
         _music.Pause();
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
     }
 
     public void ResumeGame()
     {
         _music.Continue();
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
     }
 }

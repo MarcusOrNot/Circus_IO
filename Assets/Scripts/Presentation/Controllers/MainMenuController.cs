@@ -20,8 +20,8 @@ public class MainMenuController : MonoBehaviour
     public void StartGame()
     {
         _gameStats.PlayerName = _nameField.text;
-        SceneManager.LoadScene("GameScene");
-        //StartCoroutine(ConnectorCoro(Random.Range(1,3)));
+        //SceneManager.LoadScene("GameScene");
+        StartCoroutine(ConnectorCoro(Random.Range(1,3)));
         //StartCoroutine(ConnectorCoro(5));
     }
     public void ExitGame()
@@ -35,17 +35,17 @@ public class MainMenuController : MonoBehaviour
         _connectingText.gameObject.SetActive(true);
         var counter = 0.0f;
         var dots = 3;
-        Debug.Log("Now coro is " + counter.ToString() + ", delay is " + delay.ToString());
         while (counter<delay)
         {
-            Debug.Log("Now coro is " + counter.ToString() + ", delay is " + delay.ToString());
             var resText = "Connecting";
             for (int i = 0; i < dots; i++)
                 resText += ".";
             _connectingText.text = resText;
-            yield return new WaitForSeconds(0.5f);
-            counter+=0.5f;
+
+            counter += 0.5f;
             dots++; if (dots > 3) dots = 0;
+
+            yield return new WaitForSeconds(0.5f);
         }
         SceneManager.LoadScene("GameScene");
     }

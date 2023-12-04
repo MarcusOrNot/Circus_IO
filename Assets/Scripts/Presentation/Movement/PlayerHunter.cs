@@ -58,6 +58,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
     private void OnDestroy()
     {
         _eventBus?.NotifyObservers(GameEventType.PLAYER_DEAD);
+        _controller.Hide();
     }
 
     public int GetLifes()

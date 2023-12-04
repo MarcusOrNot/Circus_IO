@@ -9,4 +9,5 @@ public interface IControlCharacter
     public void SetOnActionClicked(Action onClick);
     public void SetActionEnabled(bool enabled);
     public void SetActionCooldown(float seconds);
+    public void Hide();
 }
