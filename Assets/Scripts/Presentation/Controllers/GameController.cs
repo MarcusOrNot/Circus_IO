@@ -36,13 +36,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         {
             case GameEventType.PLAYER_DEAD:
                 //PauseGame();
-                _gameUI.ShowGameOver();
-                _music.Stop();
-                //_effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
-                _adService.ShowInterstitialIfAllowed((successfull) =>
-                {
-                    _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
-                });
+                GameOver();
                 break;
             case GameEventType.HUNTER_DEAD:
                 StartCoroutine(CheckHuntersCount());
@@ -57,20 +51,14 @@ public class GameController : MonoBehaviour, IGameEventObserver
     }
     private IEnumerator CheckHuntersCount()
     {
-        for (int i = 0; i < 2; i++) yield return null;        
+        //for (int i = 0; i < 2; i++) yield return null;
+        yield return new WaitForEndOfFrame();
         var hunters = FindObjectsOfType<Hunter>();
         if (hunters.Length == 1)
         {
             if (hunters[0].GetComponent<PlayerHunter>() != null)
             {
-                PauseGame();
-                _gameUI.ShowWin();
-                _music.Stop();
-                //_effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
-                _adService.ShowInterstitialIfAllowed((successfull) =>
-                {
-                    _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
-                });
+                PlayerWon();
             }
         }
     }
@@ -85,5 +73,28 @@ public class GameController : MonoBehaviour, IGameEventObserver
     {
         _music.Continue();
         //Time.timeScale = 1f;
+    }
+
+    public void GameOver()
+    {
+        _gameUI.ShowGameOver();
+        _music.Stop();
+        _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+        /*_adService.ShowInterstitialIfAllowed((successfull) =>
+        {
+            _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+        });*/
+    }
+
+    public void PlayerWon()
+    {
+        PauseGame();
+        _gameUI.ShowWin();
+        _music.Stop();
+        _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
+        /*_adService.ShowInterstitialIfAllowed((successfull) =>
+        {
+            _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+        });*/
     }
 }

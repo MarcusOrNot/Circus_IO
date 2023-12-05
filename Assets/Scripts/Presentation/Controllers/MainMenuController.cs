@@ -10,8 +10,7 @@ public class MainMenuController : MonoBehaviour
 {
     [Inject] private IGameStats _gameStats;
     [SerializeField] private InputField _nameField;
-    [SerializeField] private GameObject _buttonStart;
-    [SerializeField] private TextMeshProUGUI _connectingText;
+    [SerializeField] private StartGameUI _startGameUI;
     private void Start()
     {
         
@@ -20,34 +19,13 @@ public class MainMenuController : MonoBehaviour
     public void StartGame()
     {
         _gameStats.PlayerName = _nameField.text;
+        _startGameUI.StartRoyalGame();
         //SceneManager.LoadScene("GameScene");
-        StartCoroutine(ConnectorCoro(Random.Range(1,3)));
         //StartCoroutine(ConnectorCoro(5));
     }
     public void ExitGame()
     {
         Application.Quit();
-    }
-
-    private IEnumerator ConnectorCoro(int delay)
-    {
-        _buttonStart.SetActive(false);
-        _connectingText.gameObject.SetActive(true);
-        var counter = 0.0f;
-        var dots = 3;
-        while (counter<delay)
-        {
-            var resText = "Connecting";
-            for (int i = 0; i < dots; i++)
-                resText += ".";
-            _connectingText.text = resText;
-
-            counter += 0.5f;
-            dots++; if (dots > 3) dots = 0;
-
-            yield return new WaitForSeconds(0.5f);
-        }
-        SceneManager.LoadScene("GameScene");
     }
 
     /*private void OnDestroy()

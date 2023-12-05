@@ -8,7 +8,7 @@ using Zenject;
 public class GameUI : MonoBehaviour, IGameUI
 {
     [Inject] private IEventBus _eventBus;
-    [SerializeField] private GameObject _gameOverPanel;
+    [SerializeField] private PanelLose _gameOverPanel;
     [SerializeField] private PanelWin _winPanel;
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private TextMeshProUGUI _lifesValueText;
@@ -20,7 +20,7 @@ public class GameUI : MonoBehaviour, IGameUI
     public void ShowGameOver()
     {
         HideAll();
-        _gameOverPanel.SetActive(true);
+        _gameOverPanel.ShowPanel();
     }
 
     public void ShowWin()
@@ -31,7 +31,7 @@ public class GameUI : MonoBehaviour, IGameUI
 
     private void HideAll()
     {
-        _gameOverPanel.SetActive(false);
+        _gameOverPanel.HidePanel();
         _winPanel.Hide();
         _pausePanel.SetActive(false);
     }

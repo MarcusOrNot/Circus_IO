@@ -9,6 +9,7 @@ public class AppodealAds : MonoBehaviour, IAds
 {
     private Action<bool> _onShowInterstitial;
     private Action<bool> _onShowRewarded;
+    private bool _bannerShown = false;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,7 @@ public class AppodealAds : MonoBehaviour, IAds
         AppodealCallbacks.Interstitial.OnClosed += delegate { _onShowInterstitial?.Invoke(true); };
         AppodealCallbacks.RewardedVideo.OnShowFailed += delegate { _onShowRewarded?.Invoke(false); };
         AppodealCallbacks.RewardedVideo.OnClosed += RewardedVideo_OnClosed;
+        AppodealCallbacks.Banner.OnShown += delegate { _bannerShown = true; };
         //Rewarded Callbacks
         
         Appodeal.Initialize(appKey, adTypes);
@@ -33,12 +35,19 @@ public class AppodealAds : MonoBehaviour, IAds
 
     public void HideBanner()
     {
-        Appodeal.Hide(AppodealAdType.Banner);
+        //if (Appodeal.IsInitialized())
+        if (_bannerShown)
+        {
+            _bannerShown = false;
+            Appodeal.Hide(AppodealAdType.Banner);
+        }
+        //Appodeal.HideBannerView();
     }
 
     public void ShowBanner()
     {
-        Appodeal.Show(AppodealShowStyle.BannerBottom);
+        //if (Appodeal.IsLoaded(AppodealAdType.Banner))
+            Appodeal.Show(AppodealShowStyle.BannerBottom);
     }
 
     public bool ShowInterstitialAd(Action<bool> onShowInterstitial)
