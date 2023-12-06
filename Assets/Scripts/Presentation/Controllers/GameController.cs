@@ -47,6 +47,10 @@ public class GameController : MonoBehaviour, IGameEventObserver
             case GameEventType.GAME_CONTINUE:
                 ResumeGame();
                 break;
+            case GameEventType.GAME_AD_PAUSED:
+                _music.Pause();
+                Time.timeScale = 0;
+                break;
         }
     }
     private IEnumerator CheckHuntersCount()
@@ -72,7 +76,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     public void ResumeGame()
     {
         _music.Continue();
-        //Time.timeScale = 1f;
+        Time.timeScale = 1f;
     }
 
     public void GameOver()
@@ -88,13 +92,21 @@ public class GameController : MonoBehaviour, IGameEventObserver
 
     public void PlayerWon()
     {
+        //Time.timeScale = 0;
+        Level.Instance.GetDamageZone()?.Stop();
         PauseGame();
         _gameUI.ShowWin();
         _music.Stop();
-        _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
-        /*_adService.ShowInterstitialIfAllowed((successfull) =>
+        //_effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
+        _adService.ShowInterstitialIfAllowed((successfull) =>
         {
-            _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
-        });*/
+            _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
+        });
+    }
+
+    private void OnDestroy()
+    {
+        Time.timeScale = 1;
+        _adService.HideBanner();
     }
 }

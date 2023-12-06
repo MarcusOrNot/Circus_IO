@@ -5,5 +5,5 @@ using UnityEngine;
 
 public interface IData
 {
-    public DateTime InterstitialDate { get; set; }
+    public DateTime LastAdDate { get; set; }
 }

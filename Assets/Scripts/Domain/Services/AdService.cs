@@ -17,7 +17,7 @@ public class AdService
     }
     public bool IsAllowIntertitial()
     {
-        var secondsElapsed = Utils.GetSecondsElapsed(_data.InterstitialDate);
+        var secondsElapsed = Utils.GetSecondsElapsed(_data.LastAdDate);
         return secondsElapsed>INTERSTITIAL_PAUSE_SECONDS;
     }
     public bool ShowInterstitialAd(Action<bool> onShowInterstitial)
@@ -25,7 +25,7 @@ public class AdService
         return _ads.ShowInterstitialAd((isShown) =>
         {
             if (isShown) {
-                _data.InterstitialDate = DateTime.Now;
+                _data.LastAdDate = DateTime.Now;
             }
             onShowInterstitial(isShown);
         });
@@ -35,7 +35,17 @@ public class AdService
         if (IsAllowIntertitial()) return ShowInterstitialAd(onShowInterstitial);
         return false;
     }
-    public bool ShowRewardedAd(Action<bool> onShowRewarded)=>_ads.ShowRewardedAd(onShowRewarded);
+    public bool ShowRewardedAd(Action<bool> onShowRewarded)
+    {
+        return _ads.ShowRewardedAd((isShown) =>
+        {
+            if (isShown)
+            {
+                _data.LastAdDate = DateTime.Now;
+            }
+            onShowRewarded(isShown);
+        });
+    }
     public void ShowBanner()=>_ads.ShowBanner();
     public void HideBanner() => _ads.HideBanner();
 }

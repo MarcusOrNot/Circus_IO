@@ -1,20 +1,31 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using Zenject;
 
 public class AdPauseMessage : MonoBehaviour
 {
+    [Inject] private AdService _ad;
+    //[SerializeField] private int _adDelay = 30;
+    private int MIN_DELAY = 60;
+    private int MAX_DELAY = 120;
     [SerializeField] private GameObject _pauseMessagePanel;
     [SerializeField] private TextMeshProUGUI _timeValueText;
     [SerializeField] private GameObject _pauseMenuPanel;
-    private Action _onTimeFinished;
-    public void StartPauseCounter(int secondsLeft)
+    [SerializeField] private UnityEvent _onTimeFinished;
+    [SerializeField] private UnityEvent _onContinue;
+
+    private void Start()
     {
-        _pauseMenuPanel.SetActive(false);
-        _pauseMessagePanel.SetActive(false);
-        StartCoroutine(TimeCounter(secondsLeft));
+        StartPauseCounter();
+    }
+
+    public void StartPauseCounter()
+    {
+        Hide();
+        StartCoroutine(TimeCounter(UnityEngine.Random.Range(MIN_DELAY, MAX_DELAY)));
     }
 
     private IEnumerator TimeCounter(int secondsLeft)
@@ -27,14 +38,40 @@ public class AdPauseMessage : MonoBehaviour
                 _pauseMessagePanel.SetActive(true);
                 _timeValueText.text = "The game will be paused after "+current.ToString();
             }
-            if (current == 0) _onTimeFinished?.Invoke();
+            if (current == 0)
+            {
+                Hide();
+                _pauseMenuPanel.SetActive(true);
+                _onTimeFinished?.Invoke();
+            }
             current--;
             yield return new WaitForSeconds(1);
         }
     }
 
-    public void SetOnTimeFinished(Action onTimeFinished)
+    /*public void SetOnTimeFinished(Action onTimeFinished)
     {
         _onTimeFinished = onTimeFinished;
+    }*/
+
+    public void Hide()
+    {
+        _pauseMenuPanel.SetActive(false);
+        _pauseMessagePanel.SetActive(false);
+    }
+
+    public void StopMessage()
+    {
+        StopAllCoroutines();
+        Hide();
+    }
+
+    public void ContinueWithAd()
+    {
+        _ad.ShowRewardedAd((successfull) =>
+        {
+            Hide();
+            _onContinue?.Invoke();
+        });
     }
 }

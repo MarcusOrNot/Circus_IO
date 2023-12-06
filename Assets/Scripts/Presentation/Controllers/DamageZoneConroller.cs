@@ -112,6 +112,12 @@ public class DamageZoneConroller : MonoBehaviour
 
     private void OnDestroy()
     {
+        Stop();
+    }
+
+    public void Stop()
+    {
         DOTween.KillAll(false);
+        gameObject.SetActive(false);
     }
 }

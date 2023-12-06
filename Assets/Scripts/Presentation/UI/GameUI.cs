@@ -11,7 +11,13 @@ public class GameUI : MonoBehaviour, IGameUI
     [SerializeField] private PanelLose _gameOverPanel;
     [SerializeField] private PanelWin _winPanel;
     [SerializeField] private GameObject _pausePanel;
+    [SerializeField] private AdPauseMessage _adPausePanel;
     [SerializeField] private TextMeshProUGUI _lifesValueText;
+
+    /*private void Awake()
+    {
+        _adPausePanel.SetOnTimeFinished(ShowAdPause);   
+    }*/
     public void SetLifesValue(int lifes)
     {
         _lifesValueText.text = lifes.ToString();
@@ -19,6 +25,7 @@ public class GameUI : MonoBehaviour, IGameUI
 
     public void ShowGameOver()
     {
+        _adPausePanel.StopMessage();
         HideAll();
         _gameOverPanel.ShowPanel();
     }
@@ -57,6 +64,11 @@ public class GameUI : MonoBehaviour, IGameUI
     {
         HideAll();
         _pausePanel.SetActive(true);
+    }
+
+    public void ShowAdPause()
+    {
+        _eventBus.NotifyObservers(GameEventType.GAME_AD_PAUSED);
     }
 
     public void GoToMainMenu()
