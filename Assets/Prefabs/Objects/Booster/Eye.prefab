@@ -10619,7 +10619,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5469482032591261497}
-  - {fileID: 3082418451166456169}
+  - {fileID: 8690857255168724766}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1654492007429465084
@@ -11295,7 +11295,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1001 &7689735511376240224
+--- !u!1001 &4102143930808547351
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -11305,15 +11305,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.0749042
+      value: 1.6339338
       objectReference: {fileID: 0}
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.6756222
+      value: 1.6339338
       objectReference: {fileID: 0}
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2.0932908
+      value: 1.6339338
       objectReference: {fileID: 0}
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11321,7 +11321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.17
+      value: 2.04
       objectReference: {fileID: 0}
     - target: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11357,15 +11357,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8565738661670957238, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
       propertyPath: m_Name
-      value: BoosterFire
+      value: BoosterFireEffect
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
---- !u!4 &3082418451166456169 stripped
+--- !u!4 &8690857255168724766 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4643667012154521353, guid: 21996b9453ed28b4ea7f775f8d0a0a6a, type: 3}
-  m_PrefabInstance: {fileID: 7689735511376240224}
+  m_PrefabInstance: {fileID: 4102143930808547351}
   m_PrefabAsset: {fileID: 0}

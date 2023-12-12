@@ -116,8 +116,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1131480258516562475}
-  - {fileID: 1791926563002819037}
-  - {fileID: 2748376364886471578}
+  - {fileID: 4999007943305717575}
+  - {fileID: 1074366323152050295}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &6978758544117579288
@@ -183,7 +183,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.94
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1001 &1261698688376688054
+--- !u!1001 &5493350100364004140
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -233,19 +233,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3327646932587387816, guid: e49ce7e8c4fbf224dab8a974c7afa60d, type: 3}
       propertyPath: m_Name
-      value: PumpkinDestroyParticles
+      value: PumpkinDestroyEffect
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e49ce7e8c4fbf224dab8a974c7afa60d, type: 3}
---- !u!4 &1791926563002819037 stripped
+--- !u!4 &4999007943305717575 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 674493152079015019, guid: e49ce7e8c4fbf224dab8a974c7afa60d, type: 3}
-  m_PrefabInstance: {fileID: 1261698688376688054}
+  m_PrefabInstance: {fileID: 5493350100364004140}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &7373992608408290451
+--- !u!1001 &5663686588332617598
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -295,15 +295,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8565738661670957238, guid: 8b5a2e2c3c9ea5f4db577da6d2ca6dbe, type: 3}
       propertyPath: m_Name
-      value: EntityFire
+      value: EntityFireEffect
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b5a2e2c3c9ea5f4db577da6d2ca6dbe, type: 3}
---- !u!4 &2748376364886471578 stripped
+--- !u!4 &1074366323152050295 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4643667012154521353, guid: 8b5a2e2c3c9ea5f4db577da6d2ca6dbe, type: 3}
-  m_PrefabInstance: {fileID: 7373992608408290451}
+  m_PrefabInstance: {fileID: 5663686588332617598}
   m_PrefabAsset: {fileID: 0}
