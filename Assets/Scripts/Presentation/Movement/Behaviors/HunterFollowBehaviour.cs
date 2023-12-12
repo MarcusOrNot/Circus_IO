@@ -9,6 +9,7 @@ public class HunterFollowBehaviour : AIBehavior
     private float _aggressionDistance = 20;
     private float _agressive;
     private Hunter _hunter;
+    //private bool _isPauseHuntNormal = false;
 
     public HunterFollowBehaviour(float agressive, Hunter sourceHunter)
     {
@@ -25,7 +26,7 @@ public class HunterFollowBehaviour : AIBehavior
         if (nearest != null && nearest.Lifes<_hunter.Lifes)
         {
             var distance = Vector3.Distance(nearest.transform.position, _hunter.transform.position);
-            if (distance < _aggressionDistance*(Mathf.Min(_hunter.Lifes/ nearest.Lifes, 2)) || _hunter.KaufmoIsActive == true)
+            if ( (distance < _aggressionDistance*(Mathf.Min(_hunter.Lifes/ nearest.Lifes, 2)) ) || _hunter.KaufmoIsActive == true)
             {
                 //Debug.Log("Now hunter should go "+_hunter.name);
                 var accelerate = Vector3.Angle(between, _hunter.transform.forward) < 10;

@@ -92,6 +92,7 @@ MonoBehaviour:
   _hunterControlledByAI: 1
   _recollectMaterials: 0
   _refindAllElements: 0
+  _refreshAll: 0
 --- !u!114 &3954873966858999010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +315,10 @@ PrefabInstance:
     - target: {fileID: 115877127840370632, guid: 72782e4be00d99f43b110662e4120e26, type: 3}
       propertyPath: m_Name
       value: NetPlayerHUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 115877127840370632, guid: 72782e4be00d99f43b110662e4120e26, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 620545153416199166, guid: 72782e4be00d99f43b110662e4120e26, type: 3}
       propertyPath: m_AnchorMax.y
@@ -576,7 +581,7 @@ PrefabInstance:
     - target: {fileID: 7497102664628010370, guid: 616f8737c1b972d4caa8dfa34dd72a1f, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: f88a8c5389da04e4c82ca19d3076d6c7, type: 2}
+      objectReference: {fileID: 2100000, guid: f41f2a318a6ecf749bab4de03b560e58, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -598,7 +603,7 @@ PrefabInstance:
     - target: {fileID: -4901141005353062038, guid: 9cc0aaee5b9e83047a3e85dc9a147492, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 279339e4d6b5d4f4aa928b8ad5cb6fb2, type: 2}
+      objectReference: {fileID: 2100000, guid: b248764c4f562904592505fb49321f82, type: 2}
     - target: {fileID: 674493152079015019, guid: 9cc0aaee5b9e83047a3e85dc9a147492, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
