@@ -14,9 +14,7 @@ public class HunterModel
 
     [Range(1.1f, 3.5f)] public float KaufmoSpeedMultiplier = 1.5f;
     
-
-    public HunterType HunterType;
-    public Color Color;    
+    public HunterType HunterType;    
 
     public bool IsScaleDependFromHealth = true;    
 }
