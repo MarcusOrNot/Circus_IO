@@ -18,12 +18,12 @@ public class Hunter : MonoBehaviour, IBurnable
     public void AddDamage(int value) => GetDamage(value);
     public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }
     public bool KaufmoIsActive { get => _kaufmoIsActivated; }
-    
-    
-    
-    
-    
-    
+    public void SetHat(HatType hatType) { }
+
+
+
+
+
     private void AttackCurrentCollidedHunter()
     {
         if (_currentCollidedKaufmo != null)
