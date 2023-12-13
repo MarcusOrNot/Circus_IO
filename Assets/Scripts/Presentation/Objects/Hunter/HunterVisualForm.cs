@@ -16,7 +16,9 @@ public class HunterVisualForm : MonoBehaviour
     }
 
 
-    private List<Renderer> _visualElements = new List<Renderer>();
+    protected List<Renderer> _visualElements = new List<Renderer>();
+
+
     private bool _isVisible = true;
 
     protected virtual void Awake()

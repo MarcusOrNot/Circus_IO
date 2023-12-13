@@ -11,6 +11,9 @@ public class BubbleForm : HunterVisualForm, ILoveHat
     {
         if (_slotForHat == null) return;
         hat.gameObject.transform.SetParent(_slotForHat.transform);
+
+
+        _visualElements.AddRange(hat.gameObject.GetComponentsInChildren<Renderer>(true));
     }
 
 }
