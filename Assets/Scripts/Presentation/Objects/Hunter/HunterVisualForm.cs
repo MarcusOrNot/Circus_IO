@@ -3,27 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HunterVisualForm : MonoBehaviour
-{
-    public bool IsVisible { get => _isVisible; } 
+{   
 
-    public void SetVisiblityStatus(bool isVisible)
+    public void SetVisiblityStatus(bool isVisible) {  foreach (Renderer visualElement in _visualElements) { visualElement.enabled = isVisible; } }
+
+    public void SetAnimationState(HunterMovingState movingState)
     {
-        foreach (Renderer visualElement in _visualElements)
+        switch (movingState)
         {
-            visualElement.enabled = isVisible;
+            case HunterMovingState.IDLE: _animator?.SetBool("Go", false); _animator?.SetBool("TurnLeft", false); _animator?.SetBool("TurnRight", false); break;
+            case HunterMovingState.TURN_LEFT: _animator?.SetBool("TurnRight", false); _animator?.SetBool("TurnLeft", true); break;
+            case HunterMovingState.TURN_RIGHT: _animator?.SetBool("TurnLeft", false); _animator?.SetBool("TurnRight", true); break;
+            case HunterMovingState.GO_FORWARD: _animator?.SetBool("Go", true); break;
+            case HunterMovingState.STOP: _animator?.SetBool("Go", false); break;
+            case HunterMovingState.NO_TURN: _animator?.SetBool("TurnLeft", false); _animator?.SetBool("TurnRight", false); break;
+            case HunterMovingState.ATTACK: _animator.SetTrigger("Attack"); break;
         }
-        _isVisible = isVisible;
     }
+
+    public void SetAnimationSpeed(float speed) { _animator?.SetFloat("Speed", speed); }
+
 
 
     protected List<Renderer> _visualElements = new List<Renderer>();
 
+    
 
-    private bool _isVisible = true;
+    private Animator _animator;
 
     protected virtual void Awake()
     {
-        _visualElements.AddRange(GetComponentsInChildren<Renderer>(true));   
+        _visualElements.AddRange(GetComponentsInChildren<Renderer>(true)); 
+        _animator = GetComponent<Animator>();
     }    
+
+
 
 }

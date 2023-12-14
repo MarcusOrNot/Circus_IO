@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5501850513169479285}
   - component: {fileID: 744415339609313942}
   m_Layer: 0
-  m_Name: HunterDestroyEffect
+  m_Name: BaseHunterDestroyEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4899,7 +4899,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b3eca54bdb178544795bf9cedf870926, type: 2}
+  - {fileID: 2100000, guid: 83bc8aa0f64e5414f90fb9eda6a18aa9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

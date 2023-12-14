@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface ILoveHat
 {
-    public void PutOnHat(Hat hat);
+    public void SetHat(HatType hatType);
 }

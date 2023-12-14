@@ -8,34 +8,24 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Character))]
 
 public class Hunter : MonoBehaviour, IBurnable
-{           
-    [Inject] private IEventBus _eventBus;
-
+{      
     public HunterModel Model { get => _model; }
     public int Lifes { get => _health; }
+    public bool KaufmoIsActive { get => _kaufmoIsActivated; }
+    
     public void Boost() => StartCoroutine(BoosterActivation());  
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
     public void AddDamage(int value) => GetDamage(value);
-    public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }
-    public bool KaufmoIsActive { get => _kaufmoIsActivated; }
-    public void SetHat(HatType hatType) { }
-
-
-
-
-
-    private void AttackCurrentCollidedHunter()
+    public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }    
+    
+    public void SetHat(HatType hatType) 
     {
-        if (_currentCollidedKaufmo != null)
-        {
-            _currentCollidedKaufmo.AddDamage(Mathf.Max(100, _currentCollidedKaufmo.Lifes / 2));
-            _soundEffectsController?.PlayEffect(SoundEffectType.MELEE_ATTACK);
-        }
+        if (_character.MainForm.TryGetComponent(out ILoveHat mainHatLover)) { mainHatLover.SetHat(hatType); }
+        if (_character.SecondForm.TryGetComponent(out ILoveHat secondHatLover)) { secondHatLover.SetHat(hatType); }
     }
+      
 
-
-
-    public void SetOnHealthChanged(Action<int> onHealthChanged) {  _onHealthChanged.Add(onHealthChanged); }
+    public void SetOnHealthChanged(Action<int> onHealthChanged) { _onHealthChanged.Add(onHealthChanged); }
     private List<Action<int>> _onHealthChanged = new List<Action<int>>();
 
     public void SetOnHunterModeChanged(Action<bool> onKaufmoActivated) { _onKaufmoActivated.Add(onKaufmoActivated); }
@@ -47,7 +37,7 @@ public class Hunter : MonoBehaviour, IBurnable
     public void SetOnBoostingStateChanged(Action<bool> onBoostingStateChanged) { _onBoostingStateChanged.Add(onBoostingStateChanged); }
     private List<Action<bool>> _onBoostingStateChanged = new List<Action<bool>>();
 
-    public void SetOnScaleChanged(Action<Vector3> onScaleChanged) { _onScaleChanged.Add(onScaleChanged); } 
+    public void SetOnScaleChanged(Action<Vector3> onScaleChanged) { _onScaleChanged.Add(onScaleChanged); }
     private List<Action<Vector3>> _onScaleChanged = new List<Action<Vector3>>();
 
     public void SetOnBurning(Action onBurning) { _onBurning.Add(onBurning); }
@@ -56,6 +46,9 @@ public class Hunter : MonoBehaviour, IBurnable
     public void SetOnDestroying(Action onDestroying) { _onDestroying.Add(onDestroying); }
     private List<Action> _onDestroying = new List<Action>();
 
+
+
+    [Inject] private IEventBus _eventBus; 
 
     [SerializeField] private HunterModel _model;
 
@@ -74,46 +67,31 @@ public class Hunter : MonoBehaviour, IBurnable
     private IEnumerator _currentGrowingProcess = null; 
     private const float MAX_SCALE = 7f;
 
-    private bool _kaufmoIsActivated = false;    
-
-    private HunterVisualForm _mainForm = null;
-    private HunterVisualForm _secondForm = null;
-
-
-
+    private bool _kaufmoIsActivated = false;
 
     private float _defaultCharacterSpeedMultiplier = -1f;
 
     private Hunter _currentCollidedKaufmo = null;
     private float _collidedKaufmoDamagingPeriod = 1f;
 
-    
+        
     private void Awake()
     {        
         _character = GetComponent<Character>();  
         _rigidbody = GetComponent<Rigidbody>();
-        _soundEffectsController = GetComponent<EffectPlayController>();        
-                
-        _mainForm = GetComponentInChildren<BubbleForm>();
-        _mainForm ??= GetComponentInChildren<PacmanForm>();
-        _secondForm = GetComponentInChildren<KaufmoForm>();
-
-        if (_mainForm.TryGetComponent(out ICanAttack mainAttacker)) mainAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
-        if (_secondForm.TryGetComponent(out ICanAttack secondAttacker)) secondAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
-    }
-
-    
-    
+        _soundEffectsController = GetComponent<EffectPlayController>();  
+    } 
     private void Start()
     {        
-        _secondForm.SetVisiblityStatus(false);
-
-        _defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);
-        
+        _character.SecondForm.SetVisiblityStatus(false);
+        _defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);        
         transform.localScale = GetScaleDependingOnHealth(_model.StartHealth);        
-        ChangeHealth(_model.StartHealth);         
+        ChangeHealth(_model.StartHealth);
+        if (_character.MainForm.TryGetComponent(out ICanAttack mainAttacker)) mainAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
+        if (_character.SecondForm.TryGetComponent(out ICanAttack secondAttacker)) secondAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
+                
+        Array hatTypes = Enum.GetValues(typeof(HatType)); SetHat((HatType)hatTypes.GetValue(UnityEngine.Random.Range(0, hatTypes.Length))); //ТЕСТ: случайно надевает шапки в начале                                                                                                                                          
     }
-
     private void OnDestroy()
     {        
         _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
@@ -124,8 +102,41 @@ public class Hunter : MonoBehaviour, IBurnable
         _onBoostStateChanged.Clear();
         _onBurning.Clear();
         _onDestroying.Clear();
-    }    
-    
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!_kaufmoIsActivated)
+        {
+            if (other.TryGetComponent(out Entity entity) && !entity.TryGetComponent(out Rigidbody _)) 
+                StartCoroutine(EatingSomebody(entity));
+            else if (other.TryGetComponent(out Booster booster) && !booster.TryGetComponent(out Rigidbody _)) 
+                StartCoroutine(EatingSomebody(booster));
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!_kaufmoIsActivated)
+        {
+            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_health > hunter.Lifes)) StartCoroutine(EatingSomebody(hunter));
+        }
+        else
+        {
+            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_currentCollidedKaufmo == null))
+            {
+                _currentCollidedKaufmo = hunter;
+                StartCoroutine(KaufmoDamaging(hunter));
+            }
+        }
+    }
+    private void OnCollisionStay(Collision collision)
+    {
+        OnCollisionEnter(collision);
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent(out Hunter hunter) && (hunter == _currentCollidedKaufmo))  _currentCollidedKaufmo = null; 
+    }
+
 
     private IEnumerator BoosterActivation()
     {
@@ -173,53 +184,7 @@ public class Hunter : MonoBehaviour, IBurnable
         }          
     }
 
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!_kaufmoIsActivated)
-        {
-            if (other.TryGetComponent(out Entity entity) && !entity.TryGetComponent(out Rigidbody _)) StartCoroutine(EatingSomebody(entity));
-            else if (other.TryGetComponent(out Booster booster) && !booster.TryGetComponent(out Rigidbody _)) StartCoroutine(EatingSomebody(booster));
-        }        
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!_kaufmoIsActivated)
-        {
-            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_health > hunter.Lifes)) StartCoroutine(EatingSomebody(hunter));
-        }
-        else
-        {
-            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_currentCollidedKaufmo == null))
-            {
-                _currentCollidedKaufmo = hunter; 
-                StartCoroutine(KaufmoDamaging(hunter));                                
-            }                
-        }
-    }    
-    private void OnCollisionStay(Collision collision)
-    {
-        if (!KaufmoIsActive)
-        {
-            if (collision.gameObject.TryGetComponent(out Hunter hunter) && !hunter.KaufmoIsActive && (_health > hunter.Lifes)) StartCoroutine(EatingSomebody(hunter));
-        }
-        else
-        {
-            if (collision.gameObject.TryGetComponent(out Hunter hunter) && (!hunter.KaufmoIsActive) && (_currentCollidedKaufmo == null))
-            {
-                _currentCollidedKaufmo = hunter;
-                StartCoroutine(KaufmoDamaging(hunter));
-            }
-        }
         
-    }    
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent(out Hunter hunter) && (hunter == _currentCollidedKaufmo))
-        {
-            _currentCollidedKaufmo = null;
-        }
-    }
     private IEnumerator KaufmoDamaging(Hunter hunter)
     {
         while ((hunter != null) && !hunter.KaufmoIsActive && (_currentCollidedKaufmo == hunter))
@@ -260,6 +225,7 @@ public class Hunter : MonoBehaviour, IBurnable
                         break;
                     case BoosterType.KAUFMO_CONVERTER:
                         StartCoroutine(ActivateKaufmoMode((somebody as KaufmoActivatorBooster).KaufmoModeTime));
+                        //_character.ChangeForm();
                         break;
                 } 
                 eatingSpeed = 7f * _character.SpeedMultiplier;
@@ -319,8 +285,9 @@ public class Hunter : MonoBehaviour, IBurnable
         }        
         foreach (var item in _onScaleChanged) item?.Invoke(transform.localScale);
         _isGrowing = false;
-    }
+    }    
 
+    
     private IEnumerator ActivateKaufmoMode(float time)
     {
         const float HUNTER_MODEL_FLICKING_TIME_TRIGGER = 5f;
@@ -328,34 +295,42 @@ public class Hunter : MonoBehaviour, IBurnable
         SetBoostReadyState();
         _boosterIsReloading = false;
         _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost); 
-        _secondForm.SetVisiblityStatus(true);
-        _mainForm.SetVisiblityStatus(false);        
-        _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;
-        
+        _character.SecondForm.SetVisiblityStatus(true);
+        _character.MainForm.SetVisiblityStatus(false);        
+        _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;        
         yield return new WaitForSeconds(time - HUNTER_MODEL_FLICKING_TIME_TRIGGER);
-
         StartCoroutine(HunterModelFlicking(HUNTER_MODEL_FLICKING_TIME_TRIGGER));
-
-        yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER); 
-        
+        yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);         
         _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier;        
-        _mainForm.SetVisiblityStatus(true);
-        _secondForm.SetVisiblityStatus(false);
+        _character.MainForm.SetVisiblityStatus(true);
+        _character.SecondForm.SetVisiblityStatus(false);
         _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();        
     }
     private IEnumerator HunterModelFlicking(float flickingTime)
     {
         const float HUNTER_FLICKING_PERIOD = 0.3f;
+        bool mainFormIsVisible = false;
         while ((flickingTime > 0) && _kaufmoIsActivated)
-        {            
-            _mainForm?.SetVisiblityStatus(!_mainForm.IsVisible);
-            _secondForm?.SetVisiblityStatus(!_secondForm.IsVisible);
+        {
+            mainFormIsVisible = !mainFormIsVisible;
+            _character.MainForm.SetVisiblityStatus(mainFormIsVisible);
+            _character.SecondForm.SetVisiblityStatus(!mainFormIsVisible);            
             yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
             flickingTime -= HUNTER_FLICKING_PERIOD;            
         }        
-        _secondForm.SetVisiblityStatus(false);
-        _mainForm.SetVisiblityStatus(true);
+        _character.SecondForm.SetVisiblityStatus(false);
+        _character.MainForm.SetVisiblityStatus(true);
+    }
+
+
+    private void AttackCurrentCollidedHunter()
+    {
+        if (_currentCollidedKaufmo != null)
+        {
+            _currentCollidedKaufmo.AddDamage(Mathf.Max(100, _currentCollidedKaufmo.Lifes / 2));
+            _soundEffectsController?.PlayEffect(SoundEffectType.MELEE_ATTACK);
+        }
     }
 
 
@@ -364,9 +339,6 @@ public class Hunter : MonoBehaviour, IBurnable
 
 
 
-
-
-    
     // private EntityType _entityTypeForSpawn;
     // IN "START"  _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0); 
     // IN "GET_DAMAGE"     if (_rigidbody != null) EntitySpawning(value / 5); 

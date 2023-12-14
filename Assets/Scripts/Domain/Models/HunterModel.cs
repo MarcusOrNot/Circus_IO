@@ -16,5 +16,5 @@ public class HunterModel
     
     public HunterType HunterType;    
 
-    public bool IsScaleDependFromHealth = true;    
+    public bool IsScaleDependFromHealth = true;       
 }
