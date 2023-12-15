@@ -18,5 +18,6 @@ public enum HunterType
     HUNTER_VIOLET,
     HUNTER_SKYCOLOR,
     HUNTER_GRAY,
-    HUNTER_SPIDER
+    HUNTER_SPIDER,
+    PACMAN
 }

@@ -51,21 +51,9 @@ public class Character : MonoBehaviour
     private void Awake()
     {  
         _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionY;                
-        if (_model.IsPacman) 
-        { 
-            _mainForm = GetComponentInChildren<PacmanForm>(true);
-            if (_mainForm != null) { _mainForm.gameObject.SetActive(true);  GetComponentInChildren<BubbleForm>()?.gameObject.SetActive(false); }
-            else { _mainForm = GetComponentInChildren<BubbleForm>(true); _mainForm.gameObject.SetActive(true); }
-        }
-        else
-        {
-            _mainForm = GetComponentInChildren<BubbleForm>(true);
-            if (_mainForm != null)  {  _mainForm.gameObject.SetActive(true); GetComponentInChildren<PacmanForm>()?.gameObject.SetActive(false); }
-            else { _mainForm = GetComponentInChildren<PacmanForm>(true); _mainForm.gameObject.SetActive(true); }            
-        }        
-        _secondForm = GetComponentInChildren<KaufmoForm>(true); 
-        _secondForm.gameObject.SetActive(true);
+        _rigidbody.constraints = RigidbodyConstraints.FreezeAll & ~RigidbodyConstraints.FreezePositionY;
+        HunterVisualForm[] hunterForms = GetComponentsInChildren<HunterVisualForm>();
+        foreach (HunterVisualForm hunterForm in hunterForms) if (hunterForm is KaufmoForm) _secondForm = hunterForm; else _mainForm = hunterForm; 
     }
     private void Start()
     {        

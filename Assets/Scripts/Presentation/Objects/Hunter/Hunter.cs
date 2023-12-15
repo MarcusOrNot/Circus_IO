@@ -90,7 +90,7 @@ public class Hunter : MonoBehaviour, IBurnable
         if (_character.MainForm.TryGetComponent(out ICanAttack mainAttacker)) mainAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
         if (_character.SecondForm.TryGetComponent(out ICanAttack secondAttacker)) secondAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
                 
-        Array hatTypes = Enum.GetValues(typeof(HatType)); SetHat((HatType)hatTypes.GetValue(UnityEngine.Random.Range(0, hatTypes.Length))); //ТЕСТ: случайно надевает шапки в начале                                                                                                                                          
+        //Array hatTypes = Enum.GetValues(typeof(HatType)); SetHat((HatType)hatTypes.GetValue(UnityEngine.Random.Range(0, hatTypes.Length))); //ТЕСТ: случайно надевает шапки в начале                                                                                                                                          
     }
     private void OnDestroy()
     {        
