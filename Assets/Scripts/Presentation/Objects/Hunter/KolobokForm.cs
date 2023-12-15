@@ -1,14 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-public class HunterVisualForm : MonoBehaviour
-{   
-
-    public void SetVisiblityStatus(bool isVisible) {  foreach (Renderer visualElement in _visualElements) { visualElement.enabled = isVisible; } }
-
-    public virtual void SetAnimationState(HunterMovingState movingState)
+public class KolobokForm : HunterVisualForm
+{
+    public override void SetAnimationState(HunterMovingState movingState)
     {
         switch (movingState)
         {
@@ -22,25 +18,19 @@ public class HunterVisualForm : MonoBehaviour
         }
     }
 
-    public void SetAnimationSpeed(float speed) { _animator?.SetFloat("Speed", speed); }
 
 
-
-    protected List<Renderer> _visualElements = new List<Renderer>();
-
-    
-
-    protected Animator _animator;
-
-    protected virtual void Awake()
+    protected override void Start()
     {
-        _visualElements.AddRange(GetComponentsInChildren<Renderer>(true)); 
-        _animator = GetComponent<Animator>();
-    }    
-    protected virtual void Start()
-    {
-
+        StartCoroutine(IdleAnimatorChanger());       
     }
 
-
+    private IEnumerator IdleAnimatorChanger()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(3f, 10f));
+            _animator?.SetInteger("IdleVariant", Random.Range(1, 4));
+        }   
+    }
 }
