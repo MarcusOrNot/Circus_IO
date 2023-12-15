@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "408849584255",
+    "project_id": "amazing-circus-a9f1e",
+    "storage_bucket": "amazing-circus-a9f1e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408849584255:android:e5d93f9bcdbb0b1b906f4a",
+        "android_client_info": {
+          "package_name": "com.dgs.CircusIO"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3CXsSVxUY1YFwRkILl7dbW3mSpG_iVCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

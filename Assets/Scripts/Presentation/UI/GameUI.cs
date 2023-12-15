@@ -32,6 +32,7 @@ public class GameUI : MonoBehaviour, IGameUI
 
     public void ShowWin()
     {
+        _adPausePanel.StopMessage();
         HideAll();
         _winPanel.Show();
     }

@@ -4,5 +4,6 @@ using UnityEngine;
 
 public enum GameStatsType
 {
-    SCORE
+    SCORE,
+    COINS
 }

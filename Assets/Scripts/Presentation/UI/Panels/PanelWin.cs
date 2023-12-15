@@ -7,13 +7,17 @@ using Zenject;
 public class PanelWin : MonoBehaviour
 {
     [Inject] private IAds _ads;
+    [Inject] private IGameStats _gameStats;
     [SerializeField] private TextMeshProUGUI _scoreValueText;
     public void Show()
     {
         gameObject.SetActive(true);
         if (Level.Instance.GetPlayer()!=null)
         {
-            _scoreValueText.text = Level.Instance.GetPlayer().GetLifes().ToString();
+            int score = Level.Instance.GetPlayer().GetLifes() / 10;
+            _scoreValueText.text = score.ToString();
+            _gameStats.SetGameStat(GameStatsType.SCORE, _gameStats.GetStat(GameStatsType.SCORE)+score);
+            
         }
         _ads.ShowBanner();
     }
