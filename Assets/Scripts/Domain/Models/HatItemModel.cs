@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class HatItemModel
+[CreateAssetMenu(fileName = "New HatItem", menuName = "Hat Shop Item")]
+public class HatItemModel: ScriptableObject
 {
     public HatType Hat;
+    public Sprite HatSprite;
     public int price;
 }
