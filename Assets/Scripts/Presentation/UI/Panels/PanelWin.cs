@@ -16,7 +16,7 @@ public class PanelWin : MonoBehaviour
         {
             int score = Level.Instance.GetPlayer().GetLifes() / 10;
             _scoreValueText.text = score.ToString();
-            _gameStats.SetGameStat(GameStatsType.SCORE, _gameStats.GetStat(GameStatsType.SCORE)+score);
+            _gameStats.SetGameStat(GameStatsType.COINS, _gameStats.GetStat(GameStatsType.COINS)+score);
             
         }
         _ads.ShowBanner();

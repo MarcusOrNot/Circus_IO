@@ -32,7 +32,7 @@ public class StartGameUI : MonoBehaviour
 
             yield return new WaitForSeconds(0.5f);
         }
-        SceneManager.LoadScene("GameScene");
+        Utils.OpenScene(SceneType.GAME_ROYAL_BATTLE);
     }
 
     private void OnDestroy()

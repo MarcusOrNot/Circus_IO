@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -15,6 +16,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //_eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
         //_factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(0,10,0);
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
+        Analytics.LogLevelStarted();
         ResumeGame();
         
         
@@ -81,6 +83,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
 
     public void GameOver()
     {
+        Analytics.LogLevelFailed();
         _gameUI.ShowGameOver();
         _music.Stop();
         _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
@@ -93,6 +96,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     public void PlayerWon()
     {
         //Time.timeScale = 0;
+        Analytics.LogLevelFinished();
         Level.Instance.GetDamageZone()?.Stop();
         PauseGame();
         _gameUI.ShowWin();
