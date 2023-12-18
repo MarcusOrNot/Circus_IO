@@ -9,6 +9,7 @@ public class ShopHatController : MonoBehaviour
     [Inject] private ItemsProgressService _progress;
     [Inject] private HatShopFactory _hatsFactory;
     [SerializeField] private Transform _hatsPlace;
+    private List<HatShopItem> _hats = new List<HatShopItem>();
     private int _selectedHunter = 0;
     private int _currentHat = 0;
     private void Start()
@@ -16,7 +17,16 @@ public class ShopHatController : MonoBehaviour
         var hats = _hatsFactory.SpawnItems();
         foreach (var hat in hats)
         {
-            hat.transform.parent = _hatsPlace;   
+            _hats.Add(hat);
+            hat.transform.parent = _hatsPlace;
+            hat.SetOnClicked(() =>
+            {
+                foreach (var item in _hats)
+                {
+                    if (item != hat)
+                        item.Selected = false;
+                }
+            });
         }
     }
 }

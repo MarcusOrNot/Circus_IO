@@ -25,6 +25,7 @@ public class AdService
         return _ads.ShowInterstitialAd((isShown) =>
         {
             if (isShown) {
+                Analytics.LogAdInterstitialShowen();
                 _data.LastAdDate = DateTime.Now;
             }
             onShowInterstitial(isShown);
@@ -41,6 +42,7 @@ public class AdService
         {
             if (isShown)
             {
+                Analytics.LogAdRewardedShowen();
                 _data.LastAdDate = DateTime.Now;
             }
             onShowRewarded(isShown);

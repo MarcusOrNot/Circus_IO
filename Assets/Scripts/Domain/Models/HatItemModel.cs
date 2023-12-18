@@ -7,5 +7,6 @@ public class HatItemModel
 {
     public HatType Hat;
     public Sprite HatSprite;
-    public int price;
+    public ItemBlockModel ItemBlock;
+
 }

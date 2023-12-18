@@ -8,6 +8,8 @@ public static class Analytics
     //public const string LEVEL_SUCCESS = "level_success";
     private const string LEVEL_STARTED = "level_started";
     private const string LEVEL_FAILED = "level_failed";
+    private const string AD_REWARDED_SHOWN = "ad_rewarded_showen";
+    private const string AD_INTERSTITIAL_SHOWEN = "ad_interstitial_shown";
     //public const string RIGHT_CHOOSE = "right_choose";
     //public const string WRONG_CHOOSE = "wrong_choose";
 
@@ -31,6 +33,14 @@ public static class Analytics
     {
         //FirebaseAnalytics.LogEvent(LEVEL_FAILED, FirebaseAnalytics.ParameterLevel, level);
         FirebaseAnalytics.LogEvent(LEVEL_FAILED);
+    }
+    public static void LogAdRewardedShowen()
+    {
+        FirebaseAnalytics.LogEvent(AD_REWARDED_SHOWN);
+    }
+    public static void LogAdInterstitialShowen()
+    {
+        FirebaseAnalytics.LogEvent(AD_INTERSTITIAL_SHOWEN);
     }
     /*public static void LogGameFinished()
     {
