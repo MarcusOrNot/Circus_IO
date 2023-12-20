@@ -10,9 +10,11 @@ public class HatShopItem : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image _hatImage;
     [SerializeField] private Image _selectionRect;
+    [SerializeField] private GameObject _priceBack;
     [SerializeField] private TextMeshProUGUI _priceValueText;
     private HatItemModel _model;
     private bool _isSelected = false;
+    private bool _priceless = false;
     private Action _onSelect = null;
 
     public void SetModel(HatItemModel model)
@@ -34,6 +36,16 @@ public class HatShopItem : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public bool Priceless
+    {
+        get => _priceless;
+        set
+        {
+            _priceless = value;
+            _priceBack.gameObject.SetActive(!value);
+        }
+    }
+
     public void SetOnClicked(Action onSelect)
     {
         _onSelect = onSelect;
@@ -41,7 +53,8 @@ public class HatShopItem : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Selected = !Selected;
+        if (Selected) return;
+        Selected = true; //!Selected;
         _onSelect?.Invoke();
     }
 }

@@ -12,7 +12,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
 
     public Vector3 GetPosition() => transform.position;
 
-    private void Awake()
+    private void Start()
     {
         _hunter = GetComponent<Hunter>();
         if (_controller != null)
@@ -34,12 +34,6 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             });
             _hunter.SetOnHunterModeChanged((state) => { _controller.SetActionEnabled(!state); });
         }
-    }
-
-    private void Start()
-    {
-        
-            
     }
 
     private void Update()

@@ -4,23 +4,24 @@ using UnityEngine;
 
 public class GameStatsLocalImpl : IGameStats
 {
-    public string PlayerName {
-        get => PlayerPrefs.GetString("stat_player_name"); 
-        set => PlayerPrefs.SetString("stat_player_name", value); 
-    }
+    private List<IStatsObserver> _statListeners;
 
-    /*private const string STAT_OXYGEN = "stat_oxigen";
-private const string STAT_WATER = "stat_water";
-private const string STAT_VEGETABLES = "stat_vegetables";
-private const string STAT_MONEY = "stat_money";
-
-public int Oxygen { get => PlayerPrefs.GetInt(STAT_OXYGEN, 0); set => PlayerPrefs.SetInt(STAT_OXYGEN, value); }
-public int Water { get => PlayerPrefs.GetInt(STAT_WATER, 0); set => PlayerPrefs.SetInt(STAT_WATER, value); }
-public int Vegetables { get => PlayerPrefs.GetInt(STAT_VEGETABLES, 0); set => PlayerPrefs.SetInt(STAT_VEGETABLES, value); }
-public int Money { get => PlayerPrefs.GetInt(STAT_MONEY, 0); set => PlayerPrefs.SetInt(STAT_MONEY, value); }*/
     public int GetStat(GameStatsType type)
     {
         return PlayerPrefs.GetInt(GetStatStringByEnum(type), 0);
+    }
+
+    public void NotifyObservers(GameStatsType stat)
+    {
+        foreach (var observer in _statListeners)
+        {
+            observer.Notify(stat);
+        }
+    }
+
+    public void RemoveOnSettingChanged(IStatsObserver observer)
+    {
+        _statListeners.Remove(observer);
     }
 
     public void SetGameStat(GameStatsType type, int value)
@@ -28,15 +29,24 @@ public int Money { get => PlayerPrefs.GetInt(STAT_MONEY, 0); set => PlayerPrefs.
         PlayerPrefs.SetInt(GetStatStringByEnum(type), value);
     }
 
+    public void SetOnStatChanged(IStatsObserver observer)
+    {
+        if (_statListeners.Contains(observer)==false)
+        {
+            _statListeners.Add(observer);
+        }
+    }
+
     private string GetStatStringByEnum(GameStatsType gameStat)
     {
         string res = "stat_game_default";
-        switch (gameStat)
+        /*switch (gameStat)
         {
             case GameStatsType.SCORE:
                 res = "stat_score";
                 break;
-        }
+        }*/
+        res = "stat_"+gameStat.ToString();
         return res;
     }
 }

@@ -23,4 +23,11 @@ public class HunterFactory
 
         return null;
     }
+
+    public Hunter SpawnPlayerHunter(HunterType hunterType)
+    {
+        var hunter = Spawn(hunterType);
+        _container.InstantiateComponent<PlayerHunter>(hunter.gameObject);
+        return hunter;
+    }
 }

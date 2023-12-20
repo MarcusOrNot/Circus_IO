@@ -65,9 +65,5 @@ MonoBehaviour:
   - {fileID: 6145664321923869877, guid: 5705fb9798e51ac41823a6292fbf949e, type: 3}
   - {fileID: 1035915329927790388, guid: 1186d2eff77fa944ba821c9eb2e86fb0, type: 3}
   _hunters:
-  - {fileID: 4775810404566206808, guid: bb51602c2c8ece14d8b7fe0e8445d5b0, type: 3}
-  - {fileID: 4775810404566206808, guid: b064c83b2cac0df4283c87f9e6073b85, type: 3}
-  - {fileID: 4775810404566206808, guid: be5a2efc3f410ff4c8fa1aa49cd3d322, type: 3}
-  - {fileID: 3641114428563045736, guid: 7d3d4ff4025e8c74aa606774edf31514, type: 3}
-  - {fileID: 480026835366148906, guid: 6b713e4828ae50546acf6420e194be7b, type: 3}
+  - {fileID: 8341870271924419472, guid: ba87460bd07700b42b50ac0d79744fce, type: 3}
   _hatShopPrefab: {fileID: 3971177545657804939, guid: 8d0e851f6b5a51846b3250f25c2cef7b, type: 3}

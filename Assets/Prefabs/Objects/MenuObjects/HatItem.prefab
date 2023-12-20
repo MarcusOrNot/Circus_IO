@@ -170,6 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hatImage: {fileID: 434912065852142114}
   _selectionRect: {fileID: 5704417807019029713}
+  _priceBack: {fileID: 959395734765905438}
   _priceValueText: {fileID: 1667582085606316387}
 --- !u!1 &1768752739580563996
 GameObject:

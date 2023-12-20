@@ -7,14 +7,19 @@ using Zenject.Asteroids;
 
 public class MainMenuPanelController : MonoBehaviour
 {
-    [Inject] private IGameStats _gameStats;
+    [Inject] private ISettings _settings;
+    [SerializeField] private BubbleForm _hatObject;
     [SerializeField] private InputField _nameField;
     private void Start()
     {
-        _nameField.text = _gameStats.PlayerName;
+        _nameField.text = _settings.PlayerName;
     }
     public void SaveName()
     {
-        _gameStats.PlayerName = _nameField.text;
+        _settings.PlayerName = _nameField.text;
+    }
+    private void OnEnable()
+    {
+        _hatObject.SetHat(_settings.ChosenHat);
     }
 }
