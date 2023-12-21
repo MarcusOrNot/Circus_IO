@@ -7,5 +7,7 @@ public class ProjectInstaller : MonoInstaller
     {
         Container.Bind<IGameStats>().To<GameStatsLocalImpl>().AsSingle().Lazy();
         Container.Bind<ISettings>().To<SettingsLocalPrefs>().AsSingle().Lazy();
+        Container.Bind<IProgressItems>().To<ProgressLocalPrefs>().AsSingle().Lazy();
+        Container.Bind<ItemsProgressService>().AsSingle();
     }
 }

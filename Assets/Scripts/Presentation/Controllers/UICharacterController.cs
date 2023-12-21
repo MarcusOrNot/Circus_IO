@@ -71,4 +71,10 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
         _buttonAnim.Append(DOTween.To(y => _buttonMask.sizeDelta = new Vector2(_maskSize.x, y), 0, _maskSize.y, seconds));
         _buttonAnim.PlayForward();
     }
+
+    public void Hide()
+    {
+        _actionButton.gameObject.SetActive(false);
+        _joystick.gameObject.SetActive(false);
+    }
 }

@@ -68,6 +68,7 @@ public class MusicPlayController : MonoBehaviour, IMusicPlayer, ISettingsObserve
     private void OnDestroy()
     {
         _settings.RemoveOnSettingChanged(this);
+        DOTween.KillAll(false);
     }
 
     /*public void Restart()

@@ -2,15 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 public class GameUI : MonoBehaviour, IGameUI
 {
     [Inject] private IEventBus _eventBus;
-    [SerializeField] private GameObject _gameOverPanel;
-    [SerializeField] private GameObject _winPanel;
+    [SerializeField] private PanelLose _gameOverPanel;
+    [SerializeField] private PanelWin _winPanel;
     [SerializeField] private GameObject _pausePanel;
+    [SerializeField] private AdPauseMessage _adPausePanel;
     [SerializeField] private TextMeshProUGUI _lifesValueText;
+
+    /*private void Awake()
+    {
+        _adPausePanel.SetOnTimeFinished(ShowAdPause);   
+    }*/
     public void SetLifesValue(int lifes)
     {
         _lifesValueText.text = lifes.ToString();
@@ -18,20 +25,22 @@ public class GameUI : MonoBehaviour, IGameUI
 
     public void ShowGameOver()
     {
+        _adPausePanel.StopMessage();
         HideAll();
-        _gameOverPanel.SetActive(true);
+        _gameOverPanel.ShowPanel();
     }
 
     public void ShowWin()
     {
+        _adPausePanel.StopMessage();
         HideAll();
-        _winPanel.SetActive(true);
+        _winPanel.Show();
     }
 
     private void HideAll()
     {
-        _gameOverPanel.SetActive(false);
-        _winPanel.SetActive(false);
+        _gameOverPanel.HidePanel();
+        _winPanel.Hide();
         _pausePanel.SetActive(false);
     }
 
@@ -56,5 +65,16 @@ public class GameUI : MonoBehaviour, IGameUI
     {
         HideAll();
         _pausePanel.SetActive(true);
+    }
+
+    public void ShowAdPause()
+    {
+        _eventBus.NotifyObservers(GameEventType.GAME_AD_PAUSED);
+    }
+
+    public void GoToMainMenu()
+    {
+        //SceneManager.LoadScene("MainMenu");
+        Utils.OpenScene(SceneType.MAIN_MENU);
     }
 }

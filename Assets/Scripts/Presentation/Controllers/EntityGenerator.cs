@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using Zenject;
 
@@ -65,8 +66,26 @@ public class EntityGenerator : MonoBehaviour
             var allFood = FindObjectsOfType<Entity>().ToList();
             if (allFood.Count < MinAmountInField)
             {
-                Generate(StartGenerationCount - MinAmountInField);
+                //Generate(StartGenerationCount - MinAmountInField);
+                StartCoroutine(GenCoroutine(StartGenerationCount - MinAmountInField, 10));
             }
         }
+    }
+
+    private IEnumerator GenCoroutine(int count, int sectionCount)
+    {
+        int genLeft = count;
+        while(genLeft>0)
+        {
+            int countToGen = Math.Min(sectionCount, genLeft);
+            Generate(countToGen);
+            genLeft = genLeft - countToGen;
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 }

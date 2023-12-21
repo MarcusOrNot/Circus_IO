@@ -109,4 +109,15 @@ public class DamageZoneConroller : MonoBehaviour
     {
         return Vector3.Distance(_startPos, position) > _currentSize * 3.2f;
     }
+
+    private void OnDestroy()
+    {
+        Stop();
+    }
+
+    public void Stop()
+    {
+        DOTween.KillAll(false);
+        gameObject.SetActive(false);
+    }
 }

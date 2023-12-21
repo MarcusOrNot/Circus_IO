@@ -6,10 +6,7 @@ public interface IGameStats
 {
     public int GetStat(GameStatsType type);
     public void SetGameStat(GameStatsType type, int value);
-    public string PlayerName { get; set; }
-    /*public int Oxygen {  get; set; }
-    public int Water { get; set; }
-    public int Vegetables { get; set; }
-    public int Money { get; set; }*/
-    
+    public void SetOnStatChanged(IStatsObserver observer);
+    public void RemoveOnSettingChanged(IStatsObserver observer);
+    //public void NotifyObservers(GameStatsType stat);
 }

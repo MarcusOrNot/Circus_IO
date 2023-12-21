@@ -9,5 +9,6 @@ public enum GameEventType
     HUNTER_SPAWNED,
     HUNTER_DEAD,
     GAME_PAUSED,
-    GAME_CONTINUE
+    GAME_CONTINUE,
+    GAME_AD_PAUSED
 }

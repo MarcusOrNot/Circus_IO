@@ -12,7 +12,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
 
     public Vector3 GetPosition() => transform.position;
 
-    private void Awake()
+    private void Start()
     {
         _hunter = GetComponent<Hunter>();
         if (_controller != null)
@@ -33,13 +33,13 @@ public class PlayerHunter : MonoBehaviour, IPlayer
                     _controller.SetActionCooldown(_hunter.Model.BoostRestartTime);
             });
             _hunter.SetOnHunterModeChanged((state) => { _controller.SetActionEnabled(!state); });
+            _hunter.SetOnDestroying(() =>
+            {
+                _eventBus?.NotifyObservers(GameEventType.PLAYER_DEAD);
+                _controller.SetOnActionClicked(null);
+                _controller.Hide();
+            });
         }
-    }
-
-    private void Start()
-    {
-        
-            
     }
 
     private void Update()
@@ -55,8 +55,15 @@ public class PlayerHunter : MonoBehaviour, IPlayer
         }
     }
 
-    private void OnDestroy()
+    /*private void OnDestroy()
     {
         _eventBus?.NotifyObservers(GameEventType.PLAYER_DEAD);
+        _controller.SetOnActionClicked(null);
+        _controller.Hide();
+    }*/
+
+    public int GetLifes()
+    {
+        return _hunter.Lifes;
     }
 }

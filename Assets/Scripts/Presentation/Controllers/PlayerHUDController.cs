@@ -24,7 +24,7 @@ public class PlayerHUDController : MonoBehaviour
         _canvasRect = Level.Instance.GetHUDCanvas?.GetComponent<RectTransform>();
         _camera = Camera.main;
         if (_hunter== null || _camera == null || _canvasRect == null) Destroy(gameObject);
-        gameObject.transform.parent = _canvasRect;
+        gameObject.transform.SetParent(_canvasRect);
         _playerInfoModel = _playersInfoService.GeneratePlayerInfo();
         _playerImage.sprite = _playerInfoModel.PlayerIcon;
         _playerName.text = _playerInfoModel.PlayerName;
@@ -49,5 +49,10 @@ public class PlayerHUDController : MonoBehaviour
     private void UpdateLifes()
     {
         _lifesValueText.text = _hunter.Lifes.ToString();
+    }
+
+    public void Deactivate()
+    {
+        Destroy(gameObject);
     }
 }

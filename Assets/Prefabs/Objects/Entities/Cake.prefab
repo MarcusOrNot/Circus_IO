@@ -116,8 +116,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5940199741669076780}
-  - {fileID: 5858471895249153762}
-  - {fileID: 5424441827940099505}
+  - {fileID: 9143972190625110399}
+  - {fileID: 5214334052933103856}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &5479850329234931721
@@ -183,7 +183,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.12
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1001 &808083395497726648
+--- !u!1001 &589012479081154553
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -233,19 +233,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8565738661670957238, guid: 8b5a2e2c3c9ea5f4db577da6d2ca6dbe, type: 3}
       propertyPath: m_Name
-      value: EntityFire
+      value: EntityFireEffect
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b5a2e2c3c9ea5f4db577da6d2ca6dbe, type: 3}
---- !u!4 &5424441827940099505 stripped
+--- !u!4 &5214334052933103856 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4643667012154521353, guid: 8b5a2e2c3c9ea5f4db577da6d2ca6dbe, type: 3}
-  m_PrefabInstance: {fileID: 808083395497726648}
+  m_PrefabInstance: {fileID: 589012479081154553}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &6345922432610927241
+--- !u!1001 &8627117532888233236
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -295,15 +295,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3327646932587387816, guid: 5ea53f5ee8c2f094d881438e47b72ff1, type: 3}
       propertyPath: m_Name
-      value: CakeDestroyParticles
+      value: CakeDestroyEffect
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ea53f5ee8c2f094d881438e47b72ff1, type: 3}
---- !u!4 &5858471895249153762 stripped
+--- !u!4 &9143972190625110399 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 674493152079015019, guid: 5ea53f5ee8c2f094d881438e47b72ff1, type: 3}
-  m_PrefabInstance: {fileID: 6345922432610927241}
+  m_PrefabInstance: {fileID: 8627117532888233236}
   m_PrefabAsset: {fileID: 0}
