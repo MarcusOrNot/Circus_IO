@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class GameStatsLocalImpl : IGameStats
 {
-    private List<IStatsObserver> _statListeners;
+    private List<IStatsObserver> _statListeners = new List<IStatsObserver>();
 
     public int GetStat(GameStatsType type)
     {
         return PlayerPrefs.GetInt(GetStatStringByEnum(type), 0);
     }
 
-    public void NotifyObservers(GameStatsType stat)
+    private void NotifyObservers(GameStatsType stat)
     {
         foreach (var observer in _statListeners)
         {
@@ -27,6 +27,7 @@ public class GameStatsLocalImpl : IGameStats
     public void SetGameStat(GameStatsType type, int value)
     {
         PlayerPrefs.SetInt(GetStatStringByEnum(type), value);
+        NotifyObservers(type);
     }
 
     public void SetOnStatChanged(IStatsObserver observer)

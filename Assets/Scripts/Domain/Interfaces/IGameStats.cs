@@ -8,5 +8,5 @@ public interface IGameStats
     public void SetGameStat(GameStatsType type, int value);
     public void SetOnStatChanged(IStatsObserver observer);
     public void RemoveOnSettingChanged(IStatsObserver observer);
-    public void NotifyObservers(GameStatsType stat);
+    //public void NotifyObservers(GameStatsType stat);
 }

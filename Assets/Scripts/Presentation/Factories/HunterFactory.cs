@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Zenject;
 
 public class HunterFactory
@@ -28,6 +26,7 @@ public class HunterFactory
     {
         var hunter = Spawn(hunterType);
         _container.InstantiateComponent<PlayerHunter>(hunter.gameObject);
+        hunter.GetComponentInChildren<PlayerHUDController>().Deactivate();
         return hunter;
     }
 }

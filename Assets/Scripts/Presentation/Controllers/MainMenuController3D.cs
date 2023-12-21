@@ -13,7 +13,7 @@ public class MainMenuController3D : MonoBehaviour
     [SerializeField] private MainMenuPanelController _mainMenu;
     [SerializeField] private ShopHatController _shopHatMenu;
     [SerializeField] private StartGameUI _startGameUI;
-    [SerializeField] private TextMeshProUGUI _coinsCountValue;
+    //[SerializeField] private TextMeshProUGUI _coinsCountValue;
     private Camera _camera;
     //private Transform _cameraStartTransform;
     private Vector3 _cameraStartPosition;
@@ -23,10 +23,6 @@ public class MainMenuController3D : MonoBehaviour
     {
         _camera = Camera.main;
         _cameraStartPosition = _camera.transform.position;
-    }
-    private void Start()
-    {
-        _coinsCountValue.text = _gameStats.GetStat(GameStatsType.COINS).ToString();
     }
     /*public void StartGame()
     {

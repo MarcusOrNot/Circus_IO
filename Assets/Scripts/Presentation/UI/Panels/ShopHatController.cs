@@ -69,6 +69,7 @@ public class ShopHatController : MonoBehaviour
         {
             _stats.SetGameStat(GameStatsType.COINS, _stats.GetStat(GameStatsType.COINS)- _currentHat.Model.ItemBlock.Value);
             _progress.OpenHat(_currentHat.Model.Hat);
+            _currentHat.Priceless = true;
             PutOn();
         }
     }

@@ -68,10 +68,14 @@ public class AdPauseMessage : MonoBehaviour
 
     public void ContinueWithAd()
     {
-        _ad.ShowRewardedAd((successfull) =>
+        Debug.Log("Now should ad rewarded!");
+        if (! _ad.ShowRewardedAd((successfull) =>
         {
             Hide();
             _onContinue?.Invoke();
-        });
+        })) {
+            Hide();
+            _onContinue?.Invoke();
+        }
     }
 }
