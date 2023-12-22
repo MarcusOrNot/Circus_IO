@@ -69,3 +69,6 @@ MonoBehaviour:
   - Effect: 7
     EffectSource: {fileID: 8300000, guid: b1f82d97b10ccbd499d75dae00b19a25, type: 3}
     Volume: 1
+  - Effect: 8
+    EffectSource: {fileID: 8300000, guid: 0899d326d50f165469c41e91d960c8fb, type: 3}
+    Volume: 1

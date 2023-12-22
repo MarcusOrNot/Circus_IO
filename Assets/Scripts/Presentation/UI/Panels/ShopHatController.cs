@@ -17,6 +17,7 @@ public class ShopHatController : MonoBehaviour
     [SerializeField] private GameObject _buttonBuy;
     [SerializeField] private GameObject _buttonPutOn;
     [SerializeField] private TextMeshProUGUI _priceText;
+    [Inject] private IAudioEffect _audioEffect;
     private List<HatShopItem> _hats = new List<HatShopItem>();
     //private int _selectedHunter = 0;
     private HatShopItem _currentHat = null;
@@ -71,6 +72,7 @@ public class ShopHatController : MonoBehaviour
             _progress.OpenHat(_currentHat.Model.Hat);
             _currentHat.Priceless = true;
             PutOn();
+            _audioEffect.PlayEffect(SoundEffectType.PURCHASE_HAT);
         }
     }
     public void PutOn()

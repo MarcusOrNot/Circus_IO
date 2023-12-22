@@ -8,11 +8,13 @@ using Zenject;
 public class GameUI : MonoBehaviour, IGameUI
 {
     [Inject] private IEventBus _eventBus;
+    [Inject] private IGameInfo _gameInfo;
     [SerializeField] private PanelLose _gameOverPanel;
     [SerializeField] private PanelWin _winPanel;
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private AdPauseMessage _adPausePanel;
     [SerializeField] private TextMeshProUGUI _lifesValueText;
+    [SerializeField] private RateUsUI _rateUsUI;
 
     /*private void Awake()
     {
@@ -35,6 +37,8 @@ public class GameUI : MonoBehaviour, IGameUI
         _adPausePanel.StopMessage();
         HideAll();
         _winPanel.Show();
+        if (RuntimeInfo.IsShownRate == false && _gameInfo.FeedValue == 0)
+            _rateUsUI.gameObject.SetActive(true);
     }
 
     private void HideAll()
