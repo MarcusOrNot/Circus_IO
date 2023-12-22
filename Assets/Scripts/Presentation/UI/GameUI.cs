@@ -74,6 +74,7 @@ public class GameUI : MonoBehaviour, IGameUI
 
     public void GoToMainMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        //SceneManager.LoadScene("MainMenu");
+        Utils.OpenScene(SceneType.MAIN_MENU);
     }
 }

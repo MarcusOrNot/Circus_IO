@@ -7,6 +7,8 @@ public class ObjectInstaller : MonoInstaller
     [SerializeField] private List<Entity> _entities;
     [SerializeField] private List<Booster> _boosters;
     [SerializeField] private List<Hat> _hats;
+    [SerializeField] private List<Hunter> _hunters;
+    [SerializeField] private HatShopItem _hatShopPrefab;
     public override void InstallBindings()
     {
         Container.Bind<EntityFactory>().FromNew().AsSingle();
@@ -17,5 +19,11 @@ public class ObjectInstaller : MonoInstaller
 
         Container.Bind<HatFactory>().FromNew().AsSingle();
         Container.BindInstance(_hats);
+
+        Container.Bind<HunterFactory>().FromNew().AsSingle();
+        Container.BindInstance(_hunters);
+
+        Container.Bind<HatShopFactory>().FromNew().AsSingle();
+        Container.BindInstance(_hatShopPrefab);
     }
 }

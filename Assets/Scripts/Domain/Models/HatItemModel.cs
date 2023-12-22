@@ -6,5 +6,7 @@ using UnityEngine;
 public class HatItemModel
 {
     public HatType Hat;
-    public int price;
+    public Sprite HatSprite;
+    public ItemBlockModel ItemBlock;
+
 }

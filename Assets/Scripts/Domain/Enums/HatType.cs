@@ -9,7 +9,7 @@ public enum HatType
     NONE,
     CAP,
     MAGICIAN,
-    SHOWHAT,
+    USHANKAHAT,
     MINER,
     BUILDER,
     STUDENT,

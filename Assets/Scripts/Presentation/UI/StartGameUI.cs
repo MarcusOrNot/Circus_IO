@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class StartGameUI : MonoBehaviour
 {
     [SerializeField] private GameObject _buttonStart;
     [SerializeField] private TextMeshProUGUI _connectingText;
+    [SerializeField] private UnityEvent _onStartLevel;
 
     public void StartRoyalGame()
     {
@@ -32,7 +34,8 @@ public class StartGameUI : MonoBehaviour
 
             yield return new WaitForSeconds(0.5f);
         }
-        SceneManager.LoadScene("GameScene");
+        _onStartLevel?.Invoke();
+        Utils.OpenScene(SceneType.GAME_ROYAL_BATTLE);
     }
 
     private void OnDestroy()

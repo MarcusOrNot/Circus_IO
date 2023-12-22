@@ -20,6 +20,7 @@ public class HunterFollowBehaviour : AIBehavior
     public override AIBehaviorModel Update()
     {
         Hunter nearest = GetNearestObject<Hunter>(_hunter.transform.position, _hunter);
+        if (nearest == null) return new AIBehaviorModel();
         var between = (nearest.transform.position - _hunter.transform.position).normalized;
         if (nearest.KaufmoIsActive == true && _hunter.KaufmoIsActive == false) return new AIBehaviorModel();
         if (_hunter.KaufmoIsActive == true) return new AIBehaviorModel(_agressive, new Vector2(between.x, between.z), false);

@@ -50,4 +50,9 @@ public class PlayerHUDController : MonoBehaviour
     {
         _lifesValueText.text = _hunter.Lifes.ToString();
     }
+
+    public void Deactivate()
+    {
+        Destroy(gameObject);
+    }
 }

@@ -64,3 +64,6 @@ MonoBehaviour:
   - {fileID: 2086720344914534921, guid: b2c04e3908e4ab7468ef81daa95138b8, type: 3}
   - {fileID: 6145664321923869877, guid: 5705fb9798e51ac41823a6292fbf949e, type: 3}
   - {fileID: 1035915329927790388, guid: 1186d2eff77fa944ba821c9eb2e86fb0, type: 3}
+  _hunters:
+  - {fileID: 8341870271924419472, guid: ba87460bd07700b42b50ac0d79744fce, type: 3}
+  _hatShopPrefab: {fileID: 3971177545657804939, guid: 8d0e851f6b5a51846b3250f25c2cef7b, type: 3}
