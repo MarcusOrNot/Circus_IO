@@ -6,4 +6,5 @@ using UnityEngine;
 public interface IData
 {
     public DateTime LastAdDate { get; set; }
+    public int FeedValue { get; set; }
 }

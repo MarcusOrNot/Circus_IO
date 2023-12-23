@@ -17,6 +17,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //_factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(0,10,0);
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
         Analytics.LogLevelStarted();
+        RuntimeInfo.IsGamePlayedOnce = true;
         ResumeGame();
         
         

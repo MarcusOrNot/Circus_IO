@@ -94,7 +94,7 @@ public class Hunter : MonoBehaviour, IBurnable
     }
     private void OnDestroy()
     {        
-        _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
+        
         _onHealthChanged.Clear();     
         _onKaufmoActivated.Clear();
         _onScaleChanged.Clear();
@@ -248,12 +248,21 @@ public class Hunter : MonoBehaviour, IBurnable
     private void GetDamage(int value)
     {    
         ChangeHealth(-value);
-        if (_health <= 0) { foreach (var item in _onDestroying) item?.Invoke(); Destroy(gameObject); }
+        
     }
     private void ChangeHealth(int value)
     {
         _health += value; foreach (var item in _onHealthChanged) item.Invoke(_health); 
         SetBoostReadyState();
+
+        if (_health <= 0) 
+        { 
+            foreach (var item in _onDestroying) item?.Invoke();
+            _eventBus?.NotifyObservers(GameEventType.HUNTER_DEAD);
+            Destroy(gameObject); 
+        }
+        
+
         if (_model.IsScaleDependFromHealth && _rigidbody != null)
         {
             if (_isGrowing) { StopCoroutine(_currentGrowingProcess); _isGrowing = false; }

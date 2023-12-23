@@ -8,6 +8,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
     [Inject] private IControlCharacter _controller;
     [Inject] private IGameUI _gameUI;
     [Inject] private IEventBus _eventBus;
+    [Inject] private IVibration _vibro;
     private Hunter _hunter;
 
     public Vector3 GetPosition() => transform.position;
@@ -20,6 +21,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             _controller.SetOnActionClicked(() =>
             {
                 _hunter.Boost();
+                _vibro.Play();
             });
             _hunter.SetOnHealthChanged((lifes) =>
             {
@@ -32,12 +34,19 @@ public class PlayerHunter : MonoBehaviour, IPlayer
                 if (state==false)
                     _controller.SetActionCooldown(_hunter.Model.BoostRestartTime);
             });
-            _hunter.SetOnHunterModeChanged((state) => { _controller.SetActionEnabled(!state); });
+            _hunter.SetOnHunterModeChanged((state) => { 
+                _controller.SetActionEnabled(!state);
+                if (state == true)
+                    _gameUI.ShowAlertMessage("Attack them all!");
+                else
+                    _gameUI.CloseAlertMessage();
+            });
             _hunter.SetOnDestroying(() =>
             {
                 _eventBus?.NotifyObservers(GameEventType.PLAYER_DEAD);
                 _controller.SetOnActionClicked(null);
                 _controller.Hide();
+                _vibro.PlayMillis(500);
             });
         }
     }

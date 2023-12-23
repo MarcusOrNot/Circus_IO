@@ -25,7 +25,7 @@ public class KaufmoForm : HunterVisualForm, ICanAttack
     private INeedKaufmoMaterial[] _coloredElements = null;    
     
     
-    private void Start()
+    protected override void Start()
     {            
         foreach (INeedKaufmoMaterial coloredElement in _coloredElements) coloredElement.Material = _mainMesh.sharedMaterials[0];        
     }
