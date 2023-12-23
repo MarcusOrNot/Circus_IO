@@ -12,6 +12,8 @@ public class ShopHatController : MonoBehaviour
     [Inject] private ISettings _settings;
     [Inject] private ItemsProgressService _progress;
     [Inject] private HatShopFactory _hatsFactory;
+    [Inject] private IAudioEffect _effect;
+    [Inject] private IVibration _vibro;
     [SerializeField] private Transform _hatsPlace;
     [SerializeField] private BubbleForm _hatObject;
     [SerializeField] private GameObject _buttonBuy;
@@ -35,6 +37,7 @@ public class ShopHatController : MonoBehaviour
             hat.transform.SetParent(_hatsPlace);
             hat.SetOnClicked(() =>
             {
+                _vibro.Play();
                 _currentHat = hat;
                 foreach (var item in _hats)
                 {
@@ -73,6 +76,12 @@ public class ShopHatController : MonoBehaviour
             _currentHat.Priceless = true;
             PutOn();
             _audioEffect.PlayEffect(SoundEffectType.PURCHASE_HAT);
+            _vibro.PlayMillis(300);
+        }
+        else
+        {
+            _audioEffect.PlayEffect(SoundEffectType.CLICK_NEGATIVE);
+            _vibro.Play();
         }
     }
     public void PutOn()

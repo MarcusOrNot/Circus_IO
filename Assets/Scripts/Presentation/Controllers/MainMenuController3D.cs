@@ -10,9 +10,13 @@ using System;
 public class MainMenuController3D : MonoBehaviour
 {
     [Inject] private IGameStats _gameStats;
+    [Inject] private IVibration _vibration;
+    [Inject] private IData _data;
+    //[Inject] private IAudioEffect _effect;
     [SerializeField] private MainMenuPanelController _mainMenu;
     [SerializeField] private ShopHatController _shopHatMenu;
     [SerializeField] private StartGameUI _startGameUI;
+    [SerializeField] private RateUsUI _rateUS;
     //[SerializeField] private TextMeshProUGUI _coinsCountValue;
     private Camera _camera;
     //private Transform _cameraStartTransform;
@@ -24,12 +28,17 @@ public class MainMenuController3D : MonoBehaviour
         _camera = Camera.main;
         _cameraStartPosition = _camera.transform.position;
     }
+    private void Start()
+    {
+        if (_data.FeedValue == 0 && RuntimeInfo.IsShownRate == false && RuntimeInfo.IsGamePlayedOnce == true)
+            _rateUS.gameObject.SetActive(true);
+    }
     /*public void StartGame()
     {
-        _gameStats.PlayerName = _nameField.text;
-        _startGameUI.StartRoyalGame();
-        //SceneManager.LoadScene("GameScene");
-        //StartCoroutine(ConnectorCoro(5));
+        //if (_data.FeedValue==0 && RuntimeInfo.IsShownRate == false && RuntimeInfo.IsGamePlayedOnce == true)
+        //{
+        _rateUS.gameObject.SetActive(true);
+        //}
     }*/
     public void ExitGame()
     {
@@ -46,6 +55,7 @@ public class MainMenuController3D : MonoBehaviour
         //HideMenus();
         ShowMenuAnim(new Vector3(-2.5f,0,0), ()=> _shopHatMenu.gameObject.SetActive(true));
         //_shopHatMenu.gameObject.SetActive(true);
+        //_vibration.PlayMillis(2000);
     }
     private void HideMenus()
     {

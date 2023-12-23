@@ -8,4 +8,6 @@ public interface IGameUI
     public void ShowWin();
     public void ShowGameOver();
     public void ShowPause();
+    public void ShowAlertMessage(string alertText);
+    public void CloseAlertMessage();
 }

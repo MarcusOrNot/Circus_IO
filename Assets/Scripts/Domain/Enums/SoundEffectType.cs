@@ -5,6 +5,7 @@ using UnityEngine;
 public enum SoundEffectType
 {
     MENU_CLICK,
+    CLICK_NEGATIVE,
     LEVEL_COMPLETED,
     LEVEL_FAILED,
     ENTITY_EAT,

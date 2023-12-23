@@ -8,13 +8,14 @@ using Zenject;
 public class GameUI : MonoBehaviour, IGameUI
 {
     [Inject] private IEventBus _eventBus;
-    [Inject] private IGameInfo _gameInfo;
+    [Inject] private IData _data;
     [SerializeField] private PanelLose _gameOverPanel;
     [SerializeField] private PanelWin _winPanel;
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private AdPauseMessage _adPausePanel;
     [SerializeField] private TextMeshProUGUI _lifesValueText;
     [SerializeField] private RateUsUI _rateUsUI;
+    [SerializeField] private TextMeshProUGUI _alertMessageText;
 
     /*private void Awake()
     {
@@ -37,7 +38,7 @@ public class GameUI : MonoBehaviour, IGameUI
         _adPausePanel.StopMessage();
         HideAll();
         _winPanel.Show();
-        if (RuntimeInfo.IsShownRate == false && _gameInfo.FeedValue == 0)
+        if (RuntimeInfo.IsShownRate == false && _data.FeedValue == 0)
             _rateUsUI.gameObject.SetActive(true);
     }
 
@@ -46,6 +47,7 @@ public class GameUI : MonoBehaviour, IGameUI
         _gameOverPanel.HidePanel();
         _winPanel.Hide();
         _pausePanel.SetActive(false);
+        CloseAlertMessage();
     }
 
     public void RestartLevel()
@@ -80,5 +82,16 @@ public class GameUI : MonoBehaviour, IGameUI
     {
         //SceneManager.LoadScene("MainMenu");
         Utils.OpenScene(SceneType.MAIN_MENU);
+    }
+
+    public void ShowAlertMessage(string alertText)
+    {
+        _alertMessageText.text = alertText;
+        _alertMessageText.gameObject.SetActive(true);
+    }
+
+    public void CloseAlertMessage()
+    {
+        _alertMessageText.gameObject.SetActive(false);
     }
 }

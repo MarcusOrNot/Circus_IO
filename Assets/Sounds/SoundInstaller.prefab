@@ -45,30 +45,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _soundEffects:
-  - Effect: 1
+  - Effect: 2
     EffectSource: {fileID: 8300000, guid: fa37f6ea8cbeb7341be65666900e77b8, type: 3}
     Volume: 1
-  - Effect: 2
+  - Effect: 3
     EffectSource: {fileID: 8300000, guid: 9a697c94a781bc74cb64ef3c75075233, type: 3}
     Volume: 1
-  - Effect: 3
+  - Effect: 4
     EffectSource: {fileID: 8300000, guid: e39921441378cb34c93a75efeb3e2db1, type: 3}
     Volume: 1
   - Effect: 0
     EffectSource: {fileID: 8300000, guid: 8edbe11cd8404c84d8d20ea63b811eb5, type: 3}
     Volume: 1
-  - Effect: 4
+  - Effect: 5
     EffectSource: {fileID: 8300000, guid: 2c66323c43dbe81409fb2fd225db2bab, type: 3}
     Volume: 1
-  - Effect: 5
+  - Effect: 6
     EffectSource: {fileID: 8300000, guid: da9dc7bd36997254c836397c245f94a0, type: 3}
     Volume: 1
-  - Effect: 6
+  - Effect: 7
     EffectSource: {fileID: 8300000, guid: 3ae5eb11f5ffb6a4dad5634850c63d35, type: 3}
     Volume: 1
-  - Effect: 7
+  - Effect: 8
     EffectSource: {fileID: 8300000, guid: b1f82d97b10ccbd499d75dae00b19a25, type: 3}
     Volume: 1
-  - Effect: 8
+  - Effect: 9
     EffectSource: {fileID: 8300000, guid: 0899d326d50f165469c41e91d960c8fb, type: 3}
+    Volume: 1
+  - Effect: 1
+    EffectSource: {fileID: 8300000, guid: d0b095642b4861e47a3cc8cb1f14831a, type: 3}
     Volume: 1

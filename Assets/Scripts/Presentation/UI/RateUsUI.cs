@@ -10,7 +10,7 @@ public class RateUsUI : MonoBehaviour
     [SerializeField] private GameObject _ratePlace;
     [SerializeField] private GameObject _ratePanel;
     [SerializeField] private GameObject _feedPanel;
-    [Inject] private IGameInfo _gameInfo;
+    [Inject] private IData _data;
     private void Awake()
     {
         /*_countArray.SetOnChoose((rate) =>
@@ -49,7 +49,7 @@ public class RateUsUI : MonoBehaviour
     {
         if (_countArray.Count == 0) return;
         Analytics.LogRateChosen(_countArray.Count);
-        _gameInfo.FeedValue = _countArray.Count;
+        _data.FeedValue = _countArray.Count;
         if (_countArray.Count > 3) ShowFeedPanel();
         else Close();
     }
