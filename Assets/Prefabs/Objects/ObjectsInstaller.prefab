@@ -67,3 +67,4 @@ MonoBehaviour:
   _hunters:
   - {fileID: 8341870271924419472, guid: ba87460bd07700b42b50ac0d79744fce, type: 3}
   _hatShopPrefab: {fileID: 3971177545657804939, guid: 8d0e851f6b5a51846b3250f25c2cef7b, type: 3}
+  _brakingPrefub: {fileID: 8892915625063112212, guid: 3f46ddfa9307a324f9e00d72be84630e, type: 3}

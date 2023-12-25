@@ -7,13 +7,18 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(Character))]
 
-public class Hunter : MonoBehaviour, IBurnable
+public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 {      
     public HunterModel Model { get => _model; }
     public int Lifes { get => _health; }
     public bool KaufmoIsActive { get => _kaufmoIsActivated; }
     
-    public void Boost() => StartCoroutine(BoosterActivation());  
+    public void Boost() => StartCoroutine(BoosterActivation()); 
+    public void SpawnDebaff() {
+        Debug.Log("Now should spawning debaff!"); 
+        //var debaf = _brakingFactory.Spawn(this.gameObject);
+        //debaf.transform.position = transform.position - transform.forward*3;
+    }
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
     public void AddDamage(int value) => GetDamage(value);
     public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }    
@@ -48,8 +53,8 @@ public class Hunter : MonoBehaviour, IBurnable
 
 
 
-    [Inject] private IEventBus _eventBus; 
-
+    [Inject] private IEventBus _eventBus;
+    [Inject] private BrakingObjectFactory _brakingFactory;
     [SerializeField] private HunterModel _model;
 
     private Character _character;
@@ -340,6 +345,16 @@ public class Hunter : MonoBehaviour, IBurnable
             _currentCollidedKaufmo.AddDamage(Mathf.Max(100, _currentCollidedKaufmo.Lifes / 2));
             _soundEffectsController?.PlayEffect(SoundEffectType.MELEE_ATTACK);
         }
+    }
+
+    public void BrakeOn()
+    {
+        Debug.Log("Breaking on ");
+    }
+
+    public void BrakeOff()
+    {
+        Debug.Log("Breaking off");
     }
 
 

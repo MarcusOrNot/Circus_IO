@@ -8,9 +8,11 @@ using DG.Tweening;
 public class UICharacterController : MonoBehaviour, IControlCharacter
 {
     [SerializeField] private Button _actionButton;
+    [SerializeField] private Button _debafActionButton;
     [SerializeField] private RectTransform _buttonMask;
     [SerializeField] private Joystick _joystick;
     private Action _onClickAction;
+    private Action _onDebafClickAction;
     private Sequence _buttonAnim;
     private Vector2 _maskSize;
 
@@ -31,17 +33,27 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
         _onClickAction = onClick;
     }
 
+    public void SetOnDebafClicked(Action onClick)
+    {
+        _onDebafClickAction = onClick;
+    }
+
     private void OnEnable()
     {
         _actionButton.onClick.AddListener(() =>
         {
             _onClickAction?.Invoke();
         });
+        _debafActionButton.onClick.AddListener(() =>
+        {
+            _onDebafClickAction?.Invoke();
+        });
     }
 
     private void OnDisable()
     {
         _actionButton.onClick.RemoveAllListeners();
+        _debafActionButton.onClick.RemoveAllListeners();
     }
 
     private void Update()

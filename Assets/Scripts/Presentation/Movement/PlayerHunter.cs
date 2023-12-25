@@ -23,6 +23,10 @@ public class PlayerHunter : MonoBehaviour, IPlayer
                 _hunter.Boost();
                 _vibro.Play();
             });
+            _controller.SetOnDebafClicked(() =>
+            {
+                _hunter.SpawnDebaff();
+            });
             _hunter.SetOnHealthChanged((lifes) =>
             {
                 _gameUI.SetLifesValue(lifes);
