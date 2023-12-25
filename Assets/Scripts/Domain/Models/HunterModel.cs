@@ -16,5 +16,10 @@ public class HunterModel
     
     public HunterType HunterType;    
 
-    public bool IsScaleDependFromHealth = true;       
+    public bool IsScaleDependFromHealth = true;
+
+    public int StartDebaffersCount = 2;
+    public int MaxDebaffersCount = 3;
+    public float DebafferSpeedMultiplier = 0.7f;
+    
 }

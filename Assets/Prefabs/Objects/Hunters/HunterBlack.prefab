@@ -110,6 +110,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1375218314175280511, guid: 7f9b31cf9b462f44a8645c9ba8b865b7, type: 3}
+      propertyPath: _model.DebafferSpeedMultiplier
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 2537238871096614588, guid: 7f9b31cf9b462f44a8645c9ba8b865b7, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

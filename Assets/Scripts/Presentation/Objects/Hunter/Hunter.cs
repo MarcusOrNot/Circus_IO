@@ -13,12 +13,16 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     public int Lifes { get => _health; }
     public bool KaufmoIsActive { get => _kaufmoIsActivated; }
     
-    public void Boost() => StartCoroutine(BoosterActivation()); 
-    public void SpawnDebaff() {
-        Debug.Log("Now should spawning debaff!"); 
-        //var debaf = _brakingFactory.Spawn(this.gameObject);
-        //debaf.transform.position = transform.position - transform.forward*3;
+    public void Boost() => StartCoroutine(BoosterActivation());
+    
+    public void SpawnDebaff() 
+    {
+        Debug.Log("Now should spawning debaff!");
+        if (_debaffersCount <= 0) return;
+        var debaf = _brakingFactory.Spawn(this.gameObject);
+        debaf.transform.position = transform.position - transform.forward * 3;
     }
+
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
     public void AddDamage(int value) => GetDamage(value);
     public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }    
@@ -51,6 +55,9 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     public void SetOnDestroying(Action onDestroying) { _onDestroying.Add(onDestroying); }
     private List<Action> _onDestroying = new List<Action>();
 
+    public void SetOnDebaffChanged(Action<bool, int> onDebaffChanged) { _onDebaffChanged.Add(onDebaffChanged); }
+    private List<Action<bool, int>> _onDebaffChanged = new();
+
 
 
     [Inject] private IEventBus _eventBus;
@@ -74,7 +81,9 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 
     private bool _kaufmoIsActivated = false;
 
-    private float _defaultCharacterSpeedMultiplier = -1f;
+    //private float _defaultCharacterSpeedMultiplier = -1f;
+    private bool _speedIsDebaffed = false;
+    private int _debaffersCount = 0;
 
     private Hunter _currentCollidedKaufmo = null;
     private float _collidedKaufmoDamagingPeriod = 1f;
@@ -89,12 +98,12 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     private void Start()
     {        
         _character.SecondForm.SetVisiblityStatus(false);
-        _defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);        
+        //_defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);        
         transform.localScale = GetScaleDependingOnHealth(_model.StartHealth);        
         ChangeHealth(_model.StartHealth);
         if (_character.MainForm.TryGetComponent(out ICanAttack mainAttacker)) mainAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
         if (_character.SecondForm.TryGetComponent(out ICanAttack secondAttacker)) secondAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
-                
+        _debaffersCount = _model.StartDebaffersCount;   
         //Array hatTypes = Enum.GetValues(typeof(HatType)); SetHat((HatType)hatTypes.GetValue(UnityEngine.Random.Range(0, hatTypes.Length))); //ТЕСТ: случайно надевает шапки в начале                                                                                                                                          
     }
     private void OnDestroy()
@@ -107,6 +116,7 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
         _onBoostStateChanged.Clear();
         _onBurning.Clear();
         _onDestroying.Clear();
+        _onDebaffChanged.Clear();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -311,11 +321,11 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
         _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost); 
         _character.SecondForm.SetVisiblityStatus(true);
         _character.MainForm.SetVisiblityStatus(false);        
-        _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;        
+        _character.SpeedMultiplier *= _model.KaufmoSpeedMultiplier;        
         yield return new WaitForSeconds(time - HUNTER_MODEL_FLICKING_TIME_TRIGGER);
         StartCoroutine(HunterModelFlicking(HUNTER_MODEL_FLICKING_TIME_TRIGGER));
         yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);         
-        _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier;        
+        _character.SpeedMultiplier /= _model.KaufmoSpeedMultiplier;        
         _character.MainForm.SetVisiblityStatus(true);
         _character.SecondForm.SetVisiblityStatus(false);
         _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
@@ -349,12 +359,17 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 
     public void BrakeOn()
     {
-        Debug.Log("Breaking on ");
+        Debug.Log("debaff ON");
+        _debaffersCount = Math.Max(0, _debaffersCount--);
+        if (!_speedIsDebaffed) {_character.SpeedMultiplier *= _model.DebafferSpeedMultiplier; _speedIsDebaffed = true; } 
+        foreach (var item in _onDebaffChanged) item.Invoke(true, _debaffersCount);
     }
 
     public void BrakeOff()
     {
-        Debug.Log("Breaking off");
+        Debug.Log("debaff OFF");
+        if (_speedIsDebaffed) { _character.SpeedMultiplier /= _model.DebafferSpeedMultiplier; _speedIsDebaffed = false; }        
+        foreach (var item in _onDebaffChanged) item.Invoke(false, _debaffersCount);
     }
 
 
