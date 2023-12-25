@@ -87,6 +87,14 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
     public void Hide()
     {
         _actionButton.gameObject.SetActive(false);
+        _debafActionButton.gameObject.SetActive(false);
         _joystick.gameObject.SetActive(false);
+    }
+
+    public void Show()
+    {
+        _actionButton.gameObject.SetActive(true);
+        _debafActionButton.gameObject.SetActive(true);
+        _joystick.gameObject.SetActive(true);
     }
 }

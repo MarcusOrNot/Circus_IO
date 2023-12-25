@@ -75,6 +75,7 @@ public class GameUI : MonoBehaviour, IGameUI
 
     public void ShowAdPause()
     {
+        HideAll();
         _eventBus.NotifyObservers(GameEventType.GAME_AD_PAUSED);
     }
 

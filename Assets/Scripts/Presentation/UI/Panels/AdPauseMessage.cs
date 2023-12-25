@@ -9,8 +9,8 @@ public class AdPauseMessage : MonoBehaviour
 {
     [Inject] private AdService _ad;
     //[SerializeField] private int _adDelay = 30;
-    private int MIN_DELAY = 60;
-    private int MAX_DELAY = 120;
+    private int MIN_DELAY = 90;
+    private int MAX_DELAY = 150;
     [SerializeField] private GameObject _pauseMessagePanel;
     [SerializeField] private TextMeshProUGUI _timeValueText;
     [SerializeField] private GameObject _pauseMenuPanel;
@@ -68,7 +68,7 @@ public class AdPauseMessage : MonoBehaviour
 
     public void ContinueWithAd()
     {
-        Debug.Log("Now should ad rewarded!");
+        //Debug.Log("Now should ad rewarded!");
         if (! _ad.ShowRewardedAd((successfull) =>
         {
             Hide();

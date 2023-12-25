@@ -21,7 +21,6 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             _controller.SetOnActionClicked(() =>
             {
                 _hunter.Boost();
-                _vibro.Play();
             });
             _controller.SetOnDebafClicked(() =>
             {
@@ -35,6 +34,8 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             {
                 //Debug.Log("State changed "+state.ToString());
                 //_controller.SetActionEnabled(state);
+                if (state==true)
+                    _vibro.Play();
                 if (state==false)
                     _controller.SetActionCooldown(_hunter.Model.BoostRestartTime);
             });

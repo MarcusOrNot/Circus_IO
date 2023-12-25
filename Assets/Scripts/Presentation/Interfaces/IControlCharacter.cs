@@ -11,4 +11,5 @@ public interface IControlCharacter
     public void SetActionCooldown(float seconds);
     public void SetOnDebafClicked(Action onClick);
     public void Hide();
+    public void Show();
 }

@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     [Inject] private IAudioEffect _effect;
     [Inject] private IMusicPlayer _music;
     [Inject] private AdService _adService;
+    [Inject] private IControlCharacter _controlUI;
     
     void Start()
     {
@@ -51,7 +52,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
                 ResumeGame();
                 break;
             case GameEventType.GAME_AD_PAUSED:
-                _music.Pause();
+                PauseGame();
                 Time.timeScale = 0;
                 break;
         }
@@ -73,12 +74,14 @@ public class GameController : MonoBehaviour, IGameEventObserver
     public void PauseGame()
     {
         _music.Pause();
+        _controlUI.Hide();
         //Time.timeScale = 0f;
     }
 
     public void ResumeGame()
     {
         _music.Continue();
+        _controlUI.Show();
         Time.timeScale = 1f;
     }
 
