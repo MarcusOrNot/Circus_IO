@@ -18,7 +18,8 @@ public class BrakingEffectBooster : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        other.GetComponent<IBrakableMoving>()?.BrakeOn();
+        if (other.gameObject!= _parent)
+            other.GetComponent<IBrakableMoving>()?.BrakeOn();
     }
 
     private void OnTriggerExit(Collider other)

@@ -17,7 +17,6 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     
     public void SpawnDebaff() 
     {
-        Debug.Log("Now should spawning debaff!");
         if (_debaffersCount <= 0) return;
         var debaf = _brakingFactory.Spawn(this.gameObject);
         debaf.transform.position = transform.position - transform.forward * 3;

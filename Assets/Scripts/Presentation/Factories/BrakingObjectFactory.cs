@@ -16,6 +16,7 @@ public class BrakingObjectFactory
     public BrakingEffectBooster Spawn(GameObject parent)
     {
         var res = _container.InstantiatePrefabForComponent<BrakingEffectBooster>(_brakingPrefub);
+        res.SetParentObject(parent);
         return res;
     }
 }
