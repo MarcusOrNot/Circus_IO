@@ -20,6 +20,6 @@ public class HunterModel
 
     public int StartDebaffersCount = 2;
     public int MaxDebaffersCount = 3;
-    public float DebafferSpeedMultiplier = 0.4f;
+    public float DebafferSpeedMultiplier = 0.5f;
     
 }

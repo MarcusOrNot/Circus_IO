@@ -17,7 +17,9 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     
     public void SpawnDebaff() 
     {
-        if (_debaffersCount <= 0) return;
+        if (_debaffersCount <= 0) { Debug.Log("debaffers are out"); return; }
+        _debaffersCount--;
+        foreach (var item in _onDebaffChanged) item.Invoke(_speedIsDebaffed, _debaffersCount); Debug.Log("spawn debaffer");
         var debaf = _brakingFactory.Spawn(this.gameObject);
         debaf.transform.position = transform.position - transform.forward * 3;
     }
@@ -80,7 +82,7 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 
     private bool _kaufmoIsActivated = false;
 
-    //private float _defaultCharacterSpeedMultiplier = -1f;
+    private float _defaultCharacterSpeedMultiplier = -1f;
     private bool _speedIsDebaffed = false;
     private int _debaffersCount = 0;
 
@@ -97,7 +99,7 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     private void Start()
     {        
         _character.SecondForm.SetVisiblityStatus(false);
-        //_defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);        
+        _defaultCharacterSpeedMultiplier = Mathf.Max(_defaultCharacterSpeedMultiplier, _character.SpeedMultiplier);        
         transform.localScale = GetScaleDependingOnHealth(_model.StartHealth);        
         ChangeHealth(_model.StartHealth);
         if (_character.MainForm.TryGetComponent(out ICanAttack mainAttacker)) mainAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
@@ -158,15 +160,15 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
         StartCoroutine(BoosterReloading());
         _isMovingWithBoost = true; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
         _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_ACCELERATED);  
-        if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
-        float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostSpeedMultiplier;
+        if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);
+        ChangeCharacterSpeed();
         StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
-        if (!_kaufmoIsActivated)
+        if (_isMovingWithBoost)
         {
-            _character.SpeedMultiplier = savedBoostSpeed;
-            _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
+            _isMovingWithBoost = false;
+            ChangeCharacterSpeed();
+            foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
         }        
     }
     private IEnumerator BoosterReloading()
@@ -319,12 +321,12 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
         _boosterIsReloading = false;
         _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost); 
         _character.SecondForm.SetVisiblityStatus(true);
-        _character.MainForm.SetVisiblityStatus(false);        
-        _character.SpeedMultiplier *= _model.KaufmoSpeedMultiplier;        
+        _character.MainForm.SetVisiblityStatus(false);
+        ChangeCharacterSpeed();
         yield return new WaitForSeconds(time - HUNTER_MODEL_FLICKING_TIME_TRIGGER);
         StartCoroutine(HunterModelFlicking(HUNTER_MODEL_FLICKING_TIME_TRIGGER));
-        yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);         
-        _character.SpeedMultiplier /= _model.KaufmoSpeedMultiplier;        
+        yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);
+        ChangeCharacterSpeed();
         _character.MainForm.SetVisiblityStatus(true);
         _character.SecondForm.SetVisiblityStatus(false);
         _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
@@ -358,20 +360,27 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 
     public void BrakeOn()
     {
-        Debug.Log("debaff ON");
-        _debaffersCount = Math.Max(0, _debaffersCount--);
-        if (!_speedIsDebaffed) {_character.SpeedMultiplier *= _model.DebafferSpeedMultiplier; _speedIsDebaffed = true; } 
-        foreach (var item in _onDebaffChanged) item.Invoke(true, _debaffersCount);
+        Debug.Log("debaff ON");        
+        _speedIsDebaffed = true;
+        ChangeCharacterSpeed();
+        foreach (var item in _onDebaffChanged) item.Invoke(_speedIsDebaffed, _debaffersCount);
     }
 
     public void BrakeOff()
     {
         Debug.Log("debaff OFF");
-        if (_speedIsDebaffed) { _character.SpeedMultiplier /= _model.DebafferSpeedMultiplier; _speedIsDebaffed = false; }        
-        foreach (var item in _onDebaffChanged) item.Invoke(false, _debaffersCount);
+        _speedIsDebaffed = false; 
+        ChangeCharacterSpeed();         
+        foreach (var item in _onDebaffChanged) item.Invoke(_speedIsDebaffed, _debaffersCount);
     }
 
-
+    private void ChangeCharacterSpeed()
+    {
+        _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier * (_speedIsDebaffed ? _model.DebafferSpeedMultiplier 
+            : (_isMovingWithBoost ? _model.BoostSpeedMultiplier 
+            : (_kaufmoIsActivated ? _model.KaufmoSpeedMultiplier 
+            : 1f)));
+    }
 
 
 

@@ -109,6 +109,9 @@ MonoBehaviour:
     KaufmoSpeedMultiplier: 1.5
     HunterType: 11
     IsScaleDependFromHealth: 1
+    StartDebaffersCount: 2
+    MaxDebaffersCount: 3
+    DebafferSpeedMultiplier: 0.5
 --- !u!54 &8771609089846911496
 Rigidbody:
   m_ObjectHideFlags: 0
