@@ -17,9 +17,10 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     
     public void SpawnDebaff() 
     {
-        if (_debaffersCount <= 0) { Debug.Log("debaffers are out"); return; }
+        if (!_debafferSpawnerIsReady) { Debug.Log("debafferSpawner is reloading"); return; }
+        if (_debaffersCount <= 0) { Debug.Log("debaffers are out"); return; }        
         _debaffersCount--;
-        foreach (var item in _onDebaffChanged) item.Invoke(_speedIsDebaffed, _debaffersCount); Debug.Log("spawn debaffer");
+        StartCoroutine(DebafferSpawnerReloading());
         var debaf = _brakingFactory.Spawn(this.gameObject);
         debaf.transform.position = transform.position - transform.forward * 3;
     }
@@ -89,6 +90,7 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     private Hunter _currentCollidedKaufmo = null;
     private float _collidedKaufmoDamagingPeriod = 1f;
 
+    private bool _debafferSpawnerIsReady = true;
         
     private void Awake()
     {        
@@ -240,8 +242,8 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
                         ChangeHealth((somebody as HealthBooster).HealCount);
                         break;
                     case BoosterType.KAUFMO_CONVERTER:
-                        StartCoroutine(ActivateKaufmoMode((somebody as KaufmoActivatorBooster).KaufmoModeTime));
-                        //_character.ChangeForm();
+                        KaufmoActivatorBooster kaufmoActivatorBooster = (somebody as KaufmoActivatorBooster);
+                        StartCoroutine(ActivateKaufmoMode(kaufmoActivatorBooster.Model.KaufoModeTime, kaufmoActivatorBooster.Model.FlickingTimeFraction, kaufmoActivatorBooster.Model.FlickingSpeed));
                         break;
                 } 
                 eatingSpeed = 7f * _character.SpeedMultiplier;
@@ -313,9 +315,9 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     }    
 
     
-    private IEnumerator ActivateKaufmoMode(float time)
-    {
-        const float HUNTER_MODEL_FLICKING_TIME_TRIGGER = 5f;
+    private IEnumerator ActivateKaufmoMode(float time, float flickingTimeFraction, float flickingSpeed )
+    {        
+        float flickingTime = time * flickingTimeFraction;
         _kaufmoIsActivated = true; foreach (var item in _onKaufmoActivated) item?.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();
         _boosterIsReloading = false;
@@ -323,26 +325,25 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
         _character.SecondForm.SetVisiblityStatus(true);
         _character.MainForm.SetVisiblityStatus(false);
         ChangeCharacterSpeed();
-        yield return new WaitForSeconds(time - HUNTER_MODEL_FLICKING_TIME_TRIGGER);
-        StartCoroutine(HunterModelFlicking(HUNTER_MODEL_FLICKING_TIME_TRIGGER));
-        yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);
+        yield return new WaitForSeconds(time - flickingTime);
+        StartCoroutine(HunterModelFlicking(flickingTime, flickingSpeed));
+        yield return new WaitForSeconds(flickingTime);
         ChangeCharacterSpeed();
         _character.MainForm.SetVisiblityStatus(true);
         _character.SecondForm.SetVisiblityStatus(false);
         _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();        
     }
-    private IEnumerator HunterModelFlicking(float flickingTime)
-    {
-        const float HUNTER_FLICKING_PERIOD = 0.3f;
+    private IEnumerator HunterModelFlicking(float flickingTime, float flickingSpeed)
+    {        
         bool mainFormIsVisible = false;
         while ((flickingTime > 0) && _kaufmoIsActivated)
         {
             mainFormIsVisible = !mainFormIsVisible;
             _character.MainForm.SetVisiblityStatus(mainFormIsVisible);
             _character.SecondForm.SetVisiblityStatus(!mainFormIsVisible);            
-            yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
-            flickingTime -= HUNTER_FLICKING_PERIOD;            
+            yield return new WaitForSeconds(flickingSpeed);
+            flickingTime -= flickingSpeed;            
         }        
         _character.SecondForm.SetVisiblityStatus(false);
         _character.MainForm.SetVisiblityStatus(true);
@@ -363,15 +364,13 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
         Debug.Log("debaff ON");        
         _speedIsDebaffed = true;
         ChangeCharacterSpeed();
-        foreach (var item in _onDebaffChanged) item.Invoke(_speedIsDebaffed, _debaffersCount);
     }
 
     public void BrakeOff()
     {
         Debug.Log("debaff OFF");
         _speedIsDebaffed = false; 
-        ChangeCharacterSpeed();         
-        foreach (var item in _onDebaffChanged) item.Invoke(_speedIsDebaffed, _debaffersCount);
+        ChangeCharacterSpeed();     
     }
 
     private void ChangeCharacterSpeed()
@@ -382,7 +381,14 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
             : 1f)));
     }
 
-
+    private IEnumerator DebafferSpawnerReloading()
+    {        
+        _debafferSpawnerIsReady = false;
+        foreach (var item in _onDebaffChanged) item.Invoke(_debafferSpawnerIsReady, _debaffersCount);
+        yield return new WaitForSeconds(_model.DebafferSpawnCooldawn);
+        _debafferSpawnerIsReady = true;
+        foreach (var item in _onDebaffChanged) item.Invoke(_debafferSpawnerIsReady, _debaffersCount);
+    }
 
 
 

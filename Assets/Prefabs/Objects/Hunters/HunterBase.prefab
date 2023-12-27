@@ -16706,6 +16706,7 @@ MonoBehaviour:
     StartDebaffersCount: 3
     MaxDebaffersCount: 10
     DebafferSpeedMultiplier: 0.5
+    DebafferSpawnCooldawn: 10
 --- !u!54 &687348315560674955
 Rigidbody:
   m_ObjectHideFlags: 0
