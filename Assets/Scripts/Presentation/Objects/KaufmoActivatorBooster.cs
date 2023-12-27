@@ -5,10 +5,14 @@ using UnityEngine;
 
 
 public class KaufmoActivatorBooster : Booster
-{ 
+{
+    [SerializeField] private KaufmoActivatorBoosterModel _model;
+
+    public KaufmoActivatorBoosterModel Model { get => _model; }
+    
+
 
     public override BoosterType GetBoosterType() => BoosterType.KAUFMO_CONVERTER;
 
-    public float KaufmoModeTime { get => _kaufoModeTime; }
-    [SerializeField][Range(10, 100)] private float _kaufoModeTime = 20f;
+    
 }

@@ -10634,7 +10634,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a077fd553c605924c8028853c1274713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _kaufoModeTime: 20
+  _model:
+    KaufoModeTime: 20
+    FlickingTimeFraction: 0.1
+    FlickingSpeed: 0.3
 --- !u!54 &1671249007718021064
 Rigidbody:
   m_ObjectHideFlags: 0
