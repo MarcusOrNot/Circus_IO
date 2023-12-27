@@ -10,6 +10,8 @@ public interface IControlCharacter
     public void SetActionEnabled(bool enabled);
     public void SetActionCooldown(float seconds);
     public void SetOnDebafClicked(Action onClick);
+    public void SetDebafCooldown(float seconds);
+    public int DebafCount { set; }
     public void Hide();
     public void Show();
 }

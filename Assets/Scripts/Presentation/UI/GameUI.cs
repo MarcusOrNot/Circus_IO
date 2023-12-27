@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
+using DG.Tweening;
 
 public class GameUI : MonoBehaviour, IGameUI
 {
@@ -94,5 +95,15 @@ public class GameUI : MonoBehaviour, IGameUI
     public void CloseAlertMessage()
     {
         _alertMessageText.gameObject.SetActive(false);
+    }
+
+    public void ShowCounterStart(int delaySeconds)
+    {
+        ShowAlertMessage(delaySeconds.ToString());
+        DOTween.To((x) => _alertMessageText.text = (Mathf.FloorToInt(x+1)).ToString(), delaySeconds, 0, delaySeconds).SetUpdate(true).OnComplete(() =>
+        {
+            Continue();
+            //Debug.Log("Ready");
+        }).PlayForward();
     }
 }

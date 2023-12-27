@@ -18,14 +18,9 @@ public class PlayerHunter : MonoBehaviour, IPlayer
         _hunter = GetComponent<Hunter>();
         if (_controller != null)
         {
-            _controller.SetOnActionClicked(() =>
-            {
-                _hunter.Boost();
-            });
-            _controller.SetOnDebafClicked(() =>
-            {
-                _hunter.SpawnDebaff();
-            });
+            _controller.SetOnActionClicked(() =>_hunter.Boost());
+            _controller.SetOnDebafClicked(() =>_hunter.SpawnDebaff());
+            
             _hunter.SetOnHealthChanged((lifes) =>
             {
                 _gameUI.SetLifesValue(lifes);
@@ -38,6 +33,11 @@ public class PlayerHunter : MonoBehaviour, IPlayer
                     _vibro.Play();
                 if (state==false)
                     _controller.SetActionCooldown(_hunter.Model.BoostRestartTime);
+            });
+            _hunter.SetOnDebaffChanged((state, count) => {
+                _controller.DebafCount = count;
+                if (state == false)
+                    _controller.SetDebafCooldown(2);
             });
             _hunter.SetOnHunterModeChanged((state) => { 
                 _controller.SetActionEnabled(!state);

@@ -46,6 +46,7 @@ public class AIHunter : MonoBehaviour
     {
         _hunter.Move(_state.Direction);
         if (_state.Accelerate) _hunter.Boost();
+        if (_state.SpawnDebaf) _hunter.SpawnDebaff();
     }
 
     private void OnDestroy()

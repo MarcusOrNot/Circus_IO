@@ -25,9 +25,10 @@ public class AvoidHunterBehaviour : AIBehavior
             if (distance < _dangerDistance)
             {
                 var acceleration = distance < _dangerDistance / 2;
+                var debaf = distance < _dangerDistance / 2.5f;
                 var direction = -(nearest.transform.position - _hunter.transform.position).normalized;
                 direction = Quaternion.Euler(0,Random.Range(-45, 45),0) * direction;
-                return new AIBehaviorModel(_fear, new Vector2(direction.x, direction.z), acceleration);
+                return new AIBehaviorModel(_fear, new Vector2(direction.x, direction.z), acceleration, debaf);
             }
         }
 

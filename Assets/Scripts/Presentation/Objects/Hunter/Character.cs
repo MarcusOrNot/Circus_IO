@@ -11,7 +11,7 @@ public class Character : MonoBehaviour
     public float SpeedMultiplier  
     {  
         get => _speedMultiplier;   
-        set { _speedMultiplier = Mathf.Max(0, value); SendMovingSpeedToHunterForms(); Debug.Log("total speed multiplier of "+ gameObject.name+ " = " + value.ToString()); } 
+        set { _speedMultiplier = Mathf.Max(0, value); SendMovingSpeedToHunterForms(); } 
     }   
     public HunterVisualForm MainForm { get => _mainForm; set => _mainForm = value; }
     public HunterVisualForm SecondForm { get => _secondForm; }
