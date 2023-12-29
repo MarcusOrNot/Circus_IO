@@ -17,8 +17,8 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
     
     public void SpawnDebaff() 
     {
-        if (!_debafferSpawnerIsReady) { Debug.Log("debafferSpawner is reloading"); return; }
-        if (_debaffersCount <= 0) { Debug.Log("debaffers are out"); return; }        
+        if (!_debafferSpawnerIsReady) { return; }
+        if (_debaffersCount <= 0) {  return; }        
         _debaffersCount--;
         StartCoroutine(DebafferSpawnerReloading());
         var debaf = _brakingFactory.Spawn(this.gameObject);
@@ -361,14 +361,14 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 
     public void BrakeOn()
     {
-        Debug.Log("debaff ON");        
+        //Debug.Log("debaff ON");        
         _speedIsDebaffed = true;
         ChangeCharacterSpeed();
     }
 
     public void BrakeOff()
     {
-        Debug.Log("debaff OFF");
+        //Debug.Log("debaff OFF");
         _speedIsDebaffed = false; 
         ChangeCharacterSpeed();     
     }

@@ -10,7 +10,7 @@ public class HunterSpawn : MonoBehaviour
     [Inject] protected HunterFactory _factory;
     public virtual void Start()
     {
-        SetPosition(_factory.Spawn(_hunter));
+        SetCurrentPosition(_factory.Spawn(_hunter));
         Destroy(gameObject);
     }
     /*protected Hunter Spawn()
@@ -21,7 +21,12 @@ public class HunterSpawn : MonoBehaviour
         hunter.GetComponent<Rigidbody>().isKinematic = false;
         return hunter;
     }*/
-    protected void SetPosition(Hunter hunter)
+    protected void SetCurrentPosition(Hunter hunter)
+    {
+        SetPosition(hunter, transform.position);
+    }
+
+    protected void SetPosition(Hunter hunter, Vector3 position)
     {
         hunter.GetComponent<Rigidbody>().isKinematic = true;
         hunter.gameObject.transform.position = transform.position;

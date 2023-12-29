@@ -29,15 +29,21 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             {
                 //Debug.Log("State changed "+state.ToString());
                 //_controller.SetActionEnabled(state);
-                if (state==true)
+                //if (state==false)
+                //  _vibro.Play();
+                if (state == false)
+                {
                     _vibro.Play();
-                if (state==false)
                     _controller.SetActionCooldown(_hunter.Model.BoostRestartTime);
+                }
             });
             _hunter.SetOnDebaffChanged((state, count) => {
                 _controller.DebafCount = count;
                 if (state == false)
-                    _controller.SetDebafCooldown(2);
+                {
+                    _vibro.Play();
+                    _controller.SetDebafCooldown(_hunter.Model.DebafferSpawnCooldawn);
+                }
             });
             _hunter.SetOnHunterModeChanged((state) => { 
                 _controller.SetActionEnabled(!state);

@@ -99,6 +99,7 @@ public class GameUI : MonoBehaviour, IGameUI
 
     public void ShowCounterStart(int delaySeconds)
     {
+        HideAll();
         ShowAlertMessage(delaySeconds.ToString());
         DOTween.To((x) => _alertMessageText.text = (Mathf.FloorToInt(x+1)).ToString(), delaySeconds, 0, delaySeconds).SetUpdate(true).OnComplete(() =>
         {

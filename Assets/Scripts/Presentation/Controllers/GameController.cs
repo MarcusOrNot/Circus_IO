@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     [Inject] private IMusicPlayer _music;
     [Inject] private AdService _adService;
     [Inject] private IControlCharacter _controlUI;
+    [Inject] private IMobSpawner _mobSpawner;
     
     void Start()
     {
@@ -19,6 +20,8 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
         Analytics.LogLevelStarted();
         RuntimeInfo.IsGamePlayedOnce = true;
+        //_mobSpawner.SpawnAtLocation(HunterType.HUNTER_BLACK, HatType.CAP, new Vector3(5,15,5));
+        //Debug.Log("Now player us "+ Level.Instance.GetPlayer().GetPosition().ToString());
         ResumeGame();
         
         

@@ -84,6 +84,7 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
     {
         //_buttonAnim.Kill();
         _actionButton.gameObject.SetActive(enabled);
+        _debafButton.gameObject.SetActive(enabled);
         //_actionButton.gameObject.SetActive(enabled);
         /*var tempColor = _actionButton.GetComponent<Image>().color;
         tempColor.a = enabled?1:0.3f;

@@ -10,7 +10,7 @@ public class PlayerHunterSpawn : HunterSpawn
     {
         var hunter = _factory.SpawnPlayerHunter(_hunter);
         hunter.SetHat(_settings.ChosenHat);
-        SetPosition(hunter);
+        SetCurrentPosition(hunter);
         Destroy(gameObject);
     }
 }

@@ -10635,7 +10635,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _model:
-    KaufoModeTime: 20
+    KaufoModeTime: 12
     FlickingTimeFraction: 0.1
     FlickingSpeed: 0.3
 --- !u!54 &1671249007718021064

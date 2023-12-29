@@ -2545,8 +2545,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8de451ac3d2972045bb97182c4caa5c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MIN_DELAY: 15
-  MAX_DELAY: 30
+  MIN_DELAY: 90
+  MAX_DELAY: 150
   _pauseMessagePanel: {fileID: 74100268707986409}
   _timeValueText: {fileID: 375648036927258509}
   _pauseMenuPanel: {fileID: 7818564320110542251}
