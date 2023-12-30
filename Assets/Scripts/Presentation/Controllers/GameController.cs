@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     [Inject] private AdService _adService;
     [Inject] private IControlCharacter _controlUI;
     [Inject] private IMobSpawner _mobSpawner;
+    [Inject] private LevelProcessService _levelProcessService;
     
     void Start()
     {
@@ -20,8 +21,9 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
         Analytics.LogLevelStarted();
         RuntimeInfo.IsGamePlayedOnce = true;
-        //_mobSpawner.SpawnAtLocation(HunterType.HUNTER_BLACK, HatType.CAP, new Vector3(5,15,5));
+        //_mobSpawner.SpawnAtLocation(HunterType.HUNTER_BLACK, HatType.CAP, new Vector3(5,5,5));
         //Debug.Log("Now player us "+ Level.Instance.GetPlayer().GetPosition().ToString());
+        //SetLevelParams(_levelProcessService.GenerateLevel(1));
         ResumeGame();
         
         
@@ -119,5 +121,14 @@ public class GameController : MonoBehaviour, IGameEventObserver
     {
         Time.timeScale = 1;
         _adService.HideBanner();
+    }
+
+    private void SetLevelParams(LevelParamsModel levelParams)
+    {
+        //Debug.Log("Now Generate coutn is "+levelParams.Mobs.Count.ToString());
+        foreach(var mob in levelParams.Mobs)
+        {
+            _mobSpawner.SpawnAtLocation(mob.HunterType, mob.HatType, new Vector3(Random.Range(1,10), 5, Random.Range(1, 10)));
+        }
     }
 }

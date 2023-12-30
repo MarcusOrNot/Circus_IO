@@ -6,4 +6,5 @@ public static class RuntimeInfo
 {
     public static bool IsGamePlayedOnce = false;
     public static bool IsShownRate= false;
+    public static LevelParamsModel LevelParams = null;
 }

@@ -29,5 +29,7 @@ public class ObjectInstaller : MonoInstaller
 
         Container.Bind<BrakingObjectFactory>().FromNew().AsSingle();
         Container.BindInstance(_brakingPrefub);
+
+        Container.Bind<LevelProcessService>().FromNew().AsSingle();
     }
 }
