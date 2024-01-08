@@ -15,7 +15,7 @@ public class AppodealAds : MonoBehaviour, IAds
     void Start()
     {
         int adTypes = AppodealAdType.Interstitial | AppodealAdType.Banner | AppodealAdType.RewardedVideo;
-        string appKey = "47a27d5764228d42434b249e7a3f9507d1ae54fc1f29855b";
+        string appKey = "8a080d643c964a2a368ed04b2dc1ebffcc8b319179117745";
         //AppodealCallbacks.Sdk.OnInitialized += OnInitializationFinished;
         //Interstitial Callbacks
         AppodealCallbacks.Interstitial.OnShowFailed += delegate { _onShowInterstitial?.Invoke(false); };

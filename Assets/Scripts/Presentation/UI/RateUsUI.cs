@@ -41,7 +41,7 @@ public class RateUsUI : MonoBehaviour
     public void OpenFeedPage()
     {
         Analytics.LogFeedLeaving();
-        Application.OpenURL("https://play.google.com/store/apps/details?id=com.dgs.CircusIO");
+        Application.OpenURL(GameSettings.RATE_US_URL);
         Close();
     }
 

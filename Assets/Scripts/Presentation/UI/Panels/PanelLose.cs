@@ -6,6 +6,7 @@ using Zenject;
 public class PanelLose : MonoBehaviour
 {
     [Inject] private IAds _ads;
+    [Inject] private LevelStatService _levelStat;
     public void ShowPanel()
     {
         gameObject.SetActive(true);
@@ -16,5 +17,10 @@ public class PanelLose : MonoBehaviour
     {
         _ads.HideBanner();
         gameObject.SetActive(false);
+    }
+
+    public void OpenMainMenu()
+    {
+        Utils.OpenScene(SceneType.MAIN_MENU);
     }
 }

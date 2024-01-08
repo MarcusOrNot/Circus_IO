@@ -15,5 +15,11 @@ public class GameSceneInstaller : MonoInstaller
         Container.Bind<IMusicPlayer>().To<MusicPlayController>().FromInstance(_musicComponent).AsSingle();
         //Container.Bind<IAudioEffect>().To<EffectPlayController>().FromComponentInHierarchy().AsSingle();
         //Container.Bind<IMusicPlayer>().To<MusicPlayController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<LevelStatService>().FromNew().AsSingle();
+    }
+
+    private void OnDestroy()
+    {
+        Container.Resolve<LevelStatService>().UnregisterService();
     }
 }
