@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,10 @@ public class GameController : MonoBehaviour, IGameEventObserver
     
     void Start()
     {
+        /*int level = GameStatService.GetLevel(301);
+        Debug.Log("Level is "+ level.ToString());
+        Debug.Log("Points is " + GameStatService.GetNeedExpByLevel(level+1).ToString());*/
+
         //_eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
         //_factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(0,10,0);
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
@@ -45,10 +50,20 @@ public class GameController : MonoBehaviour, IGameEventObserver
         {
             case GameEventType.PLAYER_DEAD:
                 //PauseGame();
-                GameOver();
+                StartCoroutine(HunterCountHandler((count) =>
+                {
+                    GameOver();
+                }));
                 break;
             case GameEventType.HUNTER_DEAD:
-                StartCoroutine(CheckHuntersCount());
+                //StartCoroutine(CheckHuntersCount());
+                StartCoroutine(HunterCountHandler((count) =>
+                {
+                    if (count==1 && Level.Instance.GetPlayer()!=null)
+                    {
+                        PlayerWon();
+                    }
+                }));
                 break;
             case GameEventType.GAME_PAUSED:
                 PauseGame();
@@ -62,7 +77,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
                 break;
         }
     }
-    private IEnumerator CheckHuntersCount()
+    /*private IEnumerator CheckHuntersCount()
     {
         //for (int i = 0; i < 2; i++) yield return null;
         yield return new WaitForEndOfFrame();
@@ -74,6 +89,15 @@ public class GameController : MonoBehaviour, IGameEventObserver
                 PlayerWon();
             }
         }
+    }*/
+
+    private IEnumerator HunterCountHandler(Action<int> onCount)
+    {
+        yield return new WaitForEndOfFrame();
+        var count = FindObjectsOfType<Hunter>().Length;
+        onCount?.Invoke(count);
+        if (count<=1)
+            Time.timeScale = 0f;
     }
 
     public void PauseGame()
@@ -114,6 +138,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         _adService.ShowInterstitialIfAllowed((successfull) =>
         {
             _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
+            Debug.Log("Now should win sound");
         });
     }
 
@@ -128,7 +153,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //Debug.Log("Now Generate coutn is "+levelParams.Mobs.Count.ToString());
         foreach(var mob in levelParams.Mobs)
         {
-            _mobSpawner.SpawnAtLocation(mob.HunterType, mob.HatType, new Vector3(Random.Range(1,10), 5, Random.Range(1, 10)));
+            _mobSpawner.SpawnAtLocation(mob.HunterType, mob.HatType, new Vector3(UnityEngine.Random.Range(1,10), 5, UnityEngine.Random.Range(1, 10)));
         }
     }
 }

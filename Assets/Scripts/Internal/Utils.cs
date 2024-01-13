@@ -28,6 +28,9 @@ public static class Utils
             case SceneType.GAME_ROYAL_BATTLE:
                 sceneNum = 1;
                 break;
+            case SceneType.LOADER_SCENE:
+                sceneNum = 2;
+                break;
         }
         SceneManager.LoadScene(sceneNum);
     }

@@ -13,10 +13,12 @@ public class StartGameUI : MonoBehaviour
 
     public void StartRoyalGame()
     {
-        StartCoroutine(ConnectorCoro(Random.Range(1, 3)));
+        //StartCoroutine(ConnectorCoro(Random.Range(1, 3)));
+        _onStartLevel?.Invoke();
+        Utils.OpenScene(SceneType.LOADER_SCENE);
     }
 
-    private IEnumerator ConnectorCoro(int delay)
+    /*private IEnumerator ConnectorCoro(int delay)
     {
         _buttonStart.SetActive(false);
         _connectingText.gameObject.SetActive(true);
@@ -41,5 +43,5 @@ public class StartGameUI : MonoBehaviour
     private void OnDestroy()
     {
         StopAllCoroutines();
-    }
+    }*/
 }

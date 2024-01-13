@@ -12,6 +12,7 @@ public static class Analytics
     private const string AD_INTERSTITIAL_SHOWEN = "ad_interstitial_shown";
     private const string RATE_CHOSEN = "rate_chosen";
     private const string FEED_LEAVE = "feed_leaving";
+    private const string HAT_BOUGHT = "heat_baught";
     //public const string RIGHT_CHOOSE = "right_choose";
     //public const string WRONG_CHOOSE = "wrong_choose";
     //private const string PARAMETER_RATE = "rate_value";
@@ -52,6 +53,10 @@ public static class Analytics
     public static void LogFeedLeaving()
     {
         FirebaseAnalytics.LogEvent(FEED_LEAVE);
+    }
+    public static void LogHatBought()
+    {
+        FirebaseAnalytics.LogEvent(HAT_BOUGHT);
     }
 
 
