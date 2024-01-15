@@ -50,4 +50,9 @@ public class GameStatsLocalImpl : IGameStats
         res = "stat_"+gameStat.ToString();
         return res;
     }
+
+    public void ChangeGameStat(GameStatsType type, int value)
+    {
+        SetGameStat(type, GetStat(type)+value);
+    }
 }

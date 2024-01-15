@@ -23,15 +23,17 @@ public class PanelLose : MonoBehaviour
         _ads.ShowBanner();
 
         _timeStatValue.text = _levelStat.SecondsElapsed.ToString();
+        _lifesStatValue.text = _levelStat.MaxPlayerHealth.ToString();
+        _diethsStatValue.text = _levelStat.HuntersEaten.ToString();
         //_expStatValue.text = _levelStat.GetExp().ToString();
-        var resCoins = GameStatService.CalculateLoseCoins(_levelStat.SecondsElapsed, 3);
-        var exp = resCoins * 7;
+        var resCoins = GameStatService.CalculateLoseCoins(_levelStat.SecondsElapsed, _levelStat.HuntersEaten, _levelStat.MaxPlayerHealth);
+        var exp = GameStatService.GetExpFromCoins(resCoins);
         _coinsStatValue.text = resCoins.ToString();
         _expStatValue.text = exp.ToString();
         
 
-        _gameStats.SetGameStat(GameStatsType.COINS, resCoins);
-        _gameStats.SetGameStat(GameStatsType.EXP, exp);
+        _gameStats.ChangeGameStat(GameStatsType.COINS, resCoins);
+        _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
     }
 
     public void HidePanel() 

@@ -25,6 +25,7 @@ public class MainMenuController3D : MonoBehaviour
     //private Transform _shopHatTransformDelta;
     private void Awake()
     {
+        //PlayerPrefs.DeleteAll();
         _camera = Camera.main;
         _cameraStartPosition = _camera.transform.position;
     }

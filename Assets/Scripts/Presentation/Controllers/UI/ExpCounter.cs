@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
@@ -39,16 +40,17 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
             //_currentExp = value;
             //_expValueText.text = value.ToString();
             int level = GameStatService.GetLevel(value);
-            if (value> _targetExp)
+            if (value>= _targetExp)
             {
                 _levelValueText.text = level.ToString();
-                _targetExp = GameStatService.GetNeedExpByLevel(level+1);
+                _targetExp = GameStatService.GetTargetExp(level+1);
             }
             _expValueText.text = value.ToString()+" / "+_targetExp.ToString();
-            int baseLevelExp = GameStatService.GetNeedExpByLevel(level);
+            int baseLevelExp = GameStatService.GetTargetExp(level);
             var currentSize = ((float) value - baseLevelExp) / (_targetExp - baseLevelExp) * _startSize;
             //Debug.Log(targetKoef.ToString());
             _progressTransform.sizeDelta = new Vector2(-(_startSize - currentSize), 0);
+            Debug.Log("Count of level " + level.ToString() + ", " + _targetExp.ToString());
         }
     }
 

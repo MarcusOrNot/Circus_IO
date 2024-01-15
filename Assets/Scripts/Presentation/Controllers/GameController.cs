@@ -119,7 +119,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         Analytics.LogLevelFailed();
         _gameUI.ShowGameOver();
         _music.Stop();
-        _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
+        _effect.PlayEffectConstantly(SoundEffectType.LEVEL_FAILED);
         /*_adService.ShowInterstitialIfAllowed((successfull) =>
         {
             _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
@@ -137,8 +137,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //_effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
         _adService.ShowInterstitialIfAllowed((successfull) =>
         {
-            _effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
-            Debug.Log("Now should win sound");
+            _effect.PlayEffectConstantly(SoundEffectType.LEVEL_COMPLETED);
         });
     }
 

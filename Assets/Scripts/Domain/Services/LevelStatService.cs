@@ -6,7 +6,8 @@ using UnityEngine;
 public class LevelStatService: IGameEventObserver
 {
     private IEventBus _eventBus;
-    private int _huntersEaten = 10;
+    private int _huntersEaten = 0;
+    private int _maxPlayerHealth = 0;
     //private long _startedTime = 0;
     private DateTime _startedDate;
     public LevelStatService(IEventBus eventBus)
@@ -30,13 +31,18 @@ public class LevelStatService: IGameEventObserver
 
     public void Notify(GameEventType gameEvent)
     {
-        if (gameEvent==GameEventType.HUNTER_DEAD)
+        if (gameEvent==GameEventType.PLAYER_HEALTH_CHANGED)
         {
-
+            var player = Level.Instance.GetPlayer();
+            if (player!=null && player.GetLifes()>_maxPlayerHealth)
+                _maxPlayerHealth=player.GetLifes();
         }
+        if (gameEvent == GameEventType.PLAYER_ATE_HUNTER)
+            _huntersEaten++;
     }
 
     public int HuntersEaten => _huntersEaten;
+    public int MaxPlayerHealth => _maxPlayerHealth;
     public int SecondsElapsed
     {
         get

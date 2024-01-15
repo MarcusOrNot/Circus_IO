@@ -24,6 +24,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             _hunter.SetOnHealthChanged((lifes) =>
             {
                 _gameUI.SetLifesValue(lifes);
+                _eventBus.NotifyObservers(GameEventType.PLAYER_HEALTH_CHANGED);
             });
             _hunter.SetOnBoostStateChanged((state) =>
             {
@@ -59,6 +60,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
                 _controller.Hide();
                 _vibro.PlayMillis(500);
             });
+            _hunter.SetOnHunterAte(() => _eventBus.NotifyObservers(GameEventType.PLAYER_ATE_HUNTER));
         }
     }
 

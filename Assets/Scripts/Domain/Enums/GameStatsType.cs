@@ -7,5 +7,6 @@ public enum GameStatsType
     SCORE,
     COINS,
     EXP,
+    LEVEL,
     KOEF_DIFFICULTY
 }

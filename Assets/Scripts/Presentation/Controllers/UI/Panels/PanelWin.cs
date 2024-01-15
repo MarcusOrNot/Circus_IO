@@ -2,15 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using Zenject;
 
 public class PanelWin : MonoBehaviour
 {
-    private const int COMPLETE_SCORE = 35;
     [Inject] private IAds _ads;
     [Inject] private IGameStats _gameStats;
-    [Inject] private GameStatService _statService;
+    //[Inject] private GameStatService _statService;
     [SerializeField] private TextMeshProUGUI _coinsValueText;
     [SerializeField] private TextMeshProUGUI _expValueText;
     //[SerializeField] private TextMeshProUGUI _scoreComplete;
@@ -31,9 +29,9 @@ public class PanelWin : MonoBehaviour
         gameObject.SetActive(true);
         var charLifes = Level.Instance.GetPlayer()?.GetLifes()==null?0:1;
         var coins = GameStatService.CalculateWinnerCoins(charLifes, 2);
-        var exp = coins * 7;
-        _gameStats.SetGameStat(GameStatsType.COINS, _gameStats.GetStat(GameStatsType.COINS) + coins);
-        _gameStats.SetGameStat(GameStatsType.EXP, _gameStats.GetStat(GameStatsType.EXP) + exp);
+        var exp = GameStatService.GetExpFromCoins(coins);
+        _gameStats.ChangeGameStat(GameStatsType.COINS, coins);
+        _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
 
         _coinsValueText.text = coins.ToString();
         _expValueText.text = exp.ToString();
