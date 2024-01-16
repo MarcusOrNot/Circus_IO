@@ -25,7 +25,7 @@ public class LevelProcessService
             mobsCount--;
         }
 
-        return new LevelParamsModel(mobs, 100);
+        return new LevelParamsModel(mobs, 100, 100, 300);
     }
 
     private static List<HunterModel> GetHunterModels(List<Hunter> hunters)

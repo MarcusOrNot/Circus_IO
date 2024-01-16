@@ -12,5 +12,6 @@ public enum GameEventType
     HUNTER_DEAD,
     GAME_PAUSED,
     GAME_CONTINUE,
-    GAME_AD_PAUSED
+    GAME_AD_PAUSED,
+    ZONE_CHANGED
 }
