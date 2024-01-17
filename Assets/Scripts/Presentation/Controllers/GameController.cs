@@ -13,7 +13,6 @@ public class GameController : MonoBehaviour, IGameEventObserver
     [Inject] private AdService _adService;
     [Inject] private IControlCharacter _controlUI;
     [Inject] private IMobSpawner _mobSpawner;
-    [Inject] private LevelProcessService _levelProcessService;
     
     void Start()
     {

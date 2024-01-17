@@ -2,13 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Zenject;
 
 public class LoaderSceneController : MonoBehaviour
 {
+    [Inject] private IGameStats _gameStats;
+    [Inject] private LevelProcessService _levelProcessor;
     [SerializeField] private TextMeshProUGUI _connectingText;
     // Start is called before the first frame update
     void Start()
     {
+        RuntimeInfo.LevelParams = _levelProcessor.GenerateLevel(_gameStats.GetStat(GameStatsType.KOEF_DIFFICULTY));
+        Debug.Log("Runtime data info "+RuntimeInfo.LevelParams.MaxZoneSize.ToString());
         StartCoroutine(ConnectorCoro(Random.Range(2, 5)));
     }
 

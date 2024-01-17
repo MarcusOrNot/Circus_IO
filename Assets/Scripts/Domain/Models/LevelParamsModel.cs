@@ -14,7 +14,7 @@ public class LevelParamsModel
     {
         Mobs = mobs;
         FoodCount = foodCount;
-        MaxZoneSize = 0;
-        ZoneChangeTime = 0;
+        MaxZoneSize = maxZoneSize;
+        ZoneChangeTime = zoneChangeTime;
     }
 }

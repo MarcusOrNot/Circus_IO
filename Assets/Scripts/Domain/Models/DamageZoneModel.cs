@@ -6,5 +6,11 @@ using UnityEngine;
 public class DamageZoneModel
 {
     public int TimeSeconds;
-    public int Size;
+    public float Size;
+
+    public DamageZoneModel(int timeSeconds, float size)
+    {
+        TimeSeconds = timeSeconds;
+        Size = size;
+    }
 }

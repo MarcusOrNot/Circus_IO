@@ -17,6 +17,7 @@ public class GameSceneInstaller : MonoInstaller
         //Container.Bind<IMusicPlayer>().To<MusicPlayController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<LevelStatService>().FromNew().AsSingle();
         Container.Bind<IZoneController>().To<DamageZoneConroller>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<ILevelInfo>().To<Level>().FromComponentInHierarchy().AsSingle();
     }
 
     private void OnDestroy()
