@@ -32,6 +32,7 @@ public class PanelWin : MonoBehaviour
         var exp = GameStatService.GetExpFromCoins(coins);
         _gameStats.ChangeGameStat(GameStatsType.COINS, coins);
         _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
+        _gameStats.ChangeGameStat(GameStatsType.KOEF_DIFFICULTY, 1);
 
         _coinsValueText.text = coins.ToString();
         _expValueText.text = exp.ToString();

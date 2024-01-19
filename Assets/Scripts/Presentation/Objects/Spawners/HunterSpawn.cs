@@ -10,7 +10,8 @@ public class HunterSpawn : MonoBehaviour
     [Inject] protected HunterFactory _factory;
     public virtual void Start()
     {
-        SetCurrentPosition(_factory.Spawn(_hunter));
+        var hunter = _factory.Spawn(_hunter);
+        SetCurrentPosition(hunter);
         Destroy(gameObject);
     }
     /*protected Hunter Spawn()

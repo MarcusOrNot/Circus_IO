@@ -25,6 +25,7 @@ public class DamageZoneConroller : MonoBehaviour, IZoneController
         if (levelParams != null)
         {
             StartSize = levelParams.MaxZoneSize;
+            //Debug.Log("Start size damage is "+StartSize.ToString());
             //MinZoneSize = StartSize / 3;
             GenerateZones(StartSize, TransitionsCount, levelParams.ZoneChangeTime);
         }

@@ -19,13 +19,16 @@ public class LevelProcessService
         while (mobsCount > 0 && currentHunters.Count > 0)
         {
             var hunter = currentHunters[Random.Range(0, currentHunters.Count - 1)];
-            mobs.Add(new MobModel(hunter.HunterType, HatType.CAP, 10));
+            mobs.Add(new MobModel(hunter.HunterType, HatType.CAP, UnityEngine.Random.Range(0, sumLifes)));
 
             currentHunters.Remove(hunter);
             mobsCount--;
         }
 
-        return new LevelParamsModel(mobs, 100, 150, 30);
+        int foodCount = 20 + difficulty * 20;
+        int areaSize = 100 + difficulty * 10;
+
+        return new LevelParamsModel(mobs, foodCount, areaSize, 30);
     }
 
     private static List<HunterModel> GetHunterModels(List<Hunter> hunters)

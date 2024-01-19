@@ -38,6 +38,7 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) { _onHealthChanged.Add(onHealthChanged); }
     private List<Action<int>> _onHealthChanged = new List<Action<int>>();
+    private void NotifyHealthChanged() { foreach (var item in _onHealthChanged) item?.Invoke(_health); }
 
     public void SetOnHunterAte(Action onHunterAte) { _onHunterAte.Add(onHunterAte); }
     private List<Action> _onHunterAte = new List<Action>();
@@ -294,6 +295,13 @@ public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
             StartCoroutine(_currentGrowingProcess);
         }         
     }
+
+    public void SetHealth(int value)
+    {
+        _health = value;
+        //NotifyHealthChanged();
+    }
+
     private Vector3 GetScaleDependingOnHealth(int health) 
     {
         return Vector3.one * Mathf.Min(Mathf.Pow(Mathf.Max(10, health), 0.3f) / 1.5f, MAX_SCALE); 

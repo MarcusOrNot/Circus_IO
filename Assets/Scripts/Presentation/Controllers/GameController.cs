@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     [Inject] private IMusicPlayer _music;
     [Inject] private AdService _adService;
     [Inject] private IControlCharacter _controlUI;
+    [Inject] private ILevelInfo _levelInfo;
     [Inject] private IMobSpawner _mobSpawner;
     
     void Start()
@@ -28,6 +29,12 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //_mobSpawner.SpawnAtLocation(HunterType.HUNTER_BLACK, HatType.CAP, new Vector3(5,5,5));
         //Debug.Log("Now player us "+ Level.Instance.GetPlayer().GetPosition().ToString());
         //SetLevelParams(_levelProcessService.GenerateLevel(1));
+        
+        if (_levelInfo.GetLevelParams()!=null)
+        {
+            SetLevelParams(_levelInfo.GetLevelParams());
+        }
+
         ResumeGame();
         
         
@@ -151,7 +158,8 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //Debug.Log("Now Generate coutn is "+levelParams.Mobs.Count.ToString());
         foreach(var mob in levelParams.Mobs)
         {
-            _mobSpawner.SpawnAtLocation(mob.HunterType, mob.HatType, new Vector3(UnityEngine.Random.Range(1,10), 5, UnityEngine.Random.Range(1, 10)));
+            //_mobSpawner.SpawnAtLocation(mob.HunterType, mob.HatType, Utils.GetRandomPlace(Vector3.zero, ) new Vector3(UnityEngine.Random.Range(1,10), 5, UnityEngine.Random.Range(1, 10)), mob.StartLifes);
+            _mobSpawner.SpawnAtLocation(mob.HunterType, mob.HatType, Utils.GetRandomPlace(Vector3.zero, levelParams.MaxZoneSize), mob.StartLifes);
         }
     }
 }

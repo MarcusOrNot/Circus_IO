@@ -27,6 +27,7 @@ public class EntityGenerator : MonoBehaviour, IGameEventObserver
             StartGenerationCount = levelParams.FoodCount;
             GenerationAreaSize = levelParams.MaxZoneSize;
             MinAmountInField = levelParams.FoodCount / 2;
+            MinBoosterCount = StartGenerationCount / 50;
         }
     }
 
@@ -37,12 +38,12 @@ public class EntityGenerator : MonoBehaviour, IGameEventObserver
         StartCoroutine(CheckingCount());
     }
 
-    private Vector3 GetRandomPlace()
+    /*private Vector3 GetRandomPlace()
     {
         float middle = GenerationAreaSize / 2;
         return new Vector3(middle - UnityEngine.Random.Range(0, GenerationAreaSize), transform.position.y, middle - UnityEngine.Random.Range(0, GenerationAreaSize));
         //return new Vector3(middle - _rnd.Next(GenerationAreaSize), transform.position.y, middle - _rnd.Next(GenerationAreaSize));
-    }
+    }*/
 
     public void Generate(int count)
     {
@@ -52,7 +53,7 @@ public class EntityGenerator : MonoBehaviour, IGameEventObserver
         for (int i = 0; i < count; i++)
         {
 
-            Vector3 placeVector = GetRandomPlace(); //new Vector3(middle - rnd.Next(GenerationAreaSize), transform.position.y, middle - rnd.Next(GenerationAreaSize));
+            Vector3 placeVector = Utils.GetRandomPlace(transform.position, GenerationAreaSize);
             var entity = _entityFactory.Spawn(enumsArr[rnd.Next(1,enumsArr.Count)]);
             //entity.transform.parent = this.transform;
             //entity.transform.position = transform.position + Vector3.left * i;
@@ -64,7 +65,7 @@ public class EntityGenerator : MonoBehaviour, IGameEventObserver
         //Debug.Log();
         if (needBoosters > 0)
         {
-            Vector3 placeVector = GetRandomPlace(); //new Vector3(middle - rnd.Next(GenerationAreaSize), transform.position.y, middle - rnd.Next(GenerationAreaSize));
+            Vector3 placeVector = Utils.GetRandomPlace(transform.position, GenerationAreaSize); //GetRandomPlace(); //new Vector3(middle - rnd.Next(GenerationAreaSize), transform.position.y, middle - rnd.Next(GenerationAreaSize));
             var booster = _boosterFactory.Spawn(boostersArr[rnd.Next(0, boostersArr.Count)]);
             //entity.transform.parent = this.transform;
             //entity.transform.position = transform.position + Vector3.left * i;

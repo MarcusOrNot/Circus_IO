@@ -16,6 +16,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
     private void Start()
     {
         _hunter = GetComponent<Hunter>();
+        _gameUI.SetLifesValue(_hunter.Lifes);
         if (_controller != null)
         {
             _controller.SetOnActionClicked(() =>_hunter.Boost());

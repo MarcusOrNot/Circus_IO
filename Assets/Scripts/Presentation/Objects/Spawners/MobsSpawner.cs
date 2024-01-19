@@ -6,10 +6,11 @@ using Zenject;
 public class MobsSpawner : MonoBehaviour, IMobSpawner
 {
     [Inject] private HunterFactory _factory;
-    public void SpawnAtLocation(HunterType hunterType, HatType hat, Vector3 location)
+    public void SpawnAtLocation(HunterType hunterType, HatType hat, Vector3 location, int startLifes)
     {
         var hunter = _factory.SpawnAIHunter(hunterType);
         hunter.SetHat(hat);
+        hunter.SetHealth(startLifes);
         StartCoroutine(SetPosition(hunter, location));
         //SetPosition(hunter, location);
     }

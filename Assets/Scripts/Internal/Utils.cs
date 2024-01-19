@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class Utils
@@ -33,5 +34,11 @@ public static class Utils
                 break;
         }
         SceneManager.LoadScene(sceneNum);
+    }
+    public static Vector3 GetRandomPlace(Vector3 centerPosition, float areaSize)
+    {
+        float middle = areaSize / 2;
+        return new Vector3(middle - UnityEngine.Random.Range(0, areaSize), centerPosition.y, middle - UnityEngine.Random.Range(0, areaSize));
+        //return new Vector3(middle - _rnd.Next(GenerationAreaSize), transform.position.y, middle - _rnd.Next(GenerationAreaSize));
     }
 }
