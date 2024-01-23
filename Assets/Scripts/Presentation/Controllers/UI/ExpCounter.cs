@@ -50,7 +50,7 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
             var currentSize = ((float) value - baseLevelExp) / (_targetExp - baseLevelExp) * _startSize;
             //Debug.Log(targetKoef.ToString());
             _progressTransform.sizeDelta = new Vector2(-(_startSize - currentSize), 0);
-            Debug.Log("Count of level " + level.ToString() + ", " + _targetExp.ToString());
+            //Debug.Log("Count of level " + level.ToString() + ", " + _targetExp.ToString());
         }
     }
 

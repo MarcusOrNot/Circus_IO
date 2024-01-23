@@ -12,8 +12,11 @@ public class LoaderSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //_gameStats.SetGameStat(GameStatsType.KOEF_DIFFICULTY, 0);
+        Debug.Log("Current difficulty "+ _gameStats.GetStat(GameStatsType.KOEF_DIFFICULTY));
         RuntimeInfo.LevelParams = _levelProcessor.GenerateLevel(_gameStats.GetStat(GameStatsType.KOEF_DIFFICULTY));
-        Debug.Log("Runtime data info "+RuntimeInfo.LevelParams.MaxZoneSize.ToString());
+        //RuntimeInfo.LevelParams = _levelProcessor.GenerateLevel(10);
+        Debug.Log("Runtime data info "+RuntimeInfo.LevelParams.ToString());
         StartCoroutine(ConnectorCoro(Random.Range(2, 5)));
     }
 

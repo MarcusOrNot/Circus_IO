@@ -27,7 +27,7 @@ public class EntityGenerator : MonoBehaviour, IGameEventObserver
             StartGenerationCount = levelParams.FoodCount;
             GenerationAreaSize = levelParams.MaxZoneSize;
             MinAmountInField = levelParams.FoodCount / 2;
-            MinBoosterCount = StartGenerationCount / 50;
+            MinBoosterCount = levelParams.BoostersCount;
         }
     }
 
