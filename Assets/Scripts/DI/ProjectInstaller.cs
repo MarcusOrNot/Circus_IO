@@ -11,5 +11,6 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<ItemsProgressService>().AsSingle();
         Container.Bind<IData>().To<DataLocalPrefs>().FromNew().AsSingle().NonLazy();
         Container.Bind<GameStatService>().FromNew().AsSingle();
+        Container.Bind<ILang>().To<SimpleLocalizationImpl>().FromNew().AsSingle();
     }
 }

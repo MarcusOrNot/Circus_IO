@@ -20,17 +20,17 @@ public static class Utils
     }
     public static void OpenScene(SceneType scene)
     {
-        int sceneNum = 0;
+        int sceneNum = 1;
         switch (scene)
         {
             case SceneType.MAIN_MENU:
-                sceneNum = 0;
-                break;
-            case SceneType.GAME_ROYAL_BATTLE:
                 sceneNum = 1;
                 break;
-            case SceneType.LOADER_SCENE:
+            case SceneType.GAME_ROYAL_BATTLE:
                 sceneNum = 2;
+                break;
+            case SceneType.LOADER_SCENE:
+                sceneNum = 3;
                 break;
         }
         SceneManager.LoadScene(sceneNum);

@@ -11,6 +11,12 @@ namespace Assets.SimpleLocalization.Scripts
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class LocalizedTextMeshPro : MonoBehaviour
     {
+        private TextMeshProUGUI _textMesh;
+        private void Awake()
+        {
+            _textMesh = GetComponent<TextMeshProUGUI>();
+        }
+
         public string LocalizationKey;
 
         public void Start()
@@ -26,7 +32,7 @@ namespace Assets.SimpleLocalization.Scripts
 
         private void Localize()
         {
-            GetComponent<TextMeshProUGUI>().text = LocalizationManager.Localize(LocalizationKey);
+            _textMesh.text = LocalizationManager.Localize(LocalizationKey);
         }
     }
 }
