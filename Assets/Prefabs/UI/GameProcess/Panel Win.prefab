@@ -220,6 +220,7 @@ GameObject:
   - component: {fileID: 8839846785234125830}
   - component: {fileID: 4747330550900112545}
   - component: {fileID: 6696983728315366100}
+  - component: {fileID: 3319652235200963555}
   m_Layer: 5
   m_Name: RewardsText
   m_TagString: Untagged
@@ -344,6 +345,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3319652235200963555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5141156613558582282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07918144d9a438844ba7f7ee10b01706, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LocalizationKey: Menu.REWARDS
 --- !u!1 &5834743133864459907
 GameObject:
   m_ObjectHideFlags: 0
@@ -1167,6 +1181,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7565285125807923417}
     m_Modifications:
+    - target: {fileID: 1950065095275499690, guid: 15582a40cedfc8e4a9c2c2740042313f, type: 3}
+      propertyPath: LocalizationKey
+      value: Menu.Next
+      objectReference: {fileID: 0}
     - target: {fileID: 3435779785534759148, guid: 15582a40cedfc8e4a9c2c2740042313f, type: 3}
       propertyPath: m_text
       value: Next
@@ -1384,6 +1402,10 @@ PrefabInstance:
     - target: {fileID: 1378393454385854860, guid: 8132b5f423b6b9d4aa28efd17a7d9ce3, type: 3}
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3802492804092357043, guid: 8132b5f423b6b9d4aa28efd17a7d9ce3, type: 3}
+      propertyPath: LocalizationKey
+      value: Menu.Main_menu
       objectReference: {fileID: 0}
     - target: {fileID: 6359073058254169615, guid: 8132b5f423b6b9d4aa28efd17a7d9ce3, type: 3}
       propertyPath: m_Name

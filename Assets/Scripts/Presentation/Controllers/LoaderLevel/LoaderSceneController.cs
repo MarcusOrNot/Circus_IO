@@ -8,6 +8,7 @@ public class LoaderSceneController : MonoBehaviour
 {
     [Inject] private IGameStats _gameStats;
     [Inject] private LevelProcessService _levelProcessor;
+    [Inject] private ILang _lang;
     [SerializeField] private TextMeshProUGUI _connectingText;
     // Start is called before the first frame update
     void Start()
@@ -27,7 +28,7 @@ public class LoaderSceneController : MonoBehaviour
         var dots = 3;
         while (counter < delay)
         {
-            var resText = "Connecting";
+            var resText = _lang.GetCurrentLangText("Menu.Connecting");
             for (int i = 0; i < dots; i++)
                 resText += ".";
             _connectingText.text = resText;

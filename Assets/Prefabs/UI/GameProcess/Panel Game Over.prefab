@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8568069906584089332}
   - component: {fileID: 8259323072626214026}
   - component: {fileID: 2891064434048103591}
+  - component: {fileID: 5760946507349531169}
   m_Layer: 5
   m_Name: Rewards Text
   m_TagString: Untagged
@@ -134,6 +135,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5760946507349531169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4086668843320509485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07918144d9a438844ba7f7ee10b01706, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LocalizationKey: Menu.REWARDS
 --- !u!1 &4511357866879263009
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +309,7 @@ GameObject:
   - component: {fileID: 2298475482598286636}
   - component: {fileID: 8459340595288381878}
   - component: {fileID: 142447322105923651}
+  - component: {fileID: 3887100563393584267}
   m_Layer: 5
   m_Name: Stats Text
   m_TagString: Untagged
@@ -418,6 +433,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3887100563393584267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6311064177065014887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07918144d9a438844ba7f7ee10b01706, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LocalizationKey: Menu.STATS
 --- !u!1 &6719671222030580047
 GameObject:
   m_ObjectHideFlags: 0
@@ -943,6 +971,10 @@ PrefabInstance:
       propertyPath: OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 3802492804092357043, guid: 8132b5f423b6b9d4aa28efd17a7d9ce3, type: 3}
+      propertyPath: LocalizationKey
+      value: Menu.Main_menu
+      objectReference: {fileID: 0}
     - target: {fileID: 6359073058254169615, guid: 8132b5f423b6b9d4aa28efd17a7d9ce3, type: 3}
       propertyPath: m_Name
       value: ButtonMainMenu
@@ -1434,6 +1466,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1004904671801565204}
     m_Modifications:
+    - target: {fileID: 1950065095275499690, guid: 15582a40cedfc8e4a9c2c2740042313f, type: 3}
+      propertyPath: LocalizationKey
+      value: Menu.Find_new_game
+      objectReference: {fileID: 0}
     - target: {fileID: 3435779785534759148, guid: 15582a40cedfc8e4a9c2c2740042313f, type: 3}
       propertyPath: m_text
       value: Find new game

@@ -6,4 +6,5 @@ public interface ILang
 {
     public LangType GetCurrentLang();
     public void ChangeLang(LangType newLang);
+    public string GetCurrentLangText(string key);
 }

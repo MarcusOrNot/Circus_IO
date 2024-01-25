@@ -24,6 +24,11 @@ public class SimpleLocalizationImpl : ILang
         return GetLangByString(LocalizationManager.Language);
     }
 
+    public string GetCurrentLangText(string key)
+    {
+        return LocalizationManager.Localize(key);
+    }
+
     private LangType GetLangByString(string langString)
     {
         foreach (var item in _langs)

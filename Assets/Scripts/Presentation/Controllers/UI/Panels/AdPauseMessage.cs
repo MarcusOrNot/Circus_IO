@@ -8,6 +8,7 @@ using Zenject;
 public class AdPauseMessage : MonoBehaviour
 {
     [Inject] private AdService _ad;
+    [Inject] private ILang _lang;
     //[SerializeField] private int _adDelay = 30;
     [SerializeField] private int MIN_DELAY = 90;
     [SerializeField] private int MAX_DELAY = 150;
@@ -36,7 +37,7 @@ public class AdPauseMessage : MonoBehaviour
             if (current < 10)
             {
                 _pauseMessagePanel.SetActive(true);
-                _timeValueText.text = "The game will be paused after "+current.ToString();
+                _timeValueText.text = _lang.GetCurrentLangText("Menu.Game_will_paused")+ " "+current.ToString();
             }
             if (current == 0)
             {
