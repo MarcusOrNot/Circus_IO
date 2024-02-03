@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1550845917410814205}
   - component: {fileID: 2649618569020908972}
   - component: {fileID: 7226470420530298363}
-  - component: {fileID: 330377991850813469}
+  - component: {fileID: 3468875135057852812}
   m_Layer: 5
   m_Name: JoystickCanvas
   m_TagString: Untagged
@@ -106,7 +106,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &330377991850813469
+--- !u!114 &3468875135057852812
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 952853981274515134}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd9a9f3560366c640bb74f50dca898e0, type: 3}
+  m_Script: {fileID: 11500000, guid: 88538ec322edb8443a8b625803e44b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _actionButton: {fileID: 7654026078765042711}

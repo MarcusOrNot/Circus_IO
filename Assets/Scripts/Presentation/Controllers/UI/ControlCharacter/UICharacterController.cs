@@ -14,7 +14,7 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
     //[SerializeField] private Button _debafActionButton;
     [SerializeField] private TextMeshProUGUI _debafCountText;
     //[SerializeField] private RectTransform _buttonMask;
-    [SerializeField] private Joystick _joystick;
+    //[SerializeField] private Joystick _joystick;
     //private Action _onClickAction;
     //private Action _onDebafClickAction;
     //private Sequence _buttonAnim;
@@ -30,7 +30,7 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
         //SetActionCooldown(5);
     }
 
-    public Vector2 Direction => _joystick.Direction;
+    public virtual Vector2 Direction => Vector2.zero; //_joystick.Direction;
 
     public void SetOnActionClicked(Action onClick)
     {
@@ -104,18 +104,18 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
         _buttonAnim.PlayForward();*/
     }
 
-    public void Hide()
+    public virtual void Hide()
     {
         _actionButton.gameObject.SetActive(false);
         _debafButton.gameObject.SetActive(false);
-        _joystick.gameObject.SetActive(false);
+        //_joystick.gameObject.SetActive(false);
     }
 
-    public void Show()
+    public virtual void Show()
     {
         _actionButton.gameObject.SetActive(true);
         _debafButton.gameObject.SetActive(true);
-        _joystick.gameObject.SetActive(true);
+        //_joystick.gameObject.SetActive(true);
     }
 
     public void SetDebafCooldown(float seconds)

@@ -1,18 +1,16 @@
+#if UNITY_ANDROID || UNITY_EDITOR
+
 using AppodealStack.Monetization.Api;
 using AppodealStack.Monetization.Common;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class AppodealAds : MonoBehaviour, IAds
+public class AppodealAds : IAds
 {
     private Action<bool> _onShowInterstitial;
     private Action<bool> _onShowRewarded;
     private bool _bannerShown = false;
 
-    // Start is called before the first frame update
-    void Start()
+    public AppodealAds()
     {
         int adTypes = AppodealAdType.Interstitial | AppodealAdType.Banner | AppodealAdType.RewardedVideo;
         string appKey = "8a080d643c964a2a368ed04b2dc1ebffcc8b319179117745";
@@ -24,7 +22,7 @@ public class AppodealAds : MonoBehaviour, IAds
         AppodealCallbacks.RewardedVideo.OnClosed += RewardedVideo_OnClosed;
         AppodealCallbacks.Banner.OnShown += delegate { _bannerShown = true; };
         //Rewarded Callbacks
-        
+
         Appodeal.Initialize(appKey, adTypes);
     }
 
@@ -72,3 +70,5 @@ public class AppodealAds : MonoBehaviour, IAds
         return false;
     }
 }
+
+#endif

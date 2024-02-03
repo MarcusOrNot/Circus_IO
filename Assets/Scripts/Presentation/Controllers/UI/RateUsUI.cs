@@ -40,7 +40,7 @@ public class RateUsUI : MonoBehaviour
 
     public void OpenFeedPage()
     {
-        Analytics.LogFeedLeaving();
+        Info.Analytics.LogFeedLeaving();
         Application.OpenURL(GameSettings.RATE_US_URL);
         Close();
     }
@@ -48,7 +48,7 @@ public class RateUsUI : MonoBehaviour
     public void Rate()
     {
         if (_countArray.Count == 0) return;
-        Analytics.LogRateChosen(_countArray.Count);
+        Info.Analytics.LogRateChosen(_countArray.Count);
         _data.FeedValue = _countArray.Count;
         if (_countArray.Count > 3) ShowFeedPanel();
         else Close();

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using UnityEngine;
 using Zenject;
 
@@ -12,5 +13,6 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<IData>().To<DataLocalPrefs>().FromNew().AsSingle().NonLazy();
         Container.Bind<GameStatService>().FromNew().AsSingle();
         Container.Bind<ILang>().To<SimpleLocalizationImpl>().FromNew().AsSingle();
+        Container.Bind<ISystemInfo>().To<SystemInfoMultiImpl>().FromNew().AsSingle();
     }
 }

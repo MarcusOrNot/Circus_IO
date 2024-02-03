@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //_eventBus.NotifyObservers(GameEventType.HUNTER_SPAWNED);
         //_factory.Spawn(EntityType.ENTITY1).transform.position = new Vector3(0,10,0);
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
-        Analytics.LogLevelStarted();
+        Info.Analytics.LogLevelStarted();
         RuntimeInfo.IsGamePlayedOnce = true;
         //_mobSpawner.SpawnAtLocation(HunterType.HUNTER_BLACK, HatType.CAP, new Vector3(5,5,5));
         //Debug.Log("Now player us "+ Level.Instance.GetPlayer().GetPosition().ToString());
@@ -122,7 +122,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
 
     public void GameOver()
     {
-        Analytics.LogLevelFailed();
+        Info.Analytics.LogLevelFailed();
         _gameUI.ShowGameOver();
         _music.Stop();
         _effect.PlayEffectConstantly(SoundEffectType.LEVEL_FAILED);
@@ -135,7 +135,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     public void PlayerWon()
     {
         //Time.timeScale = 0;
-        Analytics.LogLevelFinished();
+        Info.Analytics.LogLevelFinished();
         Level.Instance.GetDamageZone()?.Stop();
         PauseGame();
         _gameUI.ShowWin();

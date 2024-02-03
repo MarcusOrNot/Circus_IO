@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+#if UNITY_ANDROID || UNITY_EDITOR
 using Firebase.Analytics;
 
-public static class Analytics
+public class MyFirebaseAnalytics: IAnalytics
 {
     //public const string LEVEL_SUCCESS = "level_success";
     private const string LEVEL_STARTED = "level_started";
@@ -23,63 +21,41 @@ public static class Analytics
         //Debug.Log("LEvel statrt = "+FirebaseAnalytics.ParameterLevel+", "+FirebaseAnalytics.ParameterAdFormat);
         FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventLevelStart, FirebaseAnalytics.ParameterLevel, level);
     }*/
-    public static void LogLevelStarted()
+    public void LogLevelStarted()
     {
         //FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventLevelEnd, FirebaseAnalytics.ParameterLevel, level);
         FirebaseAnalytics.LogEvent(LEVEL_STARTED);
     }
-    public static void LogLevelFinished()
+    public void LogLevelFinished()
     {
         //FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventLevelEnd, FirebaseAnalytics.ParameterLevel, level);
         FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventLevelEnd);
     }
-    public static void LogLevelFailed()
+    public void LogLevelFailed()
     {
         //FirebaseAnalytics.LogEvent(LEVEL_FAILED, FirebaseAnalytics.ParameterLevel, level);
         FirebaseAnalytics.LogEvent(LEVEL_FAILED);
     }
-    public static void LogAdRewardedShowen()
+    public void LogAdRewardedShowen()
     {
         FirebaseAnalytics.LogEvent(AD_REWARDED_SHOWN);
     }
-    public static void LogAdInterstitialShowen()
+    public void LogAdInterstitialShowen()
     {
         FirebaseAnalytics.LogEvent(AD_INTERSTITIAL_SHOWEN);
     }
-    public static void LogRateChosen(int rate)
+    public void LogRateChosen(int rate)
     {
         FirebaseAnalytics.LogEvent(AD_INTERSTITIAL_SHOWEN, FirebaseAnalytics.ParameterValue, rate);
     }
-    public static void LogFeedLeaving()
+    public void LogFeedLeaving()
     {
         FirebaseAnalytics.LogEvent(FEED_LEAVE);
     }
-    public static void LogHatBought()
+    public void LogHatBought()
     {
         FirebaseAnalytics.LogEvent(HAT_BOUGHT);
     }
-
-
-    /*public static void LogGameFinished()
-    {
-        FirebaseAnalytics.LogEvent(GAME_FINISHED);
-    }
-    public static void LogHelpRewardedAd()
-    {
-        FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventAdImpression, FirebaseAnalytics.ParameterAdFormat, "Help Rewarded Ad");
-    }
-    public static void LogFullScreenAd()
-    {
-        FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventAdImpression, FirebaseAnalytics.ParameterAdFormat, "FullScreen Ad");
-    }*/
-    /*public static void LogRightDifChosen(int progress, int level)
-    {
-        //FirebaseAnalytics.LogEvent(RIGHT_CHOOSE, PARAMETER_PROGRESS, progress);
-        FirebaseAnalytics.LogEvent(RIGHT_CHOOSE, new Parameter[] { new Parameter(PARAMETER_PROGRESS, progress), new Parameter(FirebaseAnalytics.ParameterLevel, level) });
-    }
-    public static void LogWrongDifChosen(int progress, int level)
-    {
-        //FirebaseAnalytics.LogEvent(WRONG_CHOOSE, PARAMETER_PROGRESS, progress);
-        FirebaseAnalytics.LogEvent(WRONG_CHOOSE, new Parameter[] { new Parameter(PARAMETER_PROGRESS, progress), new Parameter(FirebaseAnalytics.ParameterLevel, level) });
-    }*/
 }
+
+#endif

@@ -77,7 +77,7 @@ public class ShopHatController : MonoBehaviour
             PutOn();
             _audioEffect.PlayEffect(SoundEffectType.PURCHASE_HAT);
             _vibro.PlayMillis(300);
-            Analytics.LogHatBought();
+            Info.Analytics.LogHatBought();
         }
         else
         {

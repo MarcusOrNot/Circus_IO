@@ -18,7 +18,11 @@ public class VibrationController : MonoBehaviour, IVibration
     {
         //StopVibro();
         //StartCoroutine(VibroCoroutine(millis));
-        Vibration.VibrateAndroid(millis);
+#if UNITY_ANDROID
+    Vibration.VibrateAndroid(millis);
+#elif UNITY_WEBGL
+
+#endif
     }
 
     public void StopVibro()
