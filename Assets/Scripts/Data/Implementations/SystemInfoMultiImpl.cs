@@ -11,7 +11,7 @@ public class SystemInfoMultiImpl : ISystemInfo
 #elif UNITY_WEBGL
         return PlatformType.WEB_GL;
 #else
-        return PlatformType.ANDROID;
+        return PlatformType.PC;
 #endif
     }
 
@@ -26,6 +26,6 @@ public class SystemInfoMultiImpl : ISystemInfo
         {
             return ControlType.KEYBOARD;
         }
-        return ControlType.TOUCH_SCREEN;
+        return ControlType.KEYBOARD;
     }
 }

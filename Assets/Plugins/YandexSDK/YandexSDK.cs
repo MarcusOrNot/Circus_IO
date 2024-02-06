@@ -55,24 +55,24 @@ public class YandexSDK : MonoBehaviour {
     public event Action<InapProduct[]> onGetCatalog;
     public event Action<PurchaseItem[]> onGetPurchases;
 
-    public event Action onInterstitialShown;
-    public event Action<string> onInterstitialFailed;
+    public Action onInterstitialShown;
+    public Action<string> onInterstitialFailed;
     /// <summary>
     /// Пользователь открыл рекламу
     /// </summary>
-    public event Action<int> onRewardedAdOpened;
+    public Action<int> onRewardedAdOpened;
     /// <summary>
     /// Пользователь должен получить награду за просмотр рекламы
     /// </summary>
-    public event Action<string> onRewardedAdReward;
+    public Action<string> onRewardedAdReward;
     /// <summary>
     /// Пользователь закрыл рекламу
     /// </summary>
-    public event Action<int> onRewardedAdClosed;
+    public Action<int> onRewardedAdClosed;
     /// <summary>
     /// Вызов/просмотр рекламы повлёк за собой ошибку
     /// </summary>
-    public event Action<string> onRewardedAdError;
+    public Action<string> onRewardedAdError;
     /// <summary>
     /// Покупка успешно совершена
     /// </summary>

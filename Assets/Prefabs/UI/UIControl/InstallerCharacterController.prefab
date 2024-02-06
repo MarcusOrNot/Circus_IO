@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _touchController: {fileID: 3468875135057852812, guid: d8f2f68f079141d43889a9ba7fbfaa51, type: 3}
+  _keyboardCharactrContoller: {fileID: 7040064899480629359, guid: e8390b845ae58f14f98f1498438df29f, type: 3}

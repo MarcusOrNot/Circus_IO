@@ -1,10 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class YandexAds : IAds
 {
+    private YandexSDK _sdk;
+    private Action<bool> _onShowInterstitial=null;
+    private Action<bool> _onShowRewarded=null;
+
+    public YandexAds()
+    {
+        _sdk = YandexSDK.instance;
+        _sdk.onRewardedAdReward = (string obj) => { _onShowRewarded.Invoke(true); };
+    }
+
     public void HideBanner()
     {
         //throw new NotImplementedException();
@@ -17,15 +28,21 @@ public class YandexAds : IAds
 
     public bool ShowInterstitialAd(Action<bool> onShowInterstitial)
     {
+        _onShowInterstitial = onShowInterstitial;
+        _sdk.ShowInterstitial();
         //throw new NotImplementedException();
-        onShowInterstitial?.Invoke(true);
+        //onShowInterstitial?.Invoke(true);
+        //_sdk.
         return true;
     }
 
     public bool ShowRewardedAd(Action<bool> onShowRewarded)
     {
-        onShowRewarded?.Invoke(true);
+        _onShowRewarded = onShowRewarded;
+        _sdk.ShowRewarded("");
+        //onShowRewarded?.Invoke(true);
         //throw new NotImplementedException();
         return true;
+
     }
 }

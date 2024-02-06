@@ -13,7 +13,7 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
     [Inject] private IGameStats _gameStats;
     [Inject] private GameStatService _gameStatService;
     //private int _currentExp = 0;
-    private int _targetExp = 0;
+    private float _targetExp = 0;
     private float _startSize;
     private void Awake()
     {
@@ -43,10 +43,12 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
             if (value>= _targetExp)
             {
                 _levelValueText.text = level.ToString();
-                _targetExp = GameStatService.GetTargetExp(level+1);
+                //_targetExp = GameStatService.GetTargetExp(level+1);
+                _targetExp = GameStatService.GetNeedExpByLevel(level + 1);
             }
             _expValueText.text = value.ToString()+" / "+_targetExp.ToString();
-            int baseLevelExp = GameStatService.GetTargetExp(level);
+            //int baseLevelExp = GameStatService.GetTargetExp(level);
+            float baseLevelExp = GameStatService.GetNeedExpByLevel(level);
             var currentSize = ((float) value - baseLevelExp) / (_targetExp - baseLevelExp) * _startSize;
             //Debug.Log(targetKoef.ToString());
             _progressTransform.sizeDelta = new Vector2(-(_startSize - currentSize), 0);

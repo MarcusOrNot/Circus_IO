@@ -8,8 +8,8 @@ using TMPro;
 
 public class UICharacterController : MonoBehaviour, IControlCharacter
 {
-    [SerializeField] private FillingButton _actionButton;
-    [SerializeField] private FillingButton _debafButton;
+    [SerializeField] protected FillingButton _actionButton;
+    [SerializeField] protected FillingButton _debafButton;
     //[SerializeField] private Button _actionButton;
     //[SerializeField] private Button _debafActionButton;
     [SerializeField] private TextMeshProUGUI _debafCountText;
@@ -72,12 +72,12 @@ public class UICharacterController : MonoBehaviour, IControlCharacter
 
     private void Update()
     {
-#if UNITY_EDITOR
+/*#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Space))
             _actionButton.Click();
         if (Input.GetKeyDown(KeyCode.B))
             _debafButton.Click();
-#endif
+#endif*/
     }
 
     public void SetActionEnabled(bool enabled)
