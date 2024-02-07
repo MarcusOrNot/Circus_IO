@@ -80,11 +80,16 @@
 
       var script = document.createElement("script");
       script.src = loaderUrl;
+	  var gameInstance = null;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
               }).then((unityInstance) => {
-			  window.unityInstance = unityInstance;
+			  gameInstance = unityInstance;
+			  if (gameInstance==null)
+				console.log('game instanse is null');
+			  else
+				console.log('game instanse is ready!!!');
                 loadingBar.style.display = "none";
               }).catch((message) => {
                 alert(message);
@@ -112,6 +117,7 @@ YaGames
         console.log('Yandex SDK initialized');
         //window.ysdk = ysdk;
 		sdk = ysdk;
+		//sendDeviceInfo(sdk.deviceInfo.type);
 		sdk.adv.showFullscreenAdv({ callbacks: {} });
     });
 
@@ -211,6 +217,10 @@ YaGames
 		gameInstance.SendMessage('YandexSDK', 'SetYandexLanguage', JSON.stringify(sdk.environment.i18n.lang));				
 		console.log('lang = ' + JSON.stringify(sdk.environment.i18n.lang));
 	  }
+	  
+	  /*function sendDeviceInfo(deviceType) {
+		gameInstance.SendMessage('YandexSDK', 'SetDeviceInfo', deviceType);
+	  }*/
 </script>
 
 <!-- Обработка рекламы в нужное время -->
@@ -320,6 +330,6 @@ var gameShop=[];
 	  }
 
 </script>
-	
+
   </body>
 </html>

@@ -83,6 +83,7 @@ public class YandexSDK : MonoBehaviour {
     /// истекло отведенное на покупку время, не хватило денег и т. д.
     /// </summary>
     public event Action<string> onPurchaseFailed;
+    /// <summary>
     /// Ошибка авторизации
     /// </summary>
     public event Action<string> onAuthFailed;
@@ -91,6 +92,8 @@ public class YandexSDK : MonoBehaviour {
 
     public Queue<int> rewardedAdPlacementsAsInt = new Queue<int>();
     public Queue<string> rewardedAdsPlacements = new Queue<string>();
+
+    private string _deviceInfo = null;
 
     private void Awake() {
         if (instance == null) {
@@ -295,6 +298,14 @@ public class YandexSDK : MonoBehaviour {
         onGetPurchases?.Invoke(JsonUtility.FromJson<PurchaseStruct>(jsonString).purchases);
     }
 
+    /// <summary>
+    /// Callback from index.html
+    /// </summary>
+    public void SetDeviceInfo(string deviceInfo)
+    {
+        _deviceInfo = deviceInfo;
+    }
+
     public void SetStat(string jsonString)
     {
         SetGameStat(jsonString);
@@ -355,6 +366,8 @@ public class YandexSDK : MonoBehaviour {
     {
         GetLanguage();
     }
+
+    public string DeviceInfo => _deviceInfo;
 }
 
 public struct UserData {

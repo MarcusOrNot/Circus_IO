@@ -24,7 +24,13 @@ public class SystemInfoMultiImpl : ISystemInfo
         }
         else if (platform == PlatformType.WEB_GL)
         {
-            return ControlType.KEYBOARD;
+            string yandexPlatform = YandexSDK.instance.DeviceInfo;
+            //if (yandexPlatform==null) return ControlType.TOUCH_SCREEN;
+            switch(yandexPlatform)
+            {
+                case "desktop": return ControlType.KEYBOARD;
+            }
+            return ControlType.TOUCH_SCREEN;
         }
         return ControlType.KEYBOARD;
     }
