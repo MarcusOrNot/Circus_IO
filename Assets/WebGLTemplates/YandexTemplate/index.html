@@ -90,6 +90,7 @@
 				console.log('game instanse is null');
 			  else
 				console.log('game instanse is ready!!!');
+				tryToSendMainInfo();
                 loadingBar.style.display = "none";
               }).catch((message) => {
                 alert(message);
@@ -106,7 +107,7 @@
 
 <script>
 
-var player;
+	  var player;
   var sdk;
   var payments = null;
   var lb=null;
@@ -118,8 +119,16 @@ YaGames
         //window.ysdk = ysdk;
 		sdk = ysdk;
 		//sendDeviceInfo(sdk.deviceInfo.type);
+		tryToSend();
 		sdk.adv.showFullscreenAdv({ callbacks: {} });
     });
+	
+function tryToSendMainInfo() {
+	if (sdk != null && gameInstance != null) {
+		console.log('Now send info!!!');
+		sendDeviceInfo(sdk.deviceInfo.type);
+	}
+}
 
 </script>
 
@@ -218,9 +227,9 @@ YaGames
 		console.log('lang = ' + JSON.stringify(sdk.environment.i18n.lang));
 	  }
 	  
-	  /*function sendDeviceInfo(deviceType) {
+	  function sendDeviceInfo(deviceType) {
 		gameInstance.SendMessage('YandexSDK', 'SetDeviceInfo', deviceType);
-	  }*/
+	  }
 </script>
 
 <!-- Обработка рекламы в нужное время -->

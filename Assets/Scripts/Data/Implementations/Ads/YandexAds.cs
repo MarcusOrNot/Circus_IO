@@ -14,6 +14,12 @@ public class YandexAds : IAds
     {
         _sdk = YandexSDK.instance;
         _sdk.onRewardedAdReward = (string obj) => { _onShowRewarded.Invoke(true); };
+        //_sdk.onRewardedAdOpened = (int place) => { _onShowRewarded.Invoke(true); };
+        _sdk.onRewardedAdClosed = (int place) => { _onShowRewarded.Invoke(false); };
+        _sdk.onRewardedAdError = (string obj) => { _onShowRewarded.Invoke(false); };
+
+        _sdk.onInterstitialShown = () => { _onShowInterstitial.Invoke(true); };
+        _sdk.onInterstitialFailed = (string obj) => { _onShowInterstitial.Invoke(false); };
     }
 
     public void HideBanner()

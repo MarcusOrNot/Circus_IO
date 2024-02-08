@@ -12,11 +12,13 @@ public class MainMenuController3D : MonoBehaviour
     [Inject] private IGameStats _gameStats;
     [Inject] private IVibration _vibration;
     [Inject] private IData _data;
+    [Inject] private ISystemInfo _systemInfo;
     //[Inject] private IAudioEffect _effect;
     [SerializeField] private MainMenuPanelController _mainMenu;
     [SerializeField] private ShopHatController _shopHatMenu;
     [SerializeField] private StartGameUI _startGameUI;
     [SerializeField] private RateUsUI _rateUS;
+    [SerializeField] private GameObject _exitBTN;
     //[SerializeField] private TextMeshProUGUI _coinsCountValue;
     private Camera _camera;
     //private Transform _cameraStartTransform;
@@ -28,6 +30,8 @@ public class MainMenuController3D : MonoBehaviour
         //PlayerPrefs.DeleteAll();
         _camera = Camera.main;
         _cameraStartPosition = _camera.transform.position;
+        if (_systemInfo.GetPlatformType()!=PlatformType.ANDROID)
+            _exitBTN.SetActive(false);
     }
     private void Start()
     {

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.77255404, g: 0.9098777, b: 0.99405795, a: 1}
+  m_IndirectSpecularColor: {r: 0.77267134, g: 0.9104185, b: 0.9959926, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2637,6 +2637,7 @@ MonoBehaviour:
   _shopHatMenu: {fileID: 581056363}
   _startGameUI: {fileID: 1273474573946948953}
   _rateUS: {fileID: 1261599430}
+  _exitBTN: {fileID: 1099644550}
 --- !u!1 &1790527418
 GameObject:
   m_ObjectHideFlags: 0
