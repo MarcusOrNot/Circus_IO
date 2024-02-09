@@ -7,11 +7,12 @@ using Zenject;
 public class PreloaderController : MonoBehaviour
 {
     [Inject] private ILang _lang;
+    [Inject] private ISystemInfo _systemInfo;
     // Start is called before the first frame update
     void Start()
     {
         //PlayerPrefs.DeleteAll();
-        var currentLang = Info.GetSystemLanguage(LangType.ENGLISH);
+        var currentLang = _systemInfo.GetSystemLang(LangType.ENGLISH); //Info.GetSystemLanguage(LangType.ENGLISH);
         _lang.ChangeLang(currentLang);
         Utils.OpenScene(SceneType.MAIN_MENU);
 

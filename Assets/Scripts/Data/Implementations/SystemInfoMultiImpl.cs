@@ -17,6 +17,8 @@ public class SystemInfoMultiImpl : ISystemInfo
 
     public ControlType GetControlType()
     {
+        if (IsEditor()) return ControlType.KEYBOARD;
+
         var platform = GetPlatformType();
         if (platform == PlatformType.ANDROID)
         {
@@ -33,5 +35,36 @@ public class SystemInfoMultiImpl : ISystemInfo
             return ControlType.TOUCH_SCREEN;
         }
         return ControlType.KEYBOARD;
+    }
+
+    public LangType GetSystemLang(LangType defaultLanguage)
+    {
+        var platform = GetPlatformType();
+        if (platform == PlatformType.ANDROID)
+        {
+            switch (Application.systemLanguage)
+            {
+                case SystemLanguage.English: return LangType.ENGLISH;
+                case SystemLanguage.Russian: return LangType.RUSSIAN;
+            }
+        }
+        else if (platform == PlatformType.WEB_GL) 
+        {
+            string yaLang = YandexSDK.instance.YandexLanguage;
+            switch(yaLang)
+            {
+                case "ru": return LangType.RUSSIAN;
+            }
+        }
+        return defaultLanguage;
+    }
+
+    private bool IsEditor()
+    {
+#if UNITY_EDITOR
+        return true;
+#else
+        return false;
+#endif
     }
 }

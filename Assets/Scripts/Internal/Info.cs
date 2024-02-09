@@ -13,7 +13,7 @@ public static class Info
         Analytics = new MyYandexAnalytics();
 #endif
     }
-    public static LangType GetSystemLanguage(LangType defaultLanguage)
+    /*public static LangType GetSystemLanguage(LangType defaultLanguage)
     {
         switch(Application.systemLanguage)
         {
@@ -21,5 +21,5 @@ public static class Info
             case SystemLanguage.Russian: return LangType.RUSSIAN;
         }
         return defaultLanguage;
-    }
+    }*/
 }

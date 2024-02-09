@@ -107,8 +107,8 @@
 
 <script>
 
-	  var player;
-  var sdk;
+  var player = null;
+  var sdk = null;
   var payments = null;
   var lb=null;
 
@@ -125,8 +125,8 @@ YaGames
 	
 function tryToSendMainInfo() {
 	if (sdk != null && gameInstance != null) {
-		console.log('Now send info!!!');
 		sendDeviceInfo(sdk.deviceInfo.type);
+		getLanguage();
 	}
 }
 
@@ -224,7 +224,7 @@ function tryToSendMainInfo() {
 	  
 	  function getLanguage() {
 		gameInstance.SendMessage('YandexSDK', 'SetYandexLanguage', JSON.stringify(sdk.environment.i18n.lang));				
-		console.log('lang = ' + JSON.stringify(sdk.environment.i18n.lang));
+		//console.log('lang = ' + JSON.stringify(sdk.environment.i18n.lang));
 	  }
 	  
 	  function sendDeviceInfo(deviceType) {

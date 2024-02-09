@@ -1,3 +1,4 @@
+//using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -27,8 +28,10 @@ public class LevelProcessService
         var currentHunters = GetHunterModels(_allHunters);
         while (mobsCount > 0 && currentHunters.Count > 0)
         {
+            //var listEnums = Enum.GetValues(typeof(HatType));
+            var hats = Utils.GetListOfEnums<HatType>();
             var hunter = currentHunters[Random.Range(0, currentHunters.Count - 1)];
-            mobs.Add(new MobModel(hunter.HunterType, HatType.CAP, Random.Range(0, sumLifes)));
+            mobs.Add(new MobModel(hunter.HunterType, hats[Random.Range(0, hats.Count)], Random.Range(0, sumLifes)));
 
             currentHunters.Remove(hunter);
             mobsCount--;
