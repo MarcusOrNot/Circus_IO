@@ -141,10 +141,13 @@ public class GameController : MonoBehaviour, IGameEventObserver
         _gameUI.ShowWin();
         _music.Stop();
         //_effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
-        _adService.ShowInterstitialIfAllowed((successfull) =>
+        if (_adService.ShowInterstitialIfAllowed((successfull) =>
         {
             _effect.PlayEffectConstantly(SoundEffectType.LEVEL_COMPLETED);
-        });
+        }) == false)
+        {
+            _effect.PlayEffectConstantly(SoundEffectType.LEVEL_COMPLETED);
+        }
     }
 
     private void OnDestroy()

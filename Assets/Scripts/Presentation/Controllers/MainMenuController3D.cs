@@ -35,8 +35,7 @@ public class MainMenuController3D : MonoBehaviour
     }
     private void Start()
     {
-        if (_data.FeedValue == 0 && RuntimeInfo.IsShownRate == false && RuntimeInfo.IsGamePlayedOnce == true)
-            _rateUS.gameObject.SetActive(true);
+        _rateUS.ShowByCondtition2();
     }
     /*public void StartGame()
     {

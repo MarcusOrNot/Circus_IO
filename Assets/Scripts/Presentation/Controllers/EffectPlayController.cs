@@ -19,7 +19,9 @@ public class EffectPlayController : MonoBehaviour, IAudioEffect
     public void PlayEffect(SoundEffectType effect)
     {
         if (_isBlocked == false)
+        {
             _effectPlayService.PlayEffect(effect, _audioSource);
+        }
     }
     public void PlayEffectConstantly(SoundEffectType effect)
     {

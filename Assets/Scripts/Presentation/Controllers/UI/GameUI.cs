@@ -39,8 +39,7 @@ public class GameUI : MonoBehaviour, IGameUI
         _adPausePanel.StopMessage();
         HideAll();
         _winPanel.Show();
-        if (RuntimeInfo.IsShownRate == false && _data.FeedValue == 0)
-            _rateUsUI.gameObject.SetActive(true);
+        _rateUsUI.ShowByCondition1();
     }
 
     private void HideAll()

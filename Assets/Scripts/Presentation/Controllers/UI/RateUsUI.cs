@@ -11,6 +11,7 @@ public class RateUsUI : MonoBehaviour
     [SerializeField] private GameObject _ratePanel;
     [SerializeField] private GameObject _feedPanel;
     [Inject] private IData _data;
+    [Inject] private ISystemInfo _systemInfo;
     private void Awake()
     {
         /*_countArray.SetOnChoose((rate) =>
@@ -52,5 +53,34 @@ public class RateUsUI : MonoBehaviour
         _data.FeedValue = _countArray.Count;
         if (_countArray.Count > 3) ShowFeedPanel();
         else Close();
+    }
+
+    public void ShowByCondition1()
+    {
+        if (CanShowBySystem()==false) return;
+        if (RuntimeInfo.IsShownRate == false && _data.FeedValue == 0)
+            gameObject.SetActive(true);
+    }
+
+    public void ShowByCondtition2()
+    {
+        if (CanShowBySystem() == false) return;
+        if (_data.FeedValue == 0 && RuntimeInfo.IsShownRate == false && RuntimeInfo.IsGamePlayedOnce == true)
+            gameObject.SetActive(true);
+    }
+
+    private bool CanShowBySystem()
+    {
+        switch (_systemInfo.GetPlatformType())
+        {
+            case PlatformType.ANDROID:
+                return true;
+            case PlatformType.WEB_GL:
+                break;
+            case PlatformType.PC:
+                break;
+        }
+
+        return false;
     }
 }
