@@ -54,6 +54,8 @@ public class ShopHatController : MonoBehaviour
                     HideActionButtons();
             });
         }
+
+        //Debug.Log("Hats place is "+_hatsPlace.GetComponent<RectTransform>().sizeDelta.ToString());
     }
     private void SetBuyOrFree(bool isPrice)
     {

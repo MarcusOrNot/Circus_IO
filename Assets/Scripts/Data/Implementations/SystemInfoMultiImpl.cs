@@ -53,7 +53,7 @@ public class SystemInfoMultiImpl : ISystemInfo
             string yaLang = YandexSDK.instance.YandexLanguage;
             switch(yaLang)
             {
-                case "ru": return LangType.RUSSIAN;
+                case "\"ru\"": return LangType.RUSSIAN;
             }
         }
         return defaultLanguage;

@@ -13,17 +13,18 @@ public class PreloaderController : MonoBehaviour
     {
         //PlayerPrefs.DeleteAll();
         var currentLang = _systemInfo.GetSystemLang(LangType.ENGLISH); //Info.GetSystemLanguage(LangType.ENGLISH);
+        //Debug.Log("Using lang is "+currentLang.ToString());
         _lang.ChangeLang(currentLang);
         Utils.OpenScene(SceneType.MAIN_MENU);
 
 
-        for (int level = 1; level <= 5; level++)
+        /*for (int level = 1; level <= 5; level++)
         {
             float experienceNeeded = GameStatService.GetNeedExpByLevel(level);
             Debug.Log($"Для достижения {level} уровня необходимо {experienceNeeded} опыта.");
         }
 
         int currentLevel = GameStatService.GetLevel(500);
-        Debug.Log($"При наличии 500 опыта ваш уровень будет {currentLevel}.");
+        Debug.Log($"При наличии 500 опыта ваш уровень будет {currentLevel}.");*/
     }
 }
