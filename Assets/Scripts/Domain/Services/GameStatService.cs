@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class GameStatService
 {
-    private const int COMPLETE_BONUS = 35;
+    private const int COMPLETE_BONUS = 25;
     private const int LOSE_BONUS = 0;
-    private const float EXP_MULTIPLIER = 4.0f;
+    private const float EXP_MULTIPLIER = 3.0f;
     private const int INIT_EXP = 100;
     private const float PROGRESS_STEP = 1.5f;
     private IGameStats _gameStats;
@@ -70,7 +70,7 @@ public class GameStatService
     }
     public static int CalculateWinnerCoins(int lifes, int enemyEaten)
     {
-        return COMPLETE_BONUS+lifes/10+enemyEaten*10;
+        return COMPLETE_BONUS+lifes/15+enemyEaten*7;
     }
     public static int CalculateLoseCoins(int timeLived, int enemyEaten, int maxHealth)
     {
@@ -80,4 +80,8 @@ public class GameStatService
     {
         return Mathf.FloorToInt(coins*EXP_MULTIPLIER);
     }
+    /*public static int GetWinnerExp(int lifes, int enemyEaten)
+    {
+        return UnityEngine.Mathf.FloorToInt ((COMPLETE_BONUS + lifes / 10 + enemyEaten * 7)* EXP_MULTIPLIER);
+    }*/
 }

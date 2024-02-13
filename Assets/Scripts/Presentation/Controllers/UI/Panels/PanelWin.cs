@@ -8,6 +8,7 @@ public class PanelWin : MonoBehaviour
 {
     [Inject] private IAds _ads;
     [Inject] private IGameStats _gameStats;
+    [Inject] private LevelStatService _levelStatService;
     //[Inject] private GameStatService _statService;
     [SerializeField] private TextMeshProUGUI _coinsValueText;
     [SerializeField] private TextMeshProUGUI _expValueText;
@@ -27,12 +28,14 @@ public class PanelWin : MonoBehaviour
             
         }*/
         gameObject.SetActive(true);
-        var charLifes = Level.Instance.GetPlayer()?.GetLifes()==null?0:1;
-        var coins = GameStatService.CalculateWinnerCoins(charLifes, 2);
+        var huntersEaten = _levelStatService.HuntersEaten;
+        var charLifes = Level.Instance.GetPlayer()?.GetLifes()==null?0:_levelStatService.MaxPlayerHealth;
+        var coins = GameStatService.CalculateWinnerCoins(charLifes, huntersEaten);
         var exp = GameStatService.GetExpFromCoins(coins);
         _gameStats.ChangeGameStat(GameStatsType.COINS, coins);
         _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
         _gameStats.ChangeGameStat(GameStatsType.KOEF_DIFFICULTY, 1);
+        Debug.Log("Current LEvel exp "+_gameStats.GetStat(GameStatsType.EXP).ToString());
 
         _coinsValueText.text = coins.ToString();
         _expValueText.text = exp.ToString();
