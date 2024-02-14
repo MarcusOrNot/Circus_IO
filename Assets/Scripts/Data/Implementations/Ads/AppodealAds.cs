@@ -3,6 +3,7 @@
 using AppodealStack.Monetization.Api;
 using AppodealStack.Monetization.Common;
 using System;
+using UnityEngine;
 
 public class AppodealAds : IAds
 {
