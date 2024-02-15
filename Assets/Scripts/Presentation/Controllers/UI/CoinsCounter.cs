@@ -4,11 +4,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
+using DG.Tweening;
 
 public class CoinsCounter : MonoBehaviour, IStatsObserver
 {
     [SerializeField] private TextMeshProUGUI _coinsValueText;
     [Inject] private IGameStats _gameStats;
+    private int _currentValue = 0;
     private void Awake()
     {
         Value = _gameStats.GetStat(GameStatsType.COINS);
@@ -18,6 +20,7 @@ public class CoinsCounter : MonoBehaviour, IStatsObserver
     {
         set
         {
+            _currentValue = value;
             _coinsValueText.text = value.ToString();
         }
     }
@@ -31,7 +34,22 @@ public class CoinsCounter : MonoBehaviour, IStatsObserver
     {
         if (stat==GameStatsType.COINS)
         {
-            Value = _gameStats.GetStat(GameStatsType.COINS);
+            //Value = _gameStats.GetStat(GameStatsType.COINS);
+            CountAnimToValue(_gameStats.GetStat(GameStatsType.COINS));
         }
+    }
+
+    private void CountAnimToValue(int endValue)
+    {
+        int current = _currentValue;
+        DOTween.To((x) =>
+        {
+            Value = Mathf.FloorToInt(x);
+        },
+        current, endValue, 2).OnComplete(() =>
+        {
+            Value = _currentValue;
+        }).PlayForward();
+
     }
 }
