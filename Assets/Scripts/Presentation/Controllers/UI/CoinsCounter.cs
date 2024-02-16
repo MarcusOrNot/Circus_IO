@@ -35,6 +35,7 @@ public class CoinsCounter : MonoBehaviour, IStatsObserver
         if (stat==GameStatsType.COINS)
         {
             //Value = _gameStats.GetStat(GameStatsType.COINS);
+            Debug.Log("Shouild count coins to value "+ _gameStats.GetStat(GameStatsType.COINS).ToString());
             CountAnimToValue(_gameStats.GetStat(GameStatsType.COINS));
         }
     }
@@ -46,9 +47,9 @@ public class CoinsCounter : MonoBehaviour, IStatsObserver
         {
             Value = Mathf.FloorToInt(x);
         },
-        current, endValue, 2).OnComplete(() =>
+        current, endValue, 2).SetUpdate(true).OnComplete(() =>
         {
-            Value = _currentValue;
+            Value = endValue;
         }).PlayForward();
 
     }

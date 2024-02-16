@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -15,6 +16,7 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
     //private int _currentExp = 0;
     private float _targetExp = 0;
     private float _startSize;
+    int _currentValue = 0;
     private void Awake()
     {
         _startSize = GetComponent<RectTransform>().sizeDelta.x; //_progressTransform.sizeDelta;
@@ -29,7 +31,8 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
     {
         if (stat == GameStatsType.EXP)
         {
-            Value = _gameStats.GetStat(GameStatsType.EXP);
+            //Value = _gameStats.GetStat(GameStatsType.EXP);
+            CountAnimToValue(_gameStats.GetStat(GameStatsType.EXP));
         }
     }
 
@@ -37,6 +40,7 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
     {
         set
         {
+            _currentValue = value;
             //_currentExp = value;
             //_expValueText.text = value.ToString();
             int level = GameStatService.GetLevel(value);
@@ -60,6 +64,20 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
     {
 
     }*/
+
+    private void CountAnimToValue(int endValue)
+    {
+        int current = _currentValue;
+        DOTween.To((x) =>
+        {
+            Value = Mathf.FloorToInt(x);
+        },
+        current, endValue, 2).SetUpdate(true).OnComplete(() =>
+        {
+            Value = endValue;
+        }).PlayForward();
+
+    }
 
     private void OnDestroy()
     {
