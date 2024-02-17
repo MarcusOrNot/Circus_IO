@@ -9,6 +9,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
     [Inject] private IGameUI _gameUI;
     [Inject] private IEventBus _eventBus;
     [Inject] private IVibration _vibro;
+    [Inject] private ILang _lang;
     private Hunter _hunter;
 
     public Vector3 GetPosition() => transform.position;
@@ -50,7 +51,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
             _hunter.SetOnHunterModeChanged((state) => { 
                 _controller.SetActionEnabled(!state);
                 if (state == true)
-                    _gameUI.ShowAlertMessage("Attack them all!");
+                    _gameUI.ShowAlertMessage(_lang.GetCurrentLangText("Menu.Attack_them_all"));
                 else
                     _gameUI.CloseAlertMessage();
             });

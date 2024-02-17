@@ -6,6 +6,8 @@ using Zenject;
 
 public class PanelLose : MonoBehaviour
 {
+    [Inject] private IMusicPlayer _music;
+    [Inject] private IAudioEffect _effect;
     [SerializeField] private TextMeshProUGUI _timeStatValue;
     [SerializeField] private TextMeshProUGUI _lifesStatValue;
     [SerializeField] private TextMeshProUGUI _diethsStatValue;
@@ -34,6 +36,9 @@ public class PanelLose : MonoBehaviour
 
         _gameStats.ChangeGameStat(GameStatsType.COINS, resCoins);
         _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
+
+        _music.Stop();
+        _effect.PlayEffectConstantly(SoundEffectType.LEVEL_FAILED);
     }
 
     public void HidePanel() 

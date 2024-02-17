@@ -124,8 +124,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     {
         Info.Analytics.LogLevelFailed();
         _gameUI.ShowGameOver();
-        _music.Stop();
-        _effect.PlayEffectConstantly(SoundEffectType.LEVEL_FAILED);
+
         /*_adService.ShowInterstitialIfAllowed((successfull) =>
         {
             _effect.PlayEffect(SoundEffectType.LEVEL_FAILED);
@@ -139,7 +138,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         Level.Instance.GetDamageZone()?.Stop();
         PauseGame();
         _gameUI.ShowWin();
-        _music.Stop();
+        /*_music.Stop();
         //_effect.PlayEffect(SoundEffectType.LEVEL_COMPLETED);
         if (_adService.ShowInterstitialIfAllowed((successfull) =>
         {
@@ -147,7 +146,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         }) == false)
         {
             _effect.PlayEffectConstantly(SoundEffectType.LEVEL_COMPLETED);
-        }
+        }*/
     }
 
     private void OnDestroy()

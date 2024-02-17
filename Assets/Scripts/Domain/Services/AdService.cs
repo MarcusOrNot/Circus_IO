@@ -6,7 +6,7 @@ using Zenject;
 
 public class AdService
 {
-    private const int INTERSTITIAL_PAUSE_SECONDS=300;
+    private const int INTERSTITIAL_PAUSE_SECONDS=180;
     private IAds _ads;
     private IData _data;
     [Inject]
@@ -43,7 +43,7 @@ public class AdService
             if (isShown)
             {
                 Info.Analytics.LogAdRewardedShowen();
-                _data.LastAdDate = DateTime.Now;
+                //_data.LastAdDate = DateTime.Now;
             }
             onShowRewarded(isShown);
         });

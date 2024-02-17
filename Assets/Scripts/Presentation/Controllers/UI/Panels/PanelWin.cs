@@ -6,40 +6,28 @@ using Zenject;
 
 public class PanelWin : MonoBehaviour
 {
-    [Inject] private IAds _ads;
+    [Inject] private AdService _ads;
     [Inject] private IGameStats _gameStats;
     [Inject] private LevelStatService _levelStatService;
-    //[Inject] private GameStatService _statService;
+    [Inject] private IMusicPlayer _music;
+    [Inject] private IAudioEffect _effect;
     [SerializeField] private TextMeshProUGUI _coinsValueText;
     [SerializeField] private TextMeshProUGUI _expValueText;
-    //[SerializeField] private TextMeshProUGUI _scoreComplete;
-    //[SerializeField] private TextMeshProUGUI _scoreHealth;
+    private int _winCoins = 0;
     public void Show()
     {
-        /*_scoreComplete.text = "+"+ COMPLETE_SCORE.ToString();
         gameObject.SetActive(true);
-        if (Level.Instance.GetPlayer()!=null)
-        {
-            int lifesBonus = Level.Instance.GetPlayer().GetLifes() / 10;
-            int score = lifesBonus + COMPLETE_SCORE;
-            _scoreHealth.text = "+"+ lifesBonus.ToString();
-            _scoreValueText.text = score.ToString();
-            _gameStats.SetGameStat(GameStatsType.COINS, _gameStats.GetStat(GameStatsType.COINS)+score);
-            
-        }*/
-        gameObject.SetActive(true);
-        var huntersEaten = _levelStatService.HuntersEaten;
-        var charLifes = Level.Instance.GetPlayer()?.GetLifes()==null?0:_levelStatService.MaxPlayerHealth;
-        var coins = GameStatService.CalculateWinnerCoins(charLifes, huntersEaten);
-        var exp = GameStatService.GetExpFromCoins(coins);
-        _gameStats.ChangeGameStat(GameStatsType.COINS, coins);
-        _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
-        _gameStats.ChangeGameStat(GameStatsType.KOEF_DIFFICULTY, 1);
-        Debug.Log("Current LEvel exp "+_gameStats.GetStat(GameStatsType.EXP).ToString());
+        _music.Stop();
 
-        _coinsValueText.text = coins.ToString();
-        _expValueText.text = exp.ToString();
-        //_coinsValueText.text = _statService.GetC
+        if (_ads.ShowInterstitialIfAllowed((successfull) =>
+        {
+            ProcessWin();
+        }) == false)
+        {
+            ProcessWin();
+        }
+
+
         _ads.ShowBanner();
     }
 
@@ -52,5 +40,34 @@ public class PanelWin : MonoBehaviour
     public void MainMenu()
     {
         Utils.OpenScene(SceneType.MAIN_MENU);
+    }
+
+    private void ProcessWin()
+    {
+        var huntersEaten = _levelStatService.HuntersEaten;
+        var charLifes = Level.Instance.GetPlayer()?.GetLifes() == null ? 0 : _levelStatService.MaxPlayerHealth;
+        _winCoins = GameStatService.CalculateWinnerCoins(charLifes, huntersEaten);
+        var exp = GameStatService.GetExpFromCoins(_winCoins);
+        _gameStats.ChangeGameStat(GameStatsType.COINS, _winCoins);
+        _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
+        _gameStats.ChangeGameStat(GameStatsType.KOEF_DIFFICULTY, 1);
+
+        _coinsValueText.text = _winCoins.ToString();
+        _expValueText.text = exp.ToString();
+
+        _effect.PlayEffectConstantly(SoundEffectType.LEVEL_COMPLETED);
+    }
+
+    public void ShowRewardedX2()
+    {
+        _ads.ShowRewardedAd((isResult) =>
+        {
+            if (isResult)
+            {
+                _effect.PlayEffectConstantly(SoundEffectType.LEVEL_COMPLETED);
+                _gameStats.ChangeGameStat(GameStatsType.COINS, _winCoins);
+                _coinsValueText.text = (_winCoins*2).ToString();
+            }
+        });
     }
 }

@@ -89,7 +89,7 @@ public class MusicPlayController : MonoBehaviour, IMusicPlayer, ISettingsObserve
     public void Continue()
     {
         //if (DataControl.Instance.Settings.Sound)
-        if (_settings.SoundOn)
+        if (_settings.SoundOn && _musicSource.isPlaying == false)
             _musicSource.Play();
     }
 
