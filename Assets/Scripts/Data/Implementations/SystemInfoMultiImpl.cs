@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class SystemInfoMultiImpl : ISystemInfo
 {
+    private SystemPrefsModel _systemPrefs;
+    public SystemInfoMultiImpl(SystemPrefsModel systemPrefs)
+    {
+        _systemPrefs = systemPrefs;
+    }
+
     public PlatformType GetPlatformType()
     {
 #if UNITY_ANDROID
@@ -39,6 +45,7 @@ public class SystemInfoMultiImpl : ISystemInfo
 
     public LangType GetSystemLang(LangType defaultLanguage)
     {
+        var gameShop = GetSystemPrefs().ShopType;
         var platform = GetPlatformType();
         if (platform == PlatformType.ANDROID)
         {
@@ -50,10 +57,13 @@ public class SystemInfoMultiImpl : ISystemInfo
         }
         else if (platform == PlatformType.WEB_GL) 
         {
-            string yaLang = YandexSDK.instance.YandexLanguage;
-            switch(yaLang)
+            if (gameShop == GameShopType.YANDEX_GAMES)
             {
-                case "\"ru\"": return LangType.RUSSIAN;
+                string yaLang = YandexSDK.instance.YandexLanguage;
+                switch (yaLang)
+                {
+                    case "\"ru\"": return LangType.RUSSIAN;
+                }
             }
         }
         return defaultLanguage;
@@ -66,5 +76,10 @@ public class SystemInfoMultiImpl : ISystemInfo
 #else
         return false;
 #endif
+    }
+
+    public SystemPrefsModel GetSystemPrefs()
+    {
+        return _systemPrefs;
     }
 }

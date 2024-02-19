@@ -8,6 +8,8 @@ public class PreloaderController : MonoBehaviour
 {
     [Inject] private ILang _lang;
     [Inject] private ISystemInfo _systemInfo;
+    //[SerializeField] YandexSDK _yandexSDKPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,5 +28,16 @@ public class PreloaderController : MonoBehaviour
 
         int currentLevel = GameStatService.GetLevel(500);
         Debug.Log($"При наличии 500 опыта ваш уровень будет {currentLevel}.");*/
+
+        /*switch (_systemInfo.GetPlatformType())
+        {
+            case PlatformType.ANDROID:
+                break;
+            case PlatformType.WEB_GL:
+                //Instantiate(_yandexSDKPrefab);
+                break;
+            case PlatformType.PC:
+                break;
+        }*/
     }
 }
