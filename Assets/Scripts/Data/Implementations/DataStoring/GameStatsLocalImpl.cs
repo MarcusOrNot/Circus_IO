@@ -11,7 +11,7 @@ public class GameStatsLocalImpl : IGameStats
         return PlayerPrefs.GetInt(GetStatStringByEnum(type), 0);
     }
 
-    private void NotifyObservers(GameStatsType stat)
+    /*private void NotifyObservers(GameStatsType stat)
     {
         foreach (var observer in _statListeners)
         {
@@ -22,21 +22,21 @@ public class GameStatsLocalImpl : IGameStats
     public void RemoveOnSettingChanged(IStatsObserver observer)
     {
         _statListeners.Remove(observer);
-    }
+    }*/
 
     public void SetGameStat(GameStatsType type, int value)
     {
         PlayerPrefs.SetInt(GetStatStringByEnum(type), value);
-        NotifyObservers(type);
+        //NotifyObservers(type);
     }
 
-    public void SetOnStatChanged(IStatsObserver observer)
+    /*public void SetOnStatChanged(IStatsObserver observer)
     {
         if (_statListeners.Contains(observer)==false)
         {
             _statListeners.Add(observer);
         }
-    }
+    }*/
 
     private string GetStatStringByEnum(GameStatsType gameStat)
     {
@@ -51,8 +51,8 @@ public class GameStatsLocalImpl : IGameStats
         return res;
     }
 
-    public void ChangeGameStat(GameStatsType type, int value)
+    /*public void ChangeGameStat(GameStatsType type, int value)
     {
         SetGameStat(type, GetStat(type)+value);
-    }
+    }*/
 }

@@ -11,7 +11,7 @@ public class ExpCounter : MonoBehaviour, IStatsObserver
     [SerializeField] private TextMeshProUGUI _expValueText;
     [SerializeField] private TextMeshProUGUI _levelValueText;
     [SerializeField] private RectTransform _progressTransform;
-    [Inject] private IGameStats _gameStats;
+    [Inject] private StatDataService _gameStats;
     [Inject] private GameStatService _gameStatService;
     //private int _currentExp = 0;
     private float _targetExp = 0;

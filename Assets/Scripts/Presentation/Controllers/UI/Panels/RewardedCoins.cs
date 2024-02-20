@@ -7,7 +7,7 @@ using Zenject;
 public class RewardedCoins : MonoBehaviour
 {
     [Inject] private AdService _ads;
-    [Inject] private IGameStats _gameStats;
+    [Inject] private StatDataService _gameStats;
     [Inject] private IMusicPlayer _musicPlayer;
     public int RewardValue = 100;
     [SerializeField] private TextMeshProUGUI _rewardText;

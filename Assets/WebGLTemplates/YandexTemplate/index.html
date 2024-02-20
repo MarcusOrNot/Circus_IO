@@ -198,6 +198,7 @@ function tryToSendMainInfo() {
 			gameInstance.SendMessage('YandexSDK', 'GameJSONReceived', JSON.stringify(gameData));
 		}).catch(err => {
 			console.log('on data get error '+err);
+			gameInstance.SendMessage('YandexSDK', 'GameJSONReceived', null);
             });
 	  }
 	  
@@ -207,6 +208,7 @@ function tryToSendMainInfo() {
 			gameInstance.SendMessage('YandexSDK', 'GameStatJSONReceived', JSON.stringify(statData));
 		}).catch(err => {
 			console.log('on data get error '+err);
+			gameInstance.SendMessage('YandexSDK', 'GameStatJSONReceived', null);
             });
 	  }
 	  

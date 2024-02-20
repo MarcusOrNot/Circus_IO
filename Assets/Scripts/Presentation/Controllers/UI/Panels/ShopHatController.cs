@@ -8,7 +8,7 @@ using Zenject;
 public class ShopHatController : MonoBehaviour
 {
     //[SerializeField] private GameObject _menuHunters;
-    [Inject] private IGameStats _stats;
+    [Inject] private StatDataService _stats;
     [Inject] private ISettings _settings;
     [Inject] private ItemsProgressService _progress;
     [Inject] private HatShopFactory _hatsFactory;
@@ -73,7 +73,8 @@ public class ShopHatController : MonoBehaviour
         if (_currentHat == null) return;
         if (_stats.GetStat(GameStatsType.COINS)>=_currentHat.Model.ItemBlock.Value)
         {
-            _stats.SetGameStat(GameStatsType.COINS, _stats.GetStat(GameStatsType.COINS)- _currentHat.Model.ItemBlock.Value);
+            //_stats.SetGameStat(GameStatsType.COINS, _stats.GetStat(GameStatsType.COINS)- _currentHat.Model.ItemBlock.Value);
+            _stats.ChangeGameStat(GameStatsType.COINS, -_currentHat.Model.ItemBlock.Value);
             _progress.OpenHat(_currentHat.Model.Hat);
             _currentHat.Priceless = true;
             PutOn();

@@ -7,7 +7,7 @@ using Zenject;
 public class PanelWin : MonoBehaviour
 {
     [Inject] private AdService _ads;
-    [Inject] private IGameStats _gameStats;
+    [Inject] private StatDataService _gameStats;
     [Inject] private LevelStatService _levelStatService;
     [Inject] private IMusicPlayer _music;
     [Inject] private IAudioEffect _effect;

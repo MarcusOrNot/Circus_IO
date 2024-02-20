@@ -7,6 +7,7 @@ public class ProjectInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.Bind<IGameStats>().To<GameStatsLocalImpl>().AsSingle().Lazy();
+        Container.Bind<StatDataService>().AsSingle().Lazy();
         Container.Bind<ISettings>().To<SettingsLocalPrefs>().AsSingle().Lazy();
         Container.Bind<IProgressItems>().To<ProgressLocalPrefs>().AsSingle().Lazy();
         Container.Bind<ItemsProgressService>().AsSingle();
@@ -14,5 +15,26 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<GameStatService>().FromNew().AsSingle();
         Container.Bind<ILang>().To<SimpleLocalizationImpl>().FromNew().AsSingle();
         Container.Bind<ISystemInfo>().To<SystemInfoMultiImpl>().FromNew().AsSingle();
+
+        var platform = Container.Resolve<ISystemInfo>().GetPlatformType();
+        var gameShop = Container.Resolve<ISystemInfo>().GetSystemPrefs().ShopType;
+#if UNITY_EDITOR
+        Container.Bind<ICloudGameStats>().To<NoCloudStatImpl>().FromNew().AsSingle();
+#else
+        switch(platform)
+        {
+            case PlatformType.WEB_GL:
+                switch (gameShop)
+                {
+                    case GameShopType.YANDEX_GAMES:
+                        Container.Bind<ICloudGameStats>().To<YandexCloudStatsImpl>().FromNew().AsSingle();
+                        break;
+                }
+                break;
+            default:
+                Container.Bind<ICloudGameStats>().To<NoCloudStatImpl>().FromNew().AsSingle();
+                break;
+        }
+#endif
     }
 }

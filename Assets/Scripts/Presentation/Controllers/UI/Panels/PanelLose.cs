@@ -18,7 +18,7 @@ public class PanelLose : MonoBehaviour
     [Inject] private IAds _ads;
     [Inject] private LevelStatService _levelStat;
     //[Inject] private GameStatService _gameStatService;
-    [Inject] private IGameStats _gameStats;
+    [Inject] private StatDataService _gameStats;
     public void ShowPanel()
     {
         gameObject.SetActive(true);

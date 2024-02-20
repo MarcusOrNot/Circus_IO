@@ -9,7 +9,7 @@ using DG.Tweening;
 public class CoinsCounter : MonoBehaviour, IStatsObserver
 {
     [SerializeField] private TextMeshProUGUI _coinsValueText;
-    [Inject] private IGameStats _gameStats;
+    [Inject] private StatDataService _gameStats;
     private int _currentValue = 0;
     private void Awake()
     {
