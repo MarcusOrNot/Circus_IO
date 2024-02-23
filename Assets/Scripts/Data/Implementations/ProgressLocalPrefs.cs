@@ -17,6 +17,11 @@ public class ProgressLocalPrefs : IProgressItems
         }
     }
 
+    public void InitHats(List<HatType> hats)
+    {
+        PlayerPrefs.SetString(HAT_PROGRESS, JsonUtility.ToJson(new ContainerHats(hats)));
+    }
+
     public void OpenHat(HatType hat)
     {
         var opened = OpenedHats;

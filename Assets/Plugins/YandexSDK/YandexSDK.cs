@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -48,8 +49,8 @@ public class YandexSDK : MonoBehaviour {
 
     public event Action onUserDataReceived;
 
-    public event Action<string> onGameDataReceived;
-    public event Action<string> onGameStatReceived;
+    public Action<Dictionary<string, string>> onGameDataReceived;
+    public Action<Dictionary<string, int>> onGameStatReceived;
 
     public event Action<LeaderboardYandex> onLeaderboardReceived;
     public event Action<InapProduct[]> onGetCatalog;
@@ -239,17 +240,16 @@ public class YandexSDK : MonoBehaviour {
     /// <summary>
     /// Callback from index.html
     /// </summary>
-    public void SetGameDataJSON(string jsonString)
-    {
-        SetGameData(jsonString);
-    }
-
-    /// <summary>
-    /// Callback from index.html
-    /// </summary>
     public void GameJSONReceived(string jsonString)
     {
-        onGameDataReceived?.Invoke(jsonString);
+        Debug.Log("Data is " + jsonString);
+        var res = new Dictionary<string, string>();
+        if (jsonString != "")
+        {
+            res = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
+        }
+
+        onGameDataReceived?.Invoke(res);
     }
 
     /// <summary>
@@ -257,7 +257,12 @@ public class YandexSDK : MonoBehaviour {
     /// </summary>
     public void GameStatJSONReceived(string jsonString)
     {
-        onGameStatReceived?.Invoke(jsonString);
+        var res = new Dictionary<string, int>();
+        if (jsonString!="")
+        {
+            res = JsonConvert.DeserializeObject<Dictionary<string, int>>(jsonString);
+        }
+        onGameStatReceived?.Invoke(res);
     }
 
     /// <summary>
@@ -306,9 +311,15 @@ public class YandexSDK : MonoBehaviour {
         _deviceInfo = deviceInfo;
     }
 
-    public void SetStat(string jsonString)
+    public void SetStat(Dictionary<string, int> values)
     {
-        SetGameStat(jsonString);
+        //Debug.Log("Now setting stat Yandex "+ JsonConvert.SerializeObject(values));
+        SetGameStat(JsonConvert.SerializeObject(values));
+    }
+
+    public void SendGameData(Dictionary<string, string> data)
+    {
+        SetGameData(JsonConvert.SerializeObject(data));
     }
 
     public void RequestGameData(string[] keys)

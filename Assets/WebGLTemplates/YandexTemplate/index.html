@@ -118,6 +118,7 @@ YaGames
         console.log('Yandex SDK initialized');
         //window.ysdk = ysdk;
 		sdk = ysdk;
+		playerInit(null);
 		//sendDeviceInfo(sdk.deviceInfo.type);
 		tryToSend();
 		sdk.adv.showFullscreenAdv({ callbacks: {} });
@@ -148,7 +149,7 @@ function tryToSendMainInfo() {
             });
       }
 
-      function initPlayer(onInit){
+      /*function initPlayer(onInit){
 			sdk.getPlayer({ scopes: false }).then(_player => {
 				if (_player.getMode() === 'lite') return;
                 player = _player; 
@@ -162,7 +163,19 @@ function tryToSendMainInfo() {
                 // Если игрок не авторизован, выбрасывает исключение USER_NOT_AUTHORIZED.
 				gameInstance.SendMessage('YandexSDK', 'OnAuthFailed', err);
             });
-      }
+      }*/
+	  
+	  function playerInit(onInit) {
+			sdk.getPlayer({ scopes: false }).then(_player => {
+			  player = _player;
+			  console.log('player successfull init ');
+			  if (onInit!=null) onInit.call();
+		  }).catch(err => {
+			  // Ошибка при инициализации объекта Player.
+			  console.log('error here it is on init player '+err);
+			  if (onInit!=null) onInit.call();
+		  });
+	  }
 
       function getUserData() {
 		  initPlayer(()=>{
@@ -193,22 +206,30 @@ function tryToSendMainInfo() {
 	  }
 	  
 	  function getGameData(keyJSON) {
+		if (player==null) {
+			gameInstance.SendMessage('YandexSDK', 'GameJSONReceived', "");
+			return;
+		}
 		var resPromise=(keyJSON==""?player.getData():player.getData(JSON.parse(keyJSON)['keys']));
 		resPromise.then(gameData=>{
 			gameInstance.SendMessage('YandexSDK', 'GameJSONReceived', JSON.stringify(gameData));
 		}).catch(err => {
 			console.log('on data get error '+err);
-			gameInstance.SendMessage('YandexSDK', 'GameJSONReceived', null);
+			gameInstance.SendMessage('YandexSDK', 'GameJSONReceived', "");
             });
 	  }
 	  
 	  function getGameStat(keyJSON) {
+		if (player==null) {
+			gameInstance.SendMessage('YandexSDK', 'GameJSONReceived', "");
+			return;
+		}
 		var resPromise=(keyJSON==""?player.getStats():player.getStats(JSON.parse(keyJSON)['keys']));
 		resPromise.then(statData=>{
 			gameInstance.SendMessage('YandexSDK', 'GameStatJSONReceived', JSON.stringify(statData));
 		}).catch(err => {
 			console.log('on data get error '+err);
-			gameInstance.SendMessage('YandexSDK', 'GameStatJSONReceived', null);
+			gameInstance.SendMessage('YandexSDK', 'GameStatJSONReceived', "");
             });
 	  }
 	  

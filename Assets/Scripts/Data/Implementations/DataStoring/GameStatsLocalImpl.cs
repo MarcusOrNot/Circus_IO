@@ -30,6 +30,14 @@ public class GameStatsLocalImpl : IGameStats
         //NotifyObservers(type);
     }
 
+    public void SetGameStats(Dictionary<GameStatsType, int> values)
+    {
+        foreach(KeyValuePair<GameStatsType, int> value in values)
+        {
+            SetGameStat(value.Key, value.Value);
+        }
+    }
+
     /*public void SetOnStatChanged(IStatsObserver observer)
     {
         if (_statListeners.Contains(observer)==false)

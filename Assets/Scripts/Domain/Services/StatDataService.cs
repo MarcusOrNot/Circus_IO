@@ -16,10 +16,12 @@ public class StatDataService
 
     public void InitStartData(Action<bool> onInit)
     {
-        _cloudStats.GetStat(GameStatsType.COINS, (success, res) =>
+        var dataParamsList = Utils.GetListOfEnums<GameStatsType>();
+        _cloudStats.GetStats(dataParamsList, (isSuccess, values) =>
         {
-            Debug.Log("Now is "+success.ToString()+"res is "+res.ToString());
+            SetLocalGameStats(values);
         });
+
         onInit?.Invoke(true);
     }
 
@@ -29,10 +31,20 @@ public class StatDataService
     {
         _gameStats.SetGameStat(type, value);
         NotifyObservers(type);
-        _cloudStats.SetGameStat(type, value, (success) =>
-        {
+        _cloudStats.SetGameStat(type, value, (success) => {});
+    }
 
-        });
+    public void SetGameStats(Dictionary<GameStatsType, int> values)
+    {
+        SetLocalGameStats(values);
+        _cloudStats.SetGameStats(values, (success) => {});
+    }
+
+    private void SetLocalGameStats(Dictionary<GameStatsType, int> values)
+    {
+        _gameStats.SetGameStats(values);
+        foreach (KeyValuePair<GameStatsType, int> value in values)
+            NotifyObservers(value.Key);
     }
 
 
@@ -57,8 +69,16 @@ public class StatDataService
         }
     }
 
-    public void ChangeGameStat(GameStatsType type, int value)
+    public void ChangeGameStat(GameStatsType type, int delta)
     {
-        SetGameStat(type, _gameStats.GetStat(type) + value);
+        SetGameStat(type, _gameStats.GetStat(type) + delta);
+    }
+
+    public void ChangeGameStats(Dictionary<GameStatsType, int> deltas)
+    {
+        Dictionary<GameStatsType, int> newValues = new Dictionary<GameStatsType, int>();
+        foreach (KeyValuePair<GameStatsType, int> delta in deltas)
+            newValues.Add(delta.Key, _gameStats.GetStat(delta.Key)+delta.Value);
+        SetGameStats(newValues);
     }
 }

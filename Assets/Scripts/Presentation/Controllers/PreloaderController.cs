@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,22 +10,27 @@ public class PreloaderController : MonoBehaviour
 {
     [Inject] private ILang _lang;
     [Inject] private ISystemInfo _systemInfo;
-    [Inject] private StatDataService _statDataService;
+    //[Inject] private StatDataService _statDataService;
     //[SerializeField] YandexSDK _yandexSDKPrefab;
 
     // Start is called before the first frame update
     void Start()
     {
+
         //PlayerPrefs.DeleteAll();
         var currentLang = _systemInfo.GetSystemLang(LangType.ENGLISH); //Info.GetSystemLanguage(LangType.ENGLISH);
         //Debug.Log("Using lang is "+currentLang.ToString());
         _lang.ChangeLang(currentLang);
-        //Utils.OpenScene(SceneType.MAIN_MENU);
+        Utils.OpenScene(SceneType.MAIN_MENU);
 
-        _statDataService.InitStartData((success) =>
+        /*var testVar = "{'COINS':64}";
+        var jsonres = JsonConvert.DeserializeObject<Dictionary<string, int>>(testVar);
+        Debug.Log("Values count is "+jsonres.Count.ToString());*/
+
+        /*_statDataService.InitStartData((success) =>
         {
             Utils.OpenScene(SceneType.MAIN_MENU);
-        });
+        });*/
 
         /*for (int level = 1; level <= 5; level++)
         {

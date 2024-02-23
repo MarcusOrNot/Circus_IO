@@ -48,9 +48,15 @@ public class PanelWin : MonoBehaviour
         var charLifes = Level.Instance.GetPlayer()?.GetLifes() == null ? 0 : _levelStatService.MaxPlayerHealth;
         _winCoins = GameStatService.CalculateWinnerCoins(charLifes, huntersEaten);
         var exp = GameStatService.GetExpFromCoins(_winCoins);
-        _gameStats.ChangeGameStat(GameStatsType.COINS, _winCoins);
+        _gameStats.ChangeGameStats(new Dictionary<GameStatsType, int>()
+        {
+            {GameStatsType.COINS, _winCoins },
+            {GameStatsType.EXP, exp },
+            {GameStatsType.KOEF_DIFFICULTY, 1 }
+        });
+        /*_gameStats.ChangeGameStat(GameStatsType.COINS, _winCoins);
         _gameStats.ChangeGameStat(GameStatsType.EXP, exp);
-        _gameStats.ChangeGameStat(GameStatsType.KOEF_DIFFICULTY, 1);
+        _gameStats.ChangeGameStat(GameStatsType.KOEF_DIFFICULTY, 1);*/
 
         _coinsValueText.text = _winCoins.ToString();
         _expValueText.text = exp.ToString();

@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
     [Inject] private ILevelInfo _levelInfo;
     [Inject] private IMobSpawner _mobSpawner;
     
+    
     void Start()
     {
         /*int level = GameStatService.GetLevel(301);
@@ -26,6 +27,7 @@ public class GameController : MonoBehaviour, IGameEventObserver
         //Debug.Log("Score is "+_stats.GetStat(GameStatsType.SCORE).ToString());
         Info.Analytics.LogLevelStarted();
         RuntimeInfo.IsGamePlayedOnce = true;
+
         //_mobSpawner.SpawnAtLocation(HunterType.HUNTER_BLACK, HatType.CAP, new Vector3(5,5,5));
         //Debug.Log("Now player us "+ Level.Instance.GetPlayer().GetPosition().ToString());
         //SetLevelParams(_levelProcessService.GenerateLevel(1));

@@ -13,6 +13,8 @@ public class MainMenuController3D : MonoBehaviour
     [Inject] private IVibration _vibration;
     [Inject] private IData _data;
     [Inject] private ISystemInfo _systemInfo;
+    [Inject] private StatDataService _statDataService;
+    [Inject] private ItemsProgressService _itemProgressService;
     //[Inject] private IAudioEffect _effect;
     [SerializeField] private MainMenuPanelController _mainMenu;
     [SerializeField] private ShopHatController _shopHatMenu;
@@ -36,6 +38,15 @@ public class MainMenuController3D : MonoBehaviour
     private void Start()
     {
         _rateUS.ShowByCondtition2();
+        if (RuntimeInfo.IsCloudDataLoaded == false)
+        {
+            RuntimeInfo.IsCloudDataLoaded = true;
+            _statDataService.InitStartData((successfull) =>
+            {
+                
+            });
+            _itemProgressService.InitProgressCloud();
+        }
     }
     /*public void StartGame()
     {

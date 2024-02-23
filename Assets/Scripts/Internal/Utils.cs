@@ -44,6 +44,10 @@ public static class Utils
     }
     public static List<T> GetListOfEnums<T>() where T : Enum
     {
-        return new List<T>((T[])Enum.GetValues(typeof(HatType)));
+        return new List<T>((T[])Enum.GetValues(typeof(T)));
+    }
+    public static T GetEnumByString<T>(string fromString) where T: Enum
+    {
+        return (T)Enum.Parse(typeof(GameStatsType), fromString, true);
     }
 }

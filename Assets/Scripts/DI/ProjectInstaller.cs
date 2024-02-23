@@ -17,24 +17,24 @@ public class ProjectInstaller : MonoInstaller
         Container.Bind<ISystemInfo>().To<SystemInfoMultiImpl>().FromNew().AsSingle();
 
         var platform = Container.Resolve<ISystemInfo>().GetPlatformType();
-        var gameShop = Container.Resolve<ISystemInfo>().GetSystemPrefs().ShopType;
+var gameShop = Container.Resolve<ISystemInfo>().GetSystemPrefs().ShopType;
 #if UNITY_EDITOR
-        Container.Bind<ICloudGameStats>().To<NoCloudStatImpl>().FromNew().AsSingle();
+Container.Bind<ICloudGameStats>().To<NoCloudStatImpl>().FromNew().AsSingle().Lazy();
 #else
-        switch(platform)
+switch(platform)
+{
+    case PlatformType.WEB_GL:
+        switch (gameShop)
         {
-            case PlatformType.WEB_GL:
-                switch (gameShop)
-                {
-                    case GameShopType.YANDEX_GAMES:
-                        Container.Bind<ICloudGameStats>().To<YandexCloudStatsImpl>().FromNew().AsSingle();
-                        break;
-                }
-                break;
-            default:
-                Container.Bind<ICloudGameStats>().To<NoCloudStatImpl>().FromNew().AsSingle();
+            case GameShopType.YANDEX_GAMES:
+                Container.Bind<ICloudGameStats>().To<YandexCloudStatsImpl>().FromNew().AsSingle().Lazy();
                 break;
         }
+        break;
+    default:
+        Container.Bind<ICloudGameStats>().To<NoCloudStatImpl>().FromNew().AsSingle().Lazy();
+        break;
+}
 #endif
     }
 }
