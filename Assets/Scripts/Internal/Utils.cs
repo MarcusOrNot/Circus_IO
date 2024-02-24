@@ -48,6 +48,6 @@ public static class Utils
     }
     public static T GetEnumByString<T>(string fromString) where T: Enum
     {
-        return (T)Enum.Parse(typeof(GameStatsType), fromString, true);
+        return (T)Enum.Parse(typeof(T), fromString, true);
     }
 }

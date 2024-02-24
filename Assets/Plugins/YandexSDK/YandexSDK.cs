@@ -242,7 +242,7 @@ public class YandexSDK : MonoBehaviour {
     /// </summary>
     public void GameJSONReceived(string jsonString)
     {
-        Debug.Log("Data is " + jsonString);
+        //Debug.Log("Data is " + jsonString);
         var res = new Dictionary<string, string>();
         if (jsonString != "")
         {

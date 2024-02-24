@@ -29,7 +29,6 @@ public class YandexCloudStatsImpl : ICloudGameStats
 
         YandexSDK.instance.onGameDataReceived = (data) =>
         {
-            Debug.Log("Count of data is "+data.Count.ToString());
             _onGameDataRecieved?.Invoke(true, data);
         };
     }

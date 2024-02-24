@@ -24,14 +24,12 @@ public class ItemsProgressService
         {
             if (success)
             {
-                Debug.Log("Items progress Now hat is " + resData.Count.ToString());
                 if (resData.ContainsKey(HATS_KEY))
                 {
                     var resHats = new List<HatType>();
                     var hatsStrings = JsonConvert.DeserializeObject<List<string>>(resData[HATS_KEY]);
                     foreach (string hatString in hatsStrings)
                     {
-                        Debug.Log("Now hat is "+hatsStrings);
                         resHats.Add(Utils.GetEnumByString<HatType>(hatString));
                     }
                     _progress.InitHats(resHats);
