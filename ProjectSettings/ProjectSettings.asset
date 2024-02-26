@@ -850,7 +850,7 @@ PlayerSettings:
     Android: PROBUILDER_EXPERIMENTAL_FEATURES;YG_PLUGIN_YANDEX_GAME
     Server: PROBUILDER_EXPERIMENTAL_FEATURES
     Standalone: PROBUILDER_EXPERIMENTAL_FEATURES
-    WebGL: YG_PLUGIN_YANDEX_GAME
+    WebGL: 
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

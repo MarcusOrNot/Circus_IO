@@ -2,16 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
+[RequireComponent(typeof(AudioSource))]
 public class BrakingEffectBooster : MonoBehaviour
 {
+    [Inject] private EffectPlayService _effect;
+    private AudioSource _audioSource;
     private const int DESTROY_DELAY_SECONDS = 5;
     private bool _isTriggered = false;
     private GameObject _parent = null;
     private List<IBrakableMoving> _brakes = new List<IBrakableMoving>();
 
+    private void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
     private void Start()
     {
+        _effect.PlayEffect(SoundEffectType.BALL_INSTATIATE, _audioSource);
         StartCoroutine(DeleteCoroutine(DESTROY_DELAY_SECONDS));
     }
 

@@ -873,6 +873,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6893454352183539639}
     m_Modifications:
+    - target: {fileID: 613675769871983372, guid: 5a15d0f0a735e7d4e9043fc2f2b1dbae, type: 3}
+      propertyPath: _onKey.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 613675769871983372, guid: 5a15d0f0a735e7d4e9043fc2f2b1dbae, type: 3}
+      propertyPath: _onKey.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 952853981274515134}
+    - target: {fileID: 613675769871983372, guid: 5a15d0f0a735e7d4e9043fc2f2b1dbae, type: 3}
+      propertyPath: _onKey.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2919643973298078326, guid: 5a15d0f0a735e7d4e9043fc2f2b1dbae, type: 3}
       propertyPath: m_Name
       value: KeyboardInput

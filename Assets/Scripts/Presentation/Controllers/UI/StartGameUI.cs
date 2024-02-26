@@ -4,16 +4,29 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using Zenject;
 
 public class StartGameUI : MonoBehaviour
 {
     [SerializeField] private GameObject _buttonStart;
     [SerializeField] private TextMeshProUGUI _connectingText;
     [SerializeField] private UnityEvent _onStartLevel;
+    [Inject] private AdService _ads;
+    [Inject] private IMusicPlayer _music;
 
     public void StartRoyalGame()
     {
         //StartCoroutine(ConnectorCoro(Random.Range(1, 3)));
+        //_onStartLevel?.Invoke();
+        //Utils.OpenScene(SceneType.LOADER_SCENE);
+        _music.Pause();
+        var tryShown = _ads.ShowInterstitialIfAllowed((shown) => { StartNewGame(); });
+        if (tryShown == false) StartNewGame();
+    }
+
+    private void StartNewGame()
+    {
+        _music.Continue();
         _onStartLevel?.Invoke();
         Utils.OpenScene(SceneType.LOADER_SCENE);
     }

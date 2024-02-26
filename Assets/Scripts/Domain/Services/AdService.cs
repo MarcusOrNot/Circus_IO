@@ -22,14 +22,17 @@ public class AdService
     }
     public bool ShowInterstitialAd(Action<bool> onShowInterstitial)
     {
-        return _ads.ShowInterstitialAd((isShown) =>
+        var canShow = _ads.ShowInterstitialAd((isShown) =>
         {
+            //_music.Continue();
             if (isShown) {
                 Info.Analytics.LogAdInterstitialShowen();
                 _data.LastAdDate = DateTime.Now;
             }
             onShowInterstitial(isShown);
         });
+        //if (canShow == true) _music.Pause();
+        return canShow;
     }
     public bool ShowInterstitialIfAllowed(Action<bool> onShowInterstitial)
     {
@@ -38,8 +41,9 @@ public class AdService
     }
     public bool ShowRewardedAd(Action<bool> onShowRewarded)
     {
-        return _ads.ShowRewardedAd((isShown) =>
+        var canShow = _ads.ShowRewardedAd((isShown) =>
         {
+            //_music.Continue();
             if (isShown)
             {
                 Info.Analytics.LogAdRewardedShowen();
@@ -47,6 +51,8 @@ public class AdService
             }
             onShowRewarded(isShown);
         });
+        //if (canShow == true) _music.Pause();
+        return canShow;
     }
     public void ShowBanner()=>_ads.ShowBanner();
     public void HideBanner() => _ads.HideBanner();

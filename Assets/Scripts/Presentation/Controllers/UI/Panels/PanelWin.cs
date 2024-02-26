@@ -19,13 +19,14 @@ public class PanelWin : MonoBehaviour
         gameObject.SetActive(true);
         _music.Stop();
 
-        if (_ads.ShowInterstitialIfAllowed((successfull) =>
+        /*if (_ads.ShowInterstitialIfAllowed((successfull) =>
         {
             ProcessWin();
         }) == false)
         {
             ProcessWin();
-        }
+        }*/
+        ProcessWin();
 
 
         _ads.ShowBanner();

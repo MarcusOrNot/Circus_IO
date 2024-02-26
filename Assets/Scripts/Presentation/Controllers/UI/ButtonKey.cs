@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class ButtonKey : MonoBehaviour
 {
-    [SerializeField] private KeyCode _keyCode = KeyCode.None; 
+    [SerializeField] private KeyCode[] _keyCodes = new KeyCode[] { }; 
     [SerializeField] private UnityEvent _onKey;
     private Image _keyImage;
     private void Awake()
@@ -16,16 +16,16 @@ public class ButtonKey : MonoBehaviour
 
     private void Update()
     {
-        if (_onKey != null && _keyCode != KeyCode.None)
+        if (_onKey != null && _keyCodes.Length>0)
         {
-            if (Input.GetKey(_keyCode))
+            if (IsPressedKey())
             {
                 _onKey?.Invoke();
                 _keyImage.color = Color.white;
             }
             else
             {
-                _keyImage.color = new Color(1,1,1,0.5f);
+                _keyImage.color = new Color(1, 1, 1, 0.5f);
             }
         }
     }
@@ -38,5 +38,13 @@ public class ButtonKey : MonoBehaviour
     private void OnDestroy()
     {
         _onKey.RemoveAllListeners();
+    }
+
+    private bool IsPressedKey()
+    {
+        foreach (KeyCode key in _keyCodes)
+            if (Input.GetKey(key))
+                return true;
+        return false;
     }
 }
