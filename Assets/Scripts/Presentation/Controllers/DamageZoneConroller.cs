@@ -2,19 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Zenject;
 
-public class DamageZoneConroller : MonoBehaviour
+public class DamageZoneConroller : MonoBehaviour, IZoneController
 {
+    [Inject] private IEventBus _eventBus;
+    [Inject] private ILevelInfo _levelInfo;
     private const int TRANSITION_TIME = 10;
+    private const float VISUAL_KOEF = 0.3f;
     public int MinDamage = 100;
+    //public int MinZoneSize = 30;
+    public int TransitionsCount = 3;
     [SerializeField] private List<DamageZoneModel> _damageZones;
     private Transform _visual;
-    public int StartSize;
+    public float StartSize;
     private Vector3 _startPos;
     private float _currentSize;
     private int _currentPos=0;
     private void Awake()
     {
+        var levelParams = _levelInfo.GetLevelParams();
+        if (levelParams != null)
+        {
+            StartSize = levelParams.MaxZoneSize;
+            //Debug.Log("Start size damage is "+StartSize.ToString());
+            //MinZoneSize = StartSize / 3;
+            GenerateZones(StartSize, TransitionsCount, levelParams.ZoneChangeTime);
+        }
+
         _visual = GetComponentInChildren<Transform>();
         //_currentSize = StartSize;
         SetSize(StartSize);
@@ -47,10 +62,11 @@ public class DamageZoneConroller : MonoBehaviour
             else
             {
                 float currentValue = _damageZones[position - 1].Size;
-                DOTween.To(() => currentValue, x => currentValue=x, _damageZones[position].Size, timeTransition).OnUpdate(() =>
+                DOTween.To(() => currentValue, x => currentValue = x, _damageZones[position].Size, timeTransition).OnUpdate(() =>
                 {
                     SetSize(currentValue);
-                });
+                })
+                    .OnComplete(() => _eventBus.NotifyObservers(GameEventType.ZONE_CHANGED));
             }
             StartCoroutine(ZoneCoroutine(_damageZones[position].TimeSeconds));
         }
@@ -72,7 +88,7 @@ public class DamageZoneConroller : MonoBehaviour
         ShowZone(_currentPos+1, TRANSITION_TIME);
     }
 
-    private void DamageHunters()
+    /*private void DamageHunters()
     {
         var hunters = FindObjectsOfType<Hunter>();
         foreach (var hunter in hunters)
@@ -83,7 +99,7 @@ public class DamageZoneConroller : MonoBehaviour
                 hunter.AddDamage(Mathf.Max(hunter.Lifes/2, MinDamage));
             }
         }
-    }
+    }*/
 
     private void DamageBurnables()
     {
@@ -101,13 +117,14 @@ public class DamageZoneConroller : MonoBehaviour
     private void SetSize(float size)
     {
         _currentSize = size;
-        _visual.transform.localScale = new Vector3(size, 1, size);
+        var effective = size * VISUAL_KOEF;
+        _visual.transform.localScale = new Vector3(effective, 1, effective);
     }
 
     //public float Size => _currentSize;
     public bool IsDanger(Vector3 position)
     {
-        return Vector3.Distance(_startPos, position) > _currentSize * 3.2f;
+        return Vector3.Distance(_startPos, position) > _currentSize;
     }
 
     private void OnDestroy()
@@ -119,5 +136,24 @@ public class DamageZoneConroller : MonoBehaviour
     {
         DOTween.KillAll(false);
         gameObject.SetActive(false);
+    }
+
+    public float GetSize()
+    {
+        return _currentSize;
+    }
+
+    private void GenerateZones(float startSize, int zonesCount, int transitionTime)
+    {
+        _damageZones = new List<DamageZoneModel>();
+        var zonePart = startSize / zonesCount;
+        for (int i=1; i<zonesCount; i++)
+        {
+            _damageZones.Add(new DamageZoneModel(transitionTime, startSize - i * zonePart));
+        }
+        //float zoneTime = startParams.TimeSeconds / TransitionsCount;
+        //float sizeStep = (startParams.Size - MinZoneSize) / TransitionsCount;
+        //for (int i=0; i<TransitionsCount; i++)
+            
     }
 }

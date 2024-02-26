@@ -5,5 +5,8 @@ using UnityEngine;
 public enum GameStatsType
 {
     SCORE,
-    COINS
+    COINS,
+    EXP,
+    LEVEL,
+    KOEF_DIFFICULTY
 }

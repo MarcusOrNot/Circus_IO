@@ -7,13 +7,24 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(Character))]
 
-public class Hunter : MonoBehaviour, IBurnable
+public class Hunter : MonoBehaviour, IBurnable, IBrakableMoving
 {      
     public HunterModel Model { get => _model; }
     public int Lifes { get => _health; }
     public bool KaufmoIsActive { get => _kaufmoIsActivated; }
     
-    public void Boost() => StartCoroutine(BoosterActivation());  
+    public void Boost() => StartCoroutine(BoosterActivation());
+    
+    public void SpawnDebaff() 
+    {
+        if (!_debafferSpawnerIsReady) { return; }
+        if (_debaffersCount <= 0) {  return; }        
+        _debaffersCount--;
+        StartCoroutine(DebafferSpawnerReloading());
+        var debaf = _brakingFactory.Spawn(this.gameObject);
+        debaf.transform.position = transform.position - transform.forward * 3;
+    }
+
     public void Move(Vector2 direction) { if (!_isMovingWithBoost) _character.GetMovingCommand(direction); }
     public void AddDamage(int value) => GetDamage(value);
     public void Burn() { GetDamage(Mathf.Max(100, _health / 2)); foreach (var item in _onBurning) item?.Invoke(); }    
@@ -27,6 +38,11 @@ public class Hunter : MonoBehaviour, IBurnable
 
     public void SetOnHealthChanged(Action<int> onHealthChanged) { _onHealthChanged.Add(onHealthChanged); }
     private List<Action<int>> _onHealthChanged = new List<Action<int>>();
+    private void NotifyHealthChanged() { foreach (var item in _onHealthChanged) item?.Invoke(_health); }
+
+    public void SetOnHunterAte(Action onHunterAte) { _onHunterAte.Add(onHunterAte); }
+    private List<Action> _onHunterAte = new List<Action>();
+    private void NotifyOnHunteAte() { foreach (var item in _onHunterAte) item?.Invoke(); }
 
     public void SetOnHunterModeChanged(Action<bool> onKaufmoActivated) { _onKaufmoActivated.Add(onKaufmoActivated); }
     private List<Action<bool>> _onKaufmoActivated = new List<Action<bool>>();
@@ -46,10 +62,13 @@ public class Hunter : MonoBehaviour, IBurnable
     public void SetOnDestroying(Action onDestroying) { _onDestroying.Add(onDestroying); }
     private List<Action> _onDestroying = new List<Action>();
 
+    public void SetOnDebaffChanged(Action<bool, int> onDebaffChanged) { _onDebaffChanged.Add(onDebaffChanged); }
+    private List<Action<bool, int>> _onDebaffChanged = new();
 
 
-    [Inject] private IEventBus _eventBus; 
 
+    [Inject] private IEventBus _eventBus;
+    [Inject] private BrakingObjectFactory _brakingFactory;
     [SerializeField] private HunterModel _model;
 
     private Character _character;
@@ -70,10 +89,13 @@ public class Hunter : MonoBehaviour, IBurnable
     private bool _kaufmoIsActivated = false;
 
     private float _defaultCharacterSpeedMultiplier = -1f;
+    private bool _speedIsDebaffed = false;
+    private int _debaffersCount = 0;
 
     private Hunter _currentCollidedKaufmo = null;
     private float _collidedKaufmoDamagingPeriod = 1f;
 
+    private bool _debafferSpawnerIsReady = true;
         
     private void Awake()
     {        
@@ -89,19 +111,21 @@ public class Hunter : MonoBehaviour, IBurnable
         ChangeHealth(_model.StartHealth);
         if (_character.MainForm.TryGetComponent(out ICanAttack mainAttacker)) mainAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
         if (_character.SecondForm.TryGetComponent(out ICanAttack secondAttacker)) secondAttacker.SetOnAttack(() => AttackCurrentCollidedHunter());
-                
+        _debaffersCount = _model.StartDebaffersCount;   
         //Array hatTypes = Enum.GetValues(typeof(HatType)); SetHat((HatType)hatTypes.GetValue(UnityEngine.Random.Range(0, hatTypes.Length))); //ТЕСТ: случайно надевает шапки в начале                                                                                                                                          
     }
     private void OnDestroy()
     {        
         
-        _onHealthChanged.Clear();     
+        _onHealthChanged.Clear();
+        _onHunterAte.Clear();
         _onKaufmoActivated.Clear();
         _onScaleChanged.Clear();
         _onBoostingStateChanged.Clear();
         _onBoostStateChanged.Clear();
         _onBurning.Clear();
         _onDestroying.Clear();
+        _onDebaffChanged.Clear();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -144,15 +168,15 @@ public class Hunter : MonoBehaviour, IBurnable
         StartCoroutine(BoosterReloading());
         _isMovingWithBoost = true; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
         _soundEffectsController?.PlayEffect(SoundEffectType.HUNTER_ACCELERATED);  
-        if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);  
-        float savedBoostSpeed = _character.SpeedMultiplier;        
-        _character.SpeedMultiplier = _model.BoostSpeedMultiplier;
+        if (_health > _model.BoostPrice) GetDamage(_model.BoostPrice);
+        ChangeCharacterSpeed();
         StartCoroutine(MovingWithBoost());
         yield return new WaitForSeconds(_model.BoostTime);
-        if (!_kaufmoIsActivated)
+        if (_isMovingWithBoost)
         {
-            _character.SpeedMultiplier = savedBoostSpeed;
-            _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
+            _isMovingWithBoost = false;
+            ChangeCharacterSpeed();
+            foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost);
         }        
     }
     private IEnumerator BoosterReloading()
@@ -216,6 +240,7 @@ public class Hunter : MonoBehaviour, IBurnable
                 objectDestroyingTime = 0.3f;
                 monobehaviourDestroyingTime = 0.5f;
                 (somebody as Hunter).AddDamage((somebody as Hunter).Lifes + 100);
+                NotifyOnHunteAte();
                 break;
             case Booster _:
                 switch ((somebody as Booster).GetBoosterType())
@@ -224,8 +249,8 @@ public class Hunter : MonoBehaviour, IBurnable
                         ChangeHealth((somebody as HealthBooster).HealCount);
                         break;
                     case BoosterType.KAUFMO_CONVERTER:
-                        StartCoroutine(ActivateKaufmoMode((somebody as KaufmoActivatorBooster).KaufmoModeTime));
-                        //_character.ChangeForm();
+                        KaufmoActivatorBooster kaufmoActivatorBooster = (somebody as KaufmoActivatorBooster);
+                        StartCoroutine(ActivateKaufmoMode(kaufmoActivatorBooster.Model.KaufoModeTime, kaufmoActivatorBooster.Model.FlickingTimeFraction, kaufmoActivatorBooster.Model.FlickingSpeed));
                         break;
                 } 
                 eatingSpeed = 7f * _character.SpeedMultiplier;
@@ -270,6 +295,13 @@ public class Hunter : MonoBehaviour, IBurnable
             StartCoroutine(_currentGrowingProcess);
         }         
     }
+
+    public void SetHealth(int value)
+    {
+        _health = value;
+        //NotifyHealthChanged();
+    }
+
     private Vector3 GetScaleDependingOnHealth(int health) 
     {
         return Vector3.one * Mathf.Min(Mathf.Pow(Mathf.Max(10, health), 0.3f) / 1.5f, MAX_SCALE); 
@@ -297,36 +329,35 @@ public class Hunter : MonoBehaviour, IBurnable
     }    
 
     
-    private IEnumerator ActivateKaufmoMode(float time)
-    {
-        const float HUNTER_MODEL_FLICKING_TIME_TRIGGER = 5f;
+    private IEnumerator ActivateKaufmoMode(float time, float flickingTimeFraction, float flickingSpeed )
+    {        
+        float flickingTime = time * flickingTimeFraction;
         _kaufmoIsActivated = true; foreach (var item in _onKaufmoActivated) item?.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();
         _boosterIsReloading = false;
         _isMovingWithBoost = false; foreach (var item in _onBoostingStateChanged) item?.Invoke(_isMovingWithBoost); 
         _character.SecondForm.SetVisiblityStatus(true);
-        _character.MainForm.SetVisiblityStatus(false);        
-        _character.SpeedMultiplier = _model.KaufmoSpeedMultiplier;        
-        yield return new WaitForSeconds(time - HUNTER_MODEL_FLICKING_TIME_TRIGGER);
-        StartCoroutine(HunterModelFlicking(HUNTER_MODEL_FLICKING_TIME_TRIGGER));
-        yield return new WaitForSeconds(HUNTER_MODEL_FLICKING_TIME_TRIGGER);         
-        _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier;        
+        _character.MainForm.SetVisiblityStatus(false);
+        ChangeCharacterSpeed();
+        yield return new WaitForSeconds(time - flickingTime);
+        StartCoroutine(HunterModelFlicking(flickingTime, flickingSpeed));
+        yield return new WaitForSeconds(flickingTime);
+        ChangeCharacterSpeed();
         _character.MainForm.SetVisiblityStatus(true);
         _character.SecondForm.SetVisiblityStatus(false);
         _kaufmoIsActivated = false; foreach (var item in _onKaufmoActivated) item.Invoke(_kaufmoIsActivated);
         SetBoostReadyState();        
     }
-    private IEnumerator HunterModelFlicking(float flickingTime)
-    {
-        const float HUNTER_FLICKING_PERIOD = 0.3f;
+    private IEnumerator HunterModelFlicking(float flickingTime, float flickingSpeed)
+    {        
         bool mainFormIsVisible = false;
         while ((flickingTime > 0) && _kaufmoIsActivated)
         {
             mainFormIsVisible = !mainFormIsVisible;
             _character.MainForm.SetVisiblityStatus(mainFormIsVisible);
             _character.SecondForm.SetVisiblityStatus(!mainFormIsVisible);            
-            yield return new WaitForSeconds(HUNTER_FLICKING_PERIOD);
-            flickingTime -= HUNTER_FLICKING_PERIOD;            
+            yield return new WaitForSeconds(flickingSpeed);
+            flickingTime -= flickingSpeed;            
         }        
         _character.SecondForm.SetVisiblityStatus(false);
         _character.MainForm.SetVisiblityStatus(true);
@@ -342,122 +373,37 @@ public class Hunter : MonoBehaviour, IBurnable
         }
     }
 
-
-
-
-
-
-
-    // private EntityType _entityTypeForSpawn;
-    // IN "START"  _entityTypeForSpawn = (EntityType)Enum.GetValues(typeof(EntityType)).GetValue(0); 
-    // IN "GET_DAMAGE"     if (_rigidbody != null) EntitySpawning(value / 5); 
-    /*
-    private void EntitySpawning(int summaryHealth)
+    public void BrakeOn()
     {
-        int entityCountForSpawn = Mathf.Min(5, summaryHealth);
-        for (int i = entityCountForSpawn; i > 0; i--)
-        {
-            int currentEntityHealth = summaryHealth / i + (summaryHealth % i == 0 ? 0 : 1);
-            SpawnOutEntity(currentEntityHealth);
-            summaryHealth -= currentEntityHealth;
-        }  
+        //Debug.Log("debaff ON");        
+        _speedIsDebaffed = true;
+        ChangeCharacterSpeed();
     }
-    private Entity SpawnOutEntity(int entityHealth)
-    {
-        float pullOutForceUp = 5f;
-        float pullOutForceHorizontal = 3f;
-        float positionVerticalOffset = transform.localScale.x * 1f + 0.3f;
-        float positionHorisontalOffset = transform.localScale.x * 1f + 0.3f;
-        Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;
-        Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
-        spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
-        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
-        INeedKaufmoColor colorNeedable = spawnedEntity.GetComponentInChildren<INeedKaufmoColor>();
-        if (colorNeedable != null) colorNeedable.Color = _model.Color;
-        spawnedEntity.HealthCount = entityHealth;
-        spawnedEntity.transform.localScale *= entityHealth switch
-        {
-            >= 1 and < 10 => 1f,
-            >= 10 and < 50 => 1.5f,
-            >= 50 and < 100 => 1.8f,
-            >= 100 and < 500 => 2f,
-            >= 500 => 2.2f,
-            _ => 1f
-        };  
-        return spawnedEntity;
-    }
-    */
 
+    public void BrakeOff()
+    {
+        //Debug.Log("debaff OFF");
+        _speedIsDebaffed = false; 
+        ChangeCharacterSpeed();     
+    }
 
-    //private int _maxEnititySpawnCountPerFrame = 10;    
-    //private int _spawningEntitiesQueueSummaryHealth = 0;
-    //private float _timeBetweenSpawnFrames = 0.05f;
-    //private Renderer[] _visualComponents;
-    //private Collider _collider;
-    //_visualComponents = GetComponentsInChildren<Renderer>();
-    //_collider = GetComponent<Collider>();
+    private void ChangeCharacterSpeed()
+    {
+        _character.SpeedMultiplier = _defaultCharacterSpeedMultiplier * (_speedIsDebaffed ? _model.DebafferSpeedMultiplier 
+            : (_isMovingWithBoost ? _model.BoostSpeedMultiplier 
+            : (_kaufmoIsActivated ? _model.KaufmoSpeedMultiplier 
+            : 1f)));
+    }
 
-    //SetColorOnColoredComponents(_model.Color);
-    //StartCoroutine(EntitySpawning());
-
-    /*
-    private void SetColorOnColoredComponents(Color color)
-    {
-        foreach (Renderer coloredComponent in _model.ColoredComponents) 
-            coloredComponent.material.color = color;
-    }
-    */
-    /*
-    private void GetDamage(int value)
-    {
-        ChangeHealth(-value);
-        if (_rigidbody == null) return;
-        _spawningEntitiesQueueSummaryHealth += Math.Min(value, _health + value);
-        if (_health <= 0) StartCoroutine(DestroyingAfterEntitySpawning());
-    }
-    */
-    /*
-    private IEnumerator EntitySpawning()
-    {
-        while (true)
-        {
-            int _spawnedEntitiesCount = 0;
-            while ((_spawningEntitiesQueueSummaryHealth > 0) && (_spawnedEntitiesCount < _maxEnititySpawnCountPerFrame))            
-            {
-                _spawningEntitiesQueueSummaryHealth -= SpawnOutEntity().HealthCount;                
-                _spawnedEntitiesCount++;
-            }            
-            _spawningEntitiesQueueSummaryHealth = Math.Max(0, _spawningEntitiesQueueSummaryHealth);            
-            yield return new WaitForSeconds(_timeBetweenSpawnFrames);
-        }
-    }
-    */
-    /*
-    private Entity SpawnOutEntity()
-    {
-        float pullOutForceUp = 5f;
-        float pullOutForceHorizontal = 3f;
-        float positionVerticalOffset = transform.localScale.x * 1f + 0.3f;
-        float positionHorisontalOffset = transform.localScale.x * 1f + 0.3f;        
-        Vector3 horizontalDirection = Quaternion.AngleAxis(UnityEngine.Random.Range(45, 315f), Vector3.up) * transform.forward;        
-        Entity spawnedEntity = _factory.Spawn(_entityTypeForSpawn);
-        spawnedEntity.transform.position = transform.position + horizontalDirection * positionHorisontalOffset + Vector3.up * positionVerticalOffset;
-        spawnedEntity.GetComponent<Rigidbody>().AddForce(Vector3.up * pullOutForceUp + horizontalDirection * pullOutForceHorizontal, ForceMode.Impulse);
-        INeedKaufmoColor colorNeedable = spawnedEntity.GetComponentInChildren<INeedKaufmoColor>();
-        if (colorNeedable != null) colorNeedable.Color = _model.Color;            
-        return spawnedEntity;
-    }
-    */
-    /*
-    private IEnumerator DestroyingAfterEntitySpawning()
+    private IEnumerator DebafferSpawnerReloading()
     {        
-        Destroy(_rigidbody);
-        Destroy(_collider);
-        foreach (Renderer visualComponent in _visualComponents) { Destroy(visualComponent); }
-        while (_spawningEntitiesQueueSummaryHealth > 0) { yield return null; }
-        Destroy(gameObject);        
+        _debafferSpawnerIsReady = false;
+        foreach (var item in _onDebaffChanged) item.Invoke(_debafferSpawnerIsReady, _debaffersCount);
+        yield return new WaitForSeconds(_model.DebafferSpawnCooldawn);
+        _debafferSpawnerIsReady = true;
+        foreach (var item in _onDebaffChanged) item.Invoke(_debafferSpawnerIsReady, _debaffersCount);
     }
-    */
+
 }
 
 

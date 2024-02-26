@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -8,6 +6,7 @@ public class EffectPlayController : MonoBehaviour, IAudioEffect
 {
     [Inject] private EffectPlayService _effectPlayService;
     private AudioSource _audioSource;
+    private bool _isBlocked = false;
     private void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
@@ -15,10 +14,25 @@ public class EffectPlayController : MonoBehaviour, IAudioEffect
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
     public void PlayEffect(SoundEffectType effect)
     {
-        _effectPlayService.PlayEffect(effect, _audioSource);
+        if (_isBlocked == false)
+        {
+            _effectPlayService.PlayEffect(effect, _audioSource);
+        }
+    }
+    public void PlayEffectConstantly(SoundEffectType effect)
+    {
+        PlayEffect(effect);
+        _isBlocked = true;
+    }
+    private void Update()
+    {
+        if (_isBlocked == true) {
+            if (_audioSource.isPlaying == false)
+                _isBlocked = false;
+        }
     }
 }

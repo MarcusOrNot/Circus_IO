@@ -13,7 +13,7 @@ public class EntityFactory
 
     public Entity Spawn(EntityType entityType)
     {
-        GameObjectCreationParameters paramsNow = new GameObjectCreationParameters();
+        //GameObjectCreationParameters paramsNow = new GameObjectCreationParameters();
         //paramsNow.
         var prefub = _entities.Find(e=>e.Model.EntityType==entityType);
         if (prefub != null)

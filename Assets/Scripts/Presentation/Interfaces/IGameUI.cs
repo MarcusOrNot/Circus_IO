@@ -10,4 +10,5 @@ public interface IGameUI
     public void ShowPause();
     public void ShowAlertMessage(string alertText);
     public void CloseAlertMessage();
+    public void ShowCounterStart(int delaySeconds);
 }

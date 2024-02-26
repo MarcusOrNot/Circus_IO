@@ -7,6 +7,7 @@ public class AIBehaviorModel
     public float Weight = 0;
     public Vector2 Direction = Vector2.zero;
     public bool Accelerate = false;
+    public bool SpawnDebaf = false;
 
     public AIBehaviorModel() { }
 
@@ -14,5 +15,14 @@ public class AIBehaviorModel
         Weight = weight;
         Direction = direction;
         Accelerate = accelerate;
+        SpawnDebaf = false;
+    }
+
+    public AIBehaviorModel(float weight, Vector2 direction, bool accelerate, bool spawnDebaf)
+    {
+        Weight = weight;
+        Direction = direction;
+        Accelerate = accelerate;
+        SpawnDebaf = spawnDebaf;
     }
 }

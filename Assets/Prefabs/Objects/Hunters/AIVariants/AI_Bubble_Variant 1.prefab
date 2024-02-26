@@ -150,6 +150,14 @@ PrefabInstance:
       propertyPath: _model.HunterType
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3620438381083024642, guid: bdac8ed82ad0fae4eafa9502f5319e1a, type: 3}
+      propertyPath: _model.DebafferSpawnCooldawn
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3620438381083024642, guid: bdac8ed82ad0fae4eafa9502f5319e1a, type: 3}
+      propertyPath: _model.DebafferSpeedMultiplier
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 5100511541987312160, guid: bdac8ed82ad0fae4eafa9502f5319e1a, type: 3}
       propertyPath: m_Name
       value: AI_Bubble_Variant 1

@@ -29,4 +29,11 @@ public class HunterFactory
         hunter.GetComponentInChildren<PlayerHUDController>().Deactivate();
         return hunter;
     }
+
+    public Hunter SpawnAIHunter(HunterType hunterType)
+    {
+        var hunter = Spawn(hunterType);
+        _container.InstantiateComponent<AIHunter>(hunter.gameObject);
+        return hunter;
+    }
 }

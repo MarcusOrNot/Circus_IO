@@ -9,6 +9,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
     [Inject] private IGameUI _gameUI;
     [Inject] private IEventBus _eventBus;
     [Inject] private IVibration _vibro;
+    [Inject] private ILang _lang;
     private Hunter _hunter;
 
     public Vector3 GetPosition() => transform.position;
@@ -16,28 +17,41 @@ public class PlayerHunter : MonoBehaviour, IPlayer
     private void Start()
     {
         _hunter = GetComponent<Hunter>();
+        _gameUI.SetLifesValue(_hunter.Lifes);
         if (_controller != null)
         {
-            _controller.SetOnActionClicked(() =>
-            {
-                _hunter.Boost();
-                _vibro.Play();
-            });
+            _controller.SetOnActionClicked(() =>_hunter.Boost());
+            _controller.SetOnDebafClicked(() =>_hunter.SpawnDebaff());
+            
             _hunter.SetOnHealthChanged((lifes) =>
             {
                 _gameUI.SetLifesValue(lifes);
+                _eventBus.NotifyObservers(GameEventType.PLAYER_HEALTH_CHANGED);
             });
             _hunter.SetOnBoostStateChanged((state) =>
             {
                 //Debug.Log("State changed "+state.ToString());
                 //_controller.SetActionEnabled(state);
-                if (state==false)
+                //if (state==false)
+                //  _vibro.Play();
+                if (state == false)
+                {
+                    _vibro.Play();
                     _controller.SetActionCooldown(_hunter.Model.BoostRestartTime);
+                }
+            });
+            _hunter.SetOnDebaffChanged((state, count) => {
+                _controller.DebafCount = count;
+                if (state == false)
+                {
+                    _vibro.Play();
+                    _controller.SetDebafCooldown(_hunter.Model.DebafferSpawnCooldawn);
+                }
             });
             _hunter.SetOnHunterModeChanged((state) => { 
                 _controller.SetActionEnabled(!state);
                 if (state == true)
-                    _gameUI.ShowAlertMessage("Attack them all!");
+                    _gameUI.ShowAlertMessage(_lang.GetCurrentLangText("Menu.Attack_them_all"));
                 else
                     _gameUI.CloseAlertMessage();
             });
@@ -48,6 +62,7 @@ public class PlayerHunter : MonoBehaviour, IPlayer
                 _controller.Hide();
                 _vibro.PlayMillis(500);
             });
+            _hunter.SetOnHunterAte(() => _eventBus.NotifyObservers(GameEventType.PLAYER_ATE_HUNTER));
         }
     }
 

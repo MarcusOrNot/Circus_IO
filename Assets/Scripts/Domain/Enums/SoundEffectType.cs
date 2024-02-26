@@ -13,5 +13,6 @@ public enum SoundEffectType
     MELEE_ATTACK,
     HUNTER_DEATH,
     BOOSTER_EAT,
-    PURCHASE_HAT
+    PURCHASE_HAT,
+    BALL_INSTATIATE
 }

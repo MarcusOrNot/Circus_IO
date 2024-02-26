@@ -22,39 +22,39 @@ MonoBehaviour:
     HatSprite: {fileID: 21300000, guid: af9fe4690e808914890ab80eb00da026, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 50
+      Value: 100
   - Hat: 7
     HatSprite: {fileID: 21300000, guid: 8ed41e9f85454af4ba611db066080ec8, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 60
+      Value: 140
   - Hat: 5
     HatSprite: {fileID: 21300000, guid: 9a8d382b0f3ab4342914847e31e43839, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 70
+      Value: 210
   - Hat: 6
     HatSprite: {fileID: 21300000, guid: 240468bad19b3b9439dff28faff71a4e, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 90
+      Value: 330
   - Hat: 4
     HatSprite: {fileID: 21300000, guid: 30696b42e4459214d90103c3f615e5da, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 110
+      Value: 560
   - Hat: 2
     HatSprite: {fileID: 21300000, guid: 69e759b51ac5d2c479b9ecf80887d7e8, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 150
+      Value: 880
   - Hat: 3
     HatSprite: {fileID: 21300000, guid: ad11a32871429014aaad3a96e03c7881, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 250
+      Value: 1490
   - Hat: 8
     HatSprite: {fileID: 21300000, guid: a6f597ad41f0be241866824cd2bf6e81, type: 3}
     ItemBlock:
       BlockType: 1
-      Value: 350
+      Value: 2070
