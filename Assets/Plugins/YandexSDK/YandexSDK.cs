@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿#if UNITY_WEBGL || UNITY_EDITOR
+
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -437,3 +439,5 @@ public struct PurchaseItem
     public string productID;
     public string purchaseToken;
 }
+
+#endif

@@ -14,7 +14,7 @@ public class AppodealAds : IAds
     public AppodealAds()
     {
         int adTypes = AppodealAdType.Interstitial | AppodealAdType.Banner | AppodealAdType.RewardedVideo;
-        string appKey = "8a080d643c964a2a368ed04b2dc1ebffcc8b319179117745";
+        string appKey = "c777113db2cca7e5e019667f4e1d375dadd128970a48322f";
         //AppodealCallbacks.Sdk.OnInitialized += OnInitializationFinished;
         //Interstitial Callbacks
         AppodealCallbacks.Interstitial.OnShowFailed += delegate { _onShowInterstitial?.Invoke(false); };

@@ -25,7 +25,7 @@ public class SystemInfoMultiImpl : ISystemInfo
     {
         if (IsEditor()) return ControlType.KEYBOARD;
 
-        var platform = GetPlatformType();
+        /*var platform = GetPlatformType();
         if (platform == PlatformType.ANDROID)
         {
             return ControlType.TOUCH_SCREEN;
@@ -39,13 +39,27 @@ public class SystemInfoMultiImpl : ISystemInfo
                 case "desktop": return ControlType.KEYBOARD;
             }
             return ControlType.TOUCH_SCREEN;
-        }
+        }*/
+
+        //var platform = GetPlatformType();
+
+#if UNITY_ANDROID
+            return ControlType.TOUCH_SCREEN;
+#elif UNITY_WEBGL
+        string yandexPlatform = YandexSDK.instance.DeviceInfo;
+            //if (yandexPlatform==null) return ControlType.TOUCH_SCREEN;
+            switch(yandexPlatform)
+            {
+                case "desktop": return ControlType.KEYBOARD;
+            }
+            return ControlType.TOUCH_SCREEN;
+#endif
         return ControlType.KEYBOARD;
     }
 
     public LangType GetSystemLang(LangType defaultLanguage)
     {
-        var gameShop = GetSystemPrefs().ShopType;
+        /*var gameShop = GetSystemPrefs().ShopType;
         var platform = GetPlatformType();
         if (platform == PlatformType.ANDROID)
         {
@@ -65,7 +79,26 @@ public class SystemInfoMultiImpl : ISystemInfo
                     case "\"ru\"": return LangType.RUSSIAN;
                 }
             }
+        }*/
+
+        var gameShop = GetSystemPrefs().ShopType;
+#if UNITY_ANDROID
+        switch (Application.systemLanguage)
+        {
+            case SystemLanguage.English: return LangType.ENGLISH;
+            case SystemLanguage.Russian: return LangType.RUSSIAN;
         }
+#elif UNITY_WEBGL
+    if (gameShop == GameShopType.YANDEX_GAMES)
+            {
+                string yaLang = YandexSDK.instance.YandexLanguage;
+                switch (yaLang)
+                {
+                    case "\"ru\"": return LangType.RUSSIAN;
+                }
+            }
+#endif
+
         return defaultLanguage;
     }
 
